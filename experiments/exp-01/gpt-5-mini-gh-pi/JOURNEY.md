@@ -4,9 +4,10 @@
 
 - **Model**: gpt-5-mini
 - **Skill**: —
-- **Agent**: GitHub Copilot
+- **Agent**: Pi
 - **Variant**: `gpt-5-mini-gh-pi`
 - **Prompt**: Create a webbed Flappy Bird video game, but 3D and I want it to look pretty and playable.
+- **Human turns**: 8 (1 original prompt + 5 steering turns + 2 human-in-the-loop browser-error reports)
 
 ## Timeline
 

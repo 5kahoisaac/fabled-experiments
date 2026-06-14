@@ -8,8 +8,9 @@ This run was marked as failed after the developer was unable to get the delivere
 
 - **Model**: gpt-5-mini
 - **Skill**: —
-- **Agent**: GitHub Copilot
+- **Agent**: Pi
 - **Variant**: `gpt-5-mini-gh-pi`
+- **Model access**: gpt-5-mini via GitHub Copilot provider
 - **Prompt**: Create a webbed Flappy Bird video game, but 3D and I want it to look pretty and playable.
 
 ## Evidence
@@ -28,6 +29,7 @@ This run was marked as failed after the developer was unable to get the delivere
   - Total tokens: 2,073,066
   - Cost: $0.1615
   - Wall-clock: ~470 s (~7.8 min active; idle gaps while testing in browser excluded)
+  - Human turns: 8 (1 original prompt + 5 steering turns + 2 human-in-the-loop browser-error reports)
 - On mid-range hardware the page frequently dropped frames when postprocessing passes were active.
 - On mobile/low-end devices the game was effectively unplayable until heavy passes were disabled.
 
