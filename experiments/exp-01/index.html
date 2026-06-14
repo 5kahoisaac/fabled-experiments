@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 01 — overview</title>
+  <meta name="description" content="Write-up for Experiment 01: Fable 5 vs. cheaper model + Fabled, single-prompt build." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/css/styles.css" />
+</head>
+<body>
+  <main class="result-page">
+    <a class="result-page__back" href="../../index.html#exp-01">← Back to all experiments</a>
+
+    <header class="result-hero">
+      <p class="hero__eyebrow">Experiment 01 · Overview</p>
+      <h1>Experiment 01</h1>
+      <p class="contender__model">2026-06-13 · single prompt · 1 baseline · 3 challengers · 2 controls</p>
+    </header>
+
+    <section class="doc-section">
+      <h2>The prompt</h2>
+      <p class="exp__prompt" style="border-radius:12px;border:1px solid var(--line)">
+        <b>Prompt:</b> Create a webbed Flappy Bird video game, but 3D and I want it to look pretty and playable.
+      </p>
+
+      <h2>Contenders</h2>
+      <p>Each contender lives in its own <code>MODEL_NAME/</code> folder containing the
+        result HTML, a <code>SPEC.md</code> (params, for comparing) and a
+        <code>JOURNEY.md</code> (thinking process). Markdown opens in the in-browser viewer.</p>
+      <ul>
+        <li><strong>Baseline · <span class="mono">fable-5</span> —</strong>
+          <span class="mono">claude-fable-5</span>, no skill. Delivered (36/36 assertions, ~$2.30 est.).<br />
+          <a href="fable-5/index.html">Result →</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Ffable-5%2FSPEC.md">SPEC.md</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Ffable-5%2FJOURNEY.md">JOURNEY.md</a></li>
+        <li><strong>Challenger · variant <span class="mono">glm-5-1-fabled</span></strong> — <span class="mono">glm-5.1</span> + <span class="mono">Fabled</span> skill on <span class="mono">Pi</span>.
+          Delivered (72,086 assertions, ~$0.73).<br />
+          <a href="glm-5-1-fabled/index.html">Result →</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled%2FSPEC.md">SPEC.md</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled%2FJOURNEY.md">JOURNEY.md</a></li>
+        <li><strong>Challenger · variant <span class="mono">gpt-5-5-codex-fabled</span></strong> — gpt-5.5-codex + Fabled skill on Codex. Delivered (browser-verified, 0 page errors, 0 console errors).<br />
+          <a href="gpt-5-5-codex-fabled/index.html">Result →</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex-fabled%2FSPEC.md">SPEC.md</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex-fabled%2FJOURNEY.md">JOURNEY.md</a></li>
+        <li><strong>Challenger · variant <span class="mono">glm-5-1-fabled-oc</span></strong> — <span class="mono">glm-5.1</span> + <span class="mono">Fabled</span> skill on <span class="mono">OpenCode</span>.
+          <strong>Failed</strong> — GLM-5.1 stream closed in a ~60 s loop, no deliverable.<br />
+          <a href="glm-5-1-fabled-oc/index.html">Result →</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2FSPEC.md">SPEC.md</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2FJOURNEY.md">JOURNEY.md</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2Fresult%2FREPORT.md">REPORT.md</a></li>
+        <li><strong>Control · variant <span class="mono">glm-5-1-pi</span></strong> — <span class="mono">glm-5.1</span> on <span class="mono">Pi</span> with <strong>no skill</strong>, to isolate what Fabled adds.
+          Delivered (browser-verified, 0 console errors, ~$0.50).<br />
+          <a href="glm-5-1-pi/index.html">Result →</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-pi%2FSPEC.md">SPEC.md</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-pi%2FJOURNEY.md">JOURNEY.md</a></li>
+        <li><strong>Control · variant <span class="mono">gpt-5-5-codex</span></strong> — gpt-5.5-codex on Codex with <strong>no skill</strong>. Delivered (browser-verified, score reached 3, 3,019,341 tokens, 1,243.055 s wall time, $5.27709, 0 final browser errors).<br />
+          <a href="gpt-5-5-codex/index.html">Result →</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex%2FSPEC.md">SPEC.md</a> ·
+          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex%2FJOURNEY.md">JOURNEY.md</a>
+        </li>
+      </ul>
+
+      <h2>Result</h2>
+      <p>Both runnable builds shipped a complete single-file 3D Flappy Bird with a pure logic/render
+        split and passing assertions. The <span class="mono">Fabled</span> challenger on Pi delivered for
+        <strong>~$0.73</strong> against the baseline's estimated <strong>~$2.30</strong>, with far more
+        assertions (72,086 vs 36) — though the baseline's cost bundles plan-derivation the skill provides for
+        free, so read it as indicative, not a clean ledger. The same GLM-5.1 + Fabled combination on
+        <strong>OpenCode failed</strong>: the stream closed roughly every 60 s in a loop and produced no
+        deliverable — full analysis in its
+        <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2Fresult%2FREPORT.md">REPORT.md</a>.
+        The <strong>control</strong> (<span class="mono">glm-5-1-pi</span>) ran the same model/agent with no Fabled skill:
+        it shipped a single polished file verified directly in a real browser (0 console errors) for
+        <strong>~$0.50</strong> in ~7.6 min, but skipped the logic/render split and 72k-assertion test
+        suite the skill drove — making the delta the value of the skill itself.
+        The <strong>Codex challenger</strong> (<span class="mono">gpt-5-5-codex-fabled</span>) shipped the same prompt as a single-file Three.js game, verified through local Chrome with no page or console errors; it used 196,410 total tokens plus 1,146,624 cached tokens for $2.874655 exact ($2.87 rounded). Exact return time was not recorded; the checked lower bound is 33m56s.
+        The <strong>Codex control</strong> (gpt-5-5-codex) shipped a browser-verified Three.js build with score reaching 3, 3,019,341 total tokens, 1,243.055 s wall time, and $5.27709 calculated cost.
+        Overall winner: <em>tbd</em>.</p>
+    </section>
+  </main>
+</body>
+</html>

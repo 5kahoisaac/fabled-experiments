@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Flappy 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#2a2d3a;
+    --cream:#fff7e6;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ width:100%; height:100%; overflow:hidden; background:#7ec3ff; font-family:'Baloo 2',system-ui,sans-serif; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  #game{ position:fixed; inset:0; }
+  canvas{ display:block; }
+
+  #ui{ position:fixed; inset:0; pointer-events:none; }
+
+  /* Score */
+  #score{
+    position:absolute; top:5%; left:50%; transform:translateX(-50%);
+    font-size:clamp(48px,9vw,96px); font-weight:800; color:#fff;
+    text-shadow:0 4px 0 rgba(0,0,0,.18), 0 0 22px rgba(255,255,255,.4);
+    opacity:0; transition:opacity .25s; letter-spacing:1px;
+  }
+  #score.show{ opacity:1; }
+
+  /* Overlays */
+  .overlay{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center;
+    color:var(--ink); transition:opacity .3s; padding:20px;
+  }
+  .overlay.hidden{ opacity:0; pointer-events:none; }
+  .card{
+    background:rgba(255,251,240,.82); backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px); border-radius:28px;
+    padding:34px 44px; box-shadow:0 24px 60px rgba(0,0,0,.22),
+      inset 0 2px 0 rgba(255,255,255,.9); border:3px solid #fff;
+    max-width:min(92vw,440px);
+  }
+  h1{
+    font-size:clamp(40px,8vw,64px); font-weight:800; line-height:.95;
+    color:#ff8a3d; text-shadow:0 4px 0 #d9621f, 0 7px 14px rgba(217,98,31,.4);
+    letter-spacing:1px;
+  }
+  h1 small{ display:block; font-size:.42em; color:#2a9df4;
+    text-shadow:0 3px 0 #1976c9; margin-top:6px; }
+  h2{ font-size:clamp(34px,7vw,52px); font-weight:800; color:#ff6a3d;
+    text-shadow:0 3px 0 #d44f29; }
+  .sub{ font-size:18px; color:#5b6472; margin-top:10px; font-weight:600; }
+  .hint{
+    margin-top:20px; font-weight:700; color:#2a9df4; font-size:18px;
+    animation:pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ transform:translateY(0); opacity:.85;} 50%{ transform:translateY(-4px); opacity:1;} }
+
+  .stats{ font-size:22px; font-weight:700; color:var(--ink); margin-top:14px; }
+  .stats b{ color:#ff8a3d; font-size:30px; }
+  .badge{ display:inline-block; background:#ffd84d; color:#7a5a00;
+    font-weight:800; font-size:14px; padding:3px 12px; border-radius:999px;
+    margin-top:6px; box-shadow:0 2px 0 #c79a18; }
+
+  /* Mute button */
+  #muteBtn{
+    position:absolute; top:18px; right:18px; pointer-events:auto;
+    width:52px; height:52px; border-radius:50%; border:3px solid #fff;
+    background:rgba(255,251,240,.85); color:var(--ink); font-size:22px;
+    cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.18); display:flex;
+    align-items:center; justify-content:center; transition:transform .1s;
+  }
+  #muteBtn:active{ transform:scale(.9); }
+
+  .credit{ position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
+    font-size:12px; color:rgba(255,255,255,.65); font-weight:600;
+    text-shadow:0 1px 2px rgba(0,0,0,.2); }
+</style>
+</head>
+<body>
+<div id="game"></div>
+
+<div id="ui">
+  <div id="score">0</div>
+
+  <div id="startScreen" class="overlay">
+    <div class="card">
+      <h1>FLAPPY<small>3D • take flight</small></h1>
+      <div class="sub">Glide the little bird through the pipes</div>
+      <div class="hint">Tap • Click • Press Space</div>
+      <div class="badge">Best Score <span id="bestStart">0</span></div>
+    </div>
+  </div>
+
+  <div id="overScreen" class="overlay hidden">
+    <div class="card">
+      <h2>Ouch!</h2>
+      <div class="stats">Score <b id="finalScore">0</b>&nbsp;&nbsp;Best <b id="finalBest">0</b></div>
+      <div id="newBest" class="badge" style="display:none">✨ New Best!</div>
+      <div class="hint">Tap • Click • Press Space to retry</div>
+    </div>
+  </div>
+
+  <button id="muteBtn" title="Sound">🔊</button>
+  <div class="credit">Three.js • built with ❤️</div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ============================================================
+   FLAPPY 3D — a pretty, playable 3D Flappy Bird (Three.js)
+   ============================================================ */
+
+// ---------- DOM / UI refs ----------
+const ui = {
+  score:    document.getElementById('score'),
+  start:    document.getElementById('startScreen'),
+  over:     document.getElementById('overScreen'),
+  bestStart:document.getElementById('bestStart'),
+  finalScore:document.getElementById('finalScore'),
+  finalBest:document.getElementById('finalBest'),
+  newBest:  document.getElementById('newBest'),
+  mute:     document.getElementById('muteBtn'),
+};
+
+let best = parseInt(localStorage.getItem('flappy3d_best') || '0', 10);
+ui.bestStart.textContent = best;
+
+// ---------- Renderer / Scene / Camera ----------
+const container = document.getElementById('game');
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.08;
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+
+// Sky gradient background
+function makeSkyTexture(){
+  const c = document.createElement('canvas');
+  c.width = 8; c.height = 512;
+  const ctx = c.getContext('2d');
+  const g = ctx.createLinearGradient(0,0,0,512);
+  g.addColorStop(0.00, '#2f7fd1');   // top deep sky
+  g.addColorStop(0.45, '#5fb1f2');
+  g.addColorStop(0.78, '#bfe6ff');
+  g.addColorStop(0.93, '#ffe3b8');   // warm horizon glow
+  g.addColorStop(1.00, '#ffd79a');
+  ctx.fillStyle = g; ctx.fillRect(0,0,8,512);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+scene.background = makeSkyTexture();
+scene.fog = new THREE.Fog(0xcfeaff, 38, 95);
+
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 220);
+camera.position.set(0, 0.6, 13.2);
+camera.lookAt(0, 0.2, 0);
+
+// ---------- Lights ----------
+scene.add(new THREE.HemisphereLight(0xcfeaff, 0x7fae5b, 0.95));
+
+const sun = new THREE.DirectionalLight(0xfff1cf, 1.7);
+sun.position.set(-9, 15, 9);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.near = 1;
+sun.shadow.camera.far = 60;
+sun.shadow.camera.left = -16;
+sun.shadow.camera.right = 16;
+sun.shadow.camera.top = 16;
+sun.shadow.camera.bottom = -16;
+sun.shadow.bias = -0.0004;
+sun.shadow.normalBias = 0.02;
+scene.add(sun);
+scene.add(sun.target);
+
+// ---------- World constants ----------
+const GROUND_Y   = -5;     // bird dies at this height
+const CEILING_Y  = 6.4;
+const BIRD_X     = -2.2;
+const PIPE_RADIUS = 0.82;
+const PIPE_HALF_W = PIPE_RADIUS;
+const PIPE_DEPTH  = 1.25;   // z extent
+const GAP_SIZE    = 3.7;
+const PIPE_SPACING= 7.0;
+const POOL_COUNT  = 5;
+
+// ---------- The Bird ----------
+const bird = new THREE.Group();
+const birdParts = {};
+
+(function buildBird(){
+  const bodyMat  = new THREE.MeshStandardMaterial({ color:0xffd23f, roughness:0.55, metalness:0.05, flatShading:true });
+  const bellyMat = new THREE.MeshStandardMaterial({ color:0xfff0b8, roughness:0.6, flatShading:true });
+  const wingMat  = new THREE.MeshStandardMaterial({ color:0xff9f1c, roughness:0.5, flatShading:true });
+  const beakMat  = new THREE.MeshStandardMaterial({ color:0xff7a1a, roughness:0.45 });
+  const eyeWhite = new THREE.MeshStandardMaterial({ color:0xffffff, roughness:0.3 });
+  const eyeBlack = new THREE.MeshStandardMaterial({ color:0x1a1a1a, roughness:0.3 });
+  const feetMat  = new THREE.MeshStandardMaterial({ color:0xff7a1a, roughness:0.45 });
+
+  // body
+  const body = new THREE.Mesh(new THREE.IcosahedronGeometry(0.62, 1), bodyMat);
+  body.scale.set(1.0, 0.92, 0.9);
+  body.castShadow = true;
+  bird.add(body);
+
+  // belly patch
+  const belly = new THREE.Mesh(new THREE.IcosahedronGeometry(0.46, 1), bellyMat);
+  belly.position.set(0.16, -0.12, 0);
+  bird.add(belly);
+
+  // eyes
+  const eyeGeo = new THREE.SphereGeometry(0.16, 16, 16);
+  const eL = new THREE.Mesh(eyeGeo, eyeWhite); eL.position.set(0.42, 0.26, 0.30); bird.add(eL);
+  const eR = new THREE.Mesh(eyeGeo, eyeWhite); eR.position.set(0.42, 0.26,-0.30); bird.add(eR);
+  const pupGeo = new THREE.SphereGeometry(0.085, 14, 14);
+  const pL = new THREE.Mesh(pupGeo, eyeBlack); pL.position.set(0.53, 0.26, 0.34); bird.add(pL);
+  const pR = new THREE.Mesh(pupGeo, eyeBlack); pR.position.set(0.53, 0.26,-0.34); bird.add(pR);
+  birdParts.pupilL = pL; birdParts.pupilR = pR;
+
+  // beak
+  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.34, 12), beakMat);
+  beak.rotation.z = -Math.PI/2;
+  beak.position.set(0.74, 0.04, 0);
+  beak.castShadow = true;
+  bird.add(beak);
+  const beakBot = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.22, 12), new THREE.MeshStandardMaterial({color:0xe8631a, roughness:0.5}));
+  beakBot.rotation.z = -Math.PI/2;
+  beakBot.position.set(0.70, -0.13, 0);
+  bird.add(beakBot);
+
+  // cheek blush
+  const cheekMat = new THREE.MeshStandardMaterial({ color:0xff7a8a, transparent:true, opacity:0.55, roughness:0.8 });
+  const cheekGeo = new THREE.CircleGeometry(0.13, 16);
+  const cheekL = new THREE.Mesh(cheekGeo, cheekMat); cheekL.position.set(0.40,-0.02,0.55); bird.add(cheekL);
+  const cheekR = new THREE.Mesh(cheekGeo, cheekMat); cheekR.position.set(0.40,-0.02,-0.55); bird.add(cheekR);
+
+  // wings (flap via pivot around X). Bird faces +X.
+  function makeWing(z){
+    const pivot = new THREE.Group();
+    pivot.position.set(-0.02, 0.22, z);
+    const wing = new THREE.Mesh(new THREE.IcosahedronGeometry(0.5, 0), wingMat);
+    wing.scale.set(1.15, 0.32, 0.85);
+    wing.position.set(-0.42, -0.02, 0);
+    wing.castShadow = true;
+    pivot.add(wing);
+    return pivot;
+  }
+  birdParts.wingL = makeWing( 0.42); bird.add(birdParts.wingL);
+  birdParts.wingR = makeWing(-0.42); bird.add(birdParts.wingR);
+
+  // tail
+  const tail = new THREE.Mesh(new THREE.ConeGeometry(0.26, 0.6, 12), wingMat);
+  tail.rotation.z = Math.PI/2;
+  tail.rotation.x = Math.PI;
+  tail.position.set(-0.62, 0.08, 0);
+  tail.castShadow = true;
+  bird.add(tail);
+
+  // feet
+  const footGeo = new THREE.CapsuleGeometry(0.05, 0.16, 4, 8);
+  const fL = new THREE.Mesh(footGeo, feetMat); fL.position.set(0.02,-0.52,0.2); fL.rotation.z=0.2; bird.add(fL);
+  const fR = new THREE.Mesh(footGeo, feetMat); fR.position.set(0.02,-0.52,-0.2); fR.rotation.z=0.2; bird.add(fR);
+})();
+bird.position.set(BIRD_X, 0.5, 0);
+scene.add(bird);
+
+// collision radius (forgiving)
+const BIRD_R = 0.46;
+
+// ---------- Ground ----------
+let grassTex;
+(function buildGround(){
+  // grass texture
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#8ed24f'; ctx.fillRect(0,0,128,128);
+  for(let i=0;i<900;i++){
+    const x=Math.random()*128, y=Math.random()*128, s=Math.random()*3+1;
+    const greens=['#7cc23f','#a6e15f','#6fb832','#9ad35a','#65a82c'];
+    ctx.fillStyle = greens[(Math.random()*greens.length)|0];
+    ctx.fillRect(x,y,s,s);
+  }
+  grassTex = new THREE.CanvasTexture(c);
+  grassTex.colorSpace = THREE.SRGBColorSpace;
+  grassTex.wrapS = grassTex.wrapT = THREE.RepeatWrapping;
+  grassTex.repeat.set(60, 10);
+
+  const grass = new THREE.Mesh(
+    new THREE.PlaneGeometry(400, 60),
+    new THREE.MeshStandardMaterial({ map:grassTex, roughness:1 })
+  );
+  grass.rotation.x = -Math.PI/2;
+  grass.position.set(0, GROUND_Y, -6);
+  grass.receiveShadow = true;
+  scene.add(grass);
+  scene.userData.grass = grass;
+
+  // dirt mound under grass
+  const dirt = new THREE.Mesh(
+    new THREE.BoxGeometry(400, 4, 60),
+    new THREE.MeshStandardMaterial({ color:0x8a5a32, roughness:1, flatShading:true })
+  );
+  dirt.position.set(0, GROUND_Y - 2, -6);
+  dirt.receiveShadow = true;
+  scene.add(dirt);
+})();
+
+// ---------- Background decor: hills, clouds, sun ----------
+(function decor(){
+  // sun
+  const sunMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(4, 32, 32),
+    new THREE.MeshBasicMaterial({ color:0xfff3c0 })
+  );
+  sunMesh.position.set(-26, 17, -55);
+  scene.add(sunMesh);
+
+  // distant rolling hills (two layers)
+  function hillsLayer(z, color, scale){
+    const shape = new THREE.Shape();
+    const w = 220; shape.moveTo(-w/2, -10);
+    let x = -w/2;
+    while(x < w/2){
+      const h = (Math.random()*0.6+0.7)*scale;
+      shape.lineTo(x+12, h);
+      x += 24;
+    }
+    shape.lineTo(w/2, -10); shape.lineTo(-w/2, -10);
+    const geo = new THREE.ShapeGeometry(shape);
+    const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color, roughness:1, flatShading:true }));
+    m.position.set(0, GROUND_Y, z);
+    scene.add(m);
+  }
+  hillsLayer(-40, 0x6fb83c, 7);
+  hillsLayer(-30, 0x7fc94a, 4.5);
+  hillsLayer(-22, 0x93d65f, 3);
+
+  // clouds (pools handled below)
+})();
+
+// ---------- Clouds (parallax) ----------
+const clouds = [];
+function makeCloud(){
+  const g = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({ color:0xffffff, roughness:1, flatShading:true, transparent:true, opacity:0.96 });
+  const n = 4 + ((Math.random()*3)|0);
+  for(let i=0;i<n;i++){
+    const r = 0.8 + Math.random()*0.9;
+    const puff = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 0), mat);
+    puff.position.set((i-n/2)*1.5 + Math.random()*0.5, Math.random()*0.6, Math.random()*0.5);
+    puff.scale.y = 0.75;
+    g.add(puff);
+  }
+  return g;
+}
+for(let i=0;i<8;i++){
+  const c = makeCloud();
+  c.position.set(-30 + i*9 + Math.random()*4, 4 + Math.random()*5, -25 + Math.random()*22);
+  c.userData.speed = 0.25 + Math.random()*0.5;
+  c.scale.setScalar(0.8 + Math.random()*1.3);
+  scene.add(c); clouds.push(c);
+}
+
+// ---------- Pipes ----------
+const PIPE_COLORS = [
+  { main:0x5cc02a, dark:0x3f8f1c, cap:0x4aa821 },
+  { main:0x27b0c4, dark:0x198aa0, cap:0x1f9cb0 },
+  { main:0xe0556b, dark:0xb23349, cap:0xc94056 },
+];
+
+function makePipeSegment(height, centerY, color){
+  const grp = new THREE.Group();
+  const r = PIPE_RADIUS;
+  const mat = new THREE.MeshStandardMaterial({ color:color.main, roughness:0.5, metalness:0.15, flatShading:true });
+  const matDark = new THREE.MeshStandardMaterial({ color:color.dark, roughness:0.6, metalness:0.1, flatShading:true });
+
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(r, r, height, 22, 1, false), mat);
+  body.position.y = centerY;
+  body.castShadow = true; body.receiveShadow = true;
+  grp.add(body);
+
+  // subtle highlight stripe
+  const stripe = new THREE.Mesh(new THREE.CylinderGeometry(r*1.005, r*1.005, height, 22, 1, true, 0, 0.6), matDark);
+  stripe.position.y = centerY;
+  grp.add(stripe);
+  return grp;
+}
+function makePipeCap(y, color, facing){
+  const mat = new THREE.MeshStandardMaterial({ color:color.cap, roughness:0.5, metalness:0.15, flatShading:true });
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(PIPE_RADIUS*1.18, PIPE_RADIUS*1.18, 0.5, 22), mat);
+  cap.position.y = y;
+  cap.castShadow = true; cap.receiveShadow = true;
+  return cap;
+}
+
+function createPipe(){
+  const group = new THREE.Group();
+  const color = PIPE_COLORS[(Math.random()*PIPE_COLORS.length)|0];
+  // containers we rebuild when gap changes
+  const topHolder = new THREE.Group(); group.add(topHolder);
+  const botHolder = new THREE.Group(); group.add(botHolder);
+  topHolder.add(makePipeCap(0, color)); // placeholder cap removed on rebuild
+  const obj = { group, topHolder, botHolder, color, x:0, gapBottom:0, gapTop:0, scored:false };
+  setGap(obj, 0);
+  scene.add(group);
+  return obj;
+}
+
+function clearGroup(g){ while(g.children.length) g.remove(g.children[0]); }
+
+function setGap(pipe, center){
+  pipe.gapBottom = center - GAP_SIZE/2;
+  pipe.gapTop    = center + GAP_SIZE/2;
+
+  // top segment: from gapTop up to ceiling
+  const topH = CEILING_Y - pipe.gapTop + 4;
+  clearGroup(pipe.topHolder);
+  const topSeg = makePipeSegment(topH, pipe.gapTop + topH/2, pipe.color);
+  pipe.topHolder.add(topSeg);
+  pipe.topHolder.add(makePipeCap(pipe.gapTop + 0.25, pipe.color));
+
+  // bottom segment: from ground up to gapBottom
+  const botH = pipe.gapBottom - GROUND_Y + 4;
+  clearGroup(pipe.botHolder);
+  const botSeg = makePipeSegment(botH, pipe.gapBottom - botH/2, pipe.color);
+  pipe.botHolder.add(botSeg);
+  pipe.botHolder.add(makePipeCap(pipe.gapBottom - 0.25, pipe.color));
+}
+
+// pool
+const pipes = [];
+for(let i=0;i<POOL_COUNT;i++){
+  const p = createPipe();
+  p.x = 16 + i*PIPE_SPACING;
+  setGap(p, randGapCenter());
+  p.group.position.x = p.x;
+  pipes.push(p);
+}
+function randGapCenter(){ return -1.7 + Math.random()*4.6; } // ~[-1.7, 2.9]
+
+// ---------- Particles ----------
+const particles = [];
+const PARTICLE_GEO = new THREE.IcosahedronGeometry(0.12, 0);
+for(let i=0;i<60;i++){
+  const m = new THREE.Mesh(PARTICLE_GEO, new THREE.MeshStandardMaterial({ color:0xffffff, roughness:0.6, flatShading:true }));
+  m.visible = false;
+  scene.add(m);
+  particles.push({ mesh:m, life:0, max:1, vx:0,vy:0,vz:0, rot:0 });
+}
+function spawnParticle(x,y,z, vx,vy,vz, color, size, life){
+  const p = particles.find(p=>!p.mesh.visible);
+  if(!p) return;
+  p.mesh.visible = true;
+  p.mesh.position.set(x,y,z);
+  p.mesh.material.color.setHex(color);
+  p.mesh.scale.setScalar(size);
+  p.vx=vx; p.vy=vy; p.vz=vz; p.life=life; p.max=life; p.rot = (Math.random()-0.5)*10;
+}
+function burst(x,y,z, count, colors, spread){
+  for(let i=0;i<count;i++){
+    const a = Math.random()*Math.PI*2;
+    const sp = Math.random()*spread+1;
+    spawnParticle(x,y,z,
+      Math.cos(a)*sp, Math.sin(a)*sp + 1.5, (Math.random()-0.5)*sp,
+      colors[(Math.random()*colors.length)|0],
+      0.5+Math.random()*0.8, 0.6+Math.random()*0.4);
+  }
+}
+function updateParticles(dt){
+  for(const p of particles){
+    if(!p.mesh.visible) continue;
+    p.life -= dt;
+    if(p.life<=0){ p.mesh.visible=false; continue; }
+    p.vy -= 14*dt;
+    p.mesh.position.x += p.vx*dt;
+    p.mesh.position.y += p.vy*dt;
+    p.mesh.position.z += p.vz*dt;
+    p.mesh.rotation.x += p.rot*dt; p.mesh.rotation.y += p.rot*dt*0.7;
+    const s = Math.max(0.01, (p.life/p.max));
+    p.mesh.scale.setScalar(s * p.mesh.userData.base ?? 1);
+  }
+}
+
+// ---------- Sound (Web Audio synth) ----------
+let audioCtx = null, muted = false;
+function initAudio(){ if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } }
+function blip(freq, dur, type='sine', vol=0.18, slideTo=null){
+  if(muted || !audioCtx) return;
+  const t = audioCtx.currentTime;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t);
+  if(slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t+dur);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+  o.connect(g).connect(audioCtx.destination);
+  o.start(t); o.stop(t+dur+0.02);
+}
+function noiseBurst(dur=0.25, vol=0.25){
+  if(muted || !audioCtx) return;
+  const sr = audioCtx.sampleRate, len = (sr*dur)|0;
+  const buf = audioCtx.createBuffer(1, len, sr);
+  const d = buf.getChannelData(0);
+  for(let i=0;i<len;i++){ d[i] = (Math.random()*2-1) * (1 - i/len); }
+  const src = audioCtx.createBufferSource(); src.buffer = buf;
+  const g = audioCtx.createGain(); g.gain.value = vol;
+  const f = audioCtx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=1200;
+  src.connect(f).connect(g).connect(audioCtx.destination);
+  src.start();
+}
+const sfx = {
+  flap(){ blip(420, 0.10, 'triangle', 0.16, 640); },
+  score(){ blip(720, 0.09, 'square', 0.14, 880); setTimeout(()=>blip(980,0.10,'square',0.12,1180),70); },
+  hit(){ noiseBurst(0.18,0.3); blip(180,0.18,'sawtooth',0.2,90); },
+  die(){ blip(380,0.5,'sine',0.18,80); },
+};
+
+ui.mute.addEventListener('click', ()=>{ muted = !muted; ui.mute.textContent = muted ? '🔇' : '🔊'; initAudio(); });
+
+// ---------- Game state ----------
+const STATE = { READY:0, PLAY:1, DEAD:2 };
+let state = STATE.READY;
+let score = 0;
+let vy = 0;
+const GRAVITY = -30;
+const FLAP_V  = 9.4;
+let speed = 6.4;
+let camShake = 0;
+let idleTime = 0;
+
+function resetGame(){
+  score = 0; vy = 0; speed = 6.4; camShake = 0;
+  ui.score.textContent = '0';
+  bird.position.set(BIRD_X, 0.6, 0);
+  bird.rotation.z = 0;
+  for(let i=0;i<pipes.length;i++){
+    pipes[i].x = 16 + i*PIPE_SPACING;
+    pipes[i].scored = false;
+    setGap(pipes[i], randGapCenter());
+    pipes[i].group.position.x = pipes[i].x;
+  }
+}
+
+function startPlay(){
+  state = STATE.PLAY;
+  ui.start.classList.add('hidden');
+  ui.over.classList.add('hidden');
+  ui.score.classList.add('show');
+  flap();
+}
+
+function flap(){
+  initAudio();
+  vy = FLAP_V;
+  sfx.flap();
+  // flap puff
+  burst(bird.position.x-0.4, bird.position.y-0.1, 0, 4, [0xffffff,0xfff0b8], 1.2);
+}
+
+function die(){
+  if(state !== STATE.PLAY) return;
+  state = STATE.DEAD;
+  sfx.hit(); setTimeout(sfx.die, 90);
+  camShake = 0.6;
+  burst(bird.position.x, bird.position.y, 0, 18, [0xffd23f,0xff9f1c,0xffffff,0xff7a1a], 4);
+  const isNew = score > best;
+  if(isNew){ best = score; localStorage.setItem('flappy3d_best', String(best)); }
+  ui.finalScore.textContent = score;
+  ui.finalBest.textContent = best;
+  ui.bestStart.textContent = best;
+  ui.newBest.style.display = isNew ? 'inline-block' : 'none';
+  ui.score.classList.remove('show');
+  setTimeout(()=> ui.over.classList.remove('hidden'), 650);
+}
+
+function onInput(){
+  initAudio();
+  if(state === STATE.READY){ resetGame(); startPlay(); }
+  else if(state === STATE.PLAY){ flap(); }
+  else if(state === STATE.DEAD){ ui.over.classList.add('hidden'); resetGame(); startPlay(); }
+}
+
+// ---------- Input listeners ----------
+window.addEventListener('keydown', (e)=>{ if(e.code==='Space'||e.code==='ArrowUp'){ e.preventDefault(); onInput(); } });
+window.addEventListener('mousedown', (e)=>{ if(e.target.closest('button')) return; onInput(); });
+window.addEventListener('touchstart', (e)=>{ if(e.target.closest('button')) return; e.preventDefault(); onInput(); }, {passive:false});
+
+// ---------- Resize ----------
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ---------- Animation ----------
+const clock = new THREE.Clock();
+
+function update(dt){
+  idleTime += dt;
+
+  // clouds drift
+  for(const c of clouds){
+    c.position.x -= c.userData.speed * dt;
+    if(c.position.x < -34){ c.position.x = 34 + Math.random()*6; c.position.y = 4 + Math.random()*5; }
+  }
+
+  // grass scroll
+  if(grassTex) grassTex.offset.x -= speed * dt * 0.05;
+
+  // bird visuals
+  if(state === STATE.PLAY){
+    vy += GRAVITY*dt;
+    bird.position.y += vy*dt;
+    // clamp ceiling
+    if(bird.position.y > CEILING_Y){ bird.position.y = CEILING_Y; if(vy>0) vy=0; }
+    // ground death
+    if(bird.position.y - BIRD_R <= GROUND_Y){ bird.position.y = GROUND_Y + BIRD_R; die(); }
+
+    // difficulty ramp
+    speed = 6.4 + Math.min(score*0.07, 3.0);
+
+    // pipes
+    for(const p of pipes){
+      p.x -= speed*dt;
+      p.group.position.x = p.x;
+      // score
+      if(!p.scored && (p.x + PIPE_HALF_W) < BIRD_X){
+        p.scored = true; score++; ui.score.textContent = score; sfx.score();
+        ui.score.animate(
+          [{transform:'translateX(-50%) scale(1)'},{transform:'translateX(-50%) scale(1.25)'},{transform:'translateX(-50%) scale(1)'}],
+          {duration:240, easing:'ease-out'});
+      }
+      // recycle
+      if(p.x < -10){
+        const maxX = Math.max(...pipes.map(o=>o.x));
+        p.x = maxX + PIPE_SPACING;
+        p.scored = false;
+        setGap(p, randGapCenter());
+        p.group.position.x = p.x;
+      }
+      // collision (only when overlapping x)
+      if(Math.abs(p.x - BIRD_X) < PIPE_HALF_W + BIRD_R){
+        if(bird.position.y - BIRD_R < p.gapBottom || bird.position.y + BIRD_R > p.gapTop){
+          die();
+        }
+      }
+    }
+
+    // tilt by velocity
+    const targetTilt = Math.max(-0.5, Math.min(0.45, vy*0.05));
+    bird.rotation.z += (targetTilt - bird.rotation.z)*Math.min(1, dt*10);
+    // wing flap speed based on vy
+    const flapSpeed = 14 + Math.max(0,-vy)*0.6;
+    const flapAmp = 0.5 + Math.max(0, vy*0.03);
+    birdParts.wingL.rotation.x = Math.sin(idleTime*flapSpeed)*flapAmp;
+    birdParts.wingR.rotation.x = -Math.sin(idleTime*flapSpeed)*flapAmp;
+
+  } else {
+    // idle bob
+    const bob = Math.sin(idleTime*2.4)*0.28;
+    if(state === STATE.READY){ bird.position.y = 0.6 + bob; bird.rotation.z = bob*0.5; }
+    else { // dead: fall and spin
+      vy += GRAVITY*1.1*dt;
+      bird.position.y += vy*dt;
+      if(bird.position.y < GROUND_Y + BIRD_R){ bird.position.y = GROUND_Y + BIRD_R; vy = 0; }
+      bird.rotation.z -= dt*2.2;
+      birdParts.wingL.rotation.x = Math.sin(idleTime*6)*0.3;
+      birdParts.wingR.rotation.x = -Math.sin(idleTime*6)*0.3;
+    }
+  }
+
+  updateParticles(dt);
+
+  // camera shake
+  camShake = Math.max(0, camShake - dt*1.6);
+  const sh = camShake*camShake;
+  camera.position.x = (Math.random()-0.5)*sh*1.2;
+  camera.position.y = 0.6 + (Math.random()-0.5)*sh*1.2;
+  camera.lookAt(0, 0.2, 0);
+}
+
+function loop(){
+  let dt = clock.getDelta();
+  if(dt > 0.033) dt = 0.033; // clamp (tab switches)
+  update(dt);
+  renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+loop();
+
+// pause-friendly: reset clock when tab visible again
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) clock.getDelta(); });
+</script>
+</body>
+</html>

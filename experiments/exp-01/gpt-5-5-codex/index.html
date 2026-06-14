@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiment 01 · gpt-5.5-codex</title>
+    <link rel="icon" href="data:," />
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: #101620;
+        color: #f7fbff;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 24% 0%, rgba(255, 207, 74, 0.2), transparent 34rem),
+          linear-gradient(145deg, #101620, #152638 58%, #17312d);
+      }
+
+      main {
+        width: min(1180px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 28px 0 40px;
+      }
+
+      a {
+        color: #ffcf4a;
+      }
+
+      .meta {
+        margin: 0 0 16px;
+        color: rgba(247, 251, 255, 0.72);
+        font-size: 0.95rem;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(2.4rem, 7vw, 5.6rem);
+        line-height: 0.9;
+        letter-spacing: 0;
+      }
+
+      .summary {
+        max-width: 760px;
+        margin: 0 0 22px;
+        color: rgba(247, 251, 255, 0.78);
+        font-size: 1.05rem;
+        line-height: 1.55;
+      }
+
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 22px;
+      }
+
+      .links a {
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 8px;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.08);
+        text-decoration: none;
+      }
+
+      iframe {
+        width: 100%;
+        height: min(72vh, 760px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 8px;
+        background: #10243a;
+        box-shadow: 0 28px 90px rgba(0, 0, 0, 0.28);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="meta">Experiment 01 · Control · gpt-5.5-codex · no skill · Codex · variant: <code>gpt-5-5-codex</code></p>
+      <h1>3D Flappy Bird</h1>
+      <p class="summary">
+        gpt-5.5-codex — no skill · Codex · 1 prompt · success: browser-verified static Three.js game with
+        scoring, collision, restart, desktop/mobile layout checks, 0 final browser errors, 3,019,341 total tokens,
+        1,243.055 s wall time, and $5.27709 calculated cost.
+      </p>
+      <nav class="links" aria-label="Run links">
+        <a href="result/index.html">Play full screen</a>
+        <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex%2FSPEC.md">SPEC.md</a>
+        <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex%2FJOURNEY.md">JOURNEY.md</a>
+      </nav>
+      <iframe src="result/index.html" title="Playable 3D Flappy Bird result"></iframe>
+    </main>
+  </body>
+</html>

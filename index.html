@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fable → Fabled · Single-Prompt Build Experiments</title>
+  <meta name="description" content="Head-to-head experiments: Fable 5 vs. a cheaper model running the Fabled skill — building a complete project in a single prompt." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="#top">
+        <span class="brand__mark">F→F</span>
+        <span class="brand__text">Fable <span class="brand__arrow">→</span> Fabled</span>
+      </a>
+      <div class="nav__links">
+        <a href="#experiments">Experiments</a>
+        <a href="#method">Method</a>
+        <a class="nav__cta" href="https://medium.com/@5kahoisaac/from-fable-to-fabled-ep-1-token-panic-made-me-build-fabled-8a9d452700ba" target="_blank" rel="noopener">Background ↗</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <p class="hero__eyebrow">Lab Notebook · Single-prompt builds</p>
+      <h1 id="hero-heading" class="hero__title">
+        One prompt. <em>Rival</em> models.<br />
+        Who builds the <span class="hl">whole thing</span>?
+      </h1>
+      <p class="hero__lede">
+        A running log of single-prompt builds: <strong>Fable 5</strong> as the baseline, a
+        <strong>cheaper model wearing the <span class="mono">Fabled</span> skill</strong> as the challenger, and
+        another model <strong>without Fabled</strong> as the control — each given a single prompt and asked to
+        ship a complete, runnable project. Each run measures whether a cheaper model plus the right skill can
+        match the flagship — and what it costs.
+      </p>
+      <div class="hero__stats" id="hero-stats" aria-live="polite">
+        <!-- injected by main.js -->
+      </div>
+    </section>
+
+    <!-- EXPERIMENTS -->
+    <section id="experiments" class="experiments" aria-labelledby="exp-heading">
+      <div class="section-head">
+        <h2 id="exp-heading">Experiments</h2>
+        <p class="section-head__note">Each card compares several single-prompt builds of the same prompt — a baseline, challengers, and a control.</p>
+      </div>
+      <div id="experiment-list" class="experiment-list">
+        <!-- injected by main.js -->
+      </div>
+    </section>
+
+    <!-- METHOD -->
+    <section id="method" class="method" aria-labelledby="method-heading">
+      <div class="section-head">
+        <h2 id="method-heading">How a run works</h2>
+      </div>
+      <ol class="method__steps">
+        <li>
+          <span class="method__num">01</span>
+          <h3>Same prompt, sealed</h3>
+          <p>Both contenders get an identical single prompt — no follow-ups, no nudges.</p>
+        </li>
+        <li>
+          <span class="method__num">02</span>
+          <h3>Three roles, one prompt</h3>
+          <p>The <strong>baseline</strong> is Fable 5. A <strong>challenger</strong> runs the <span class="mono">Fabled</span> skill on a cheaper model (it may succeed or fail). A <strong>control</strong> runs another model <em>without</em> Fabled, as reference.</p>
+        </li>
+        <li>
+          <span class="method__num">03</span>
+          <h3>Measure the cost of completeness</h3>
+          <p>Tokens, dollars, wall-clock, and whether the output actually runs end-to-end.</p>
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Fable → Fabled · single-prompt build experiments · placeholder data, real results landing soon.</p>
+    <a href="https://medium.com/@5kahoisaac/from-fable-to-fabled-ep-1-token-panic-made-me-build-fabled-8a9d452700ba" target="_blank" rel="noopener">From Fable to Fabled ↗</a>
+  </footer>
+
+  <script src="assets/data/experiments.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

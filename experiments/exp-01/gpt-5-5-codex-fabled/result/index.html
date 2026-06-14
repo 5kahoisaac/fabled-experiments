@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Skyline Flap 3D</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a1020'/%3E%3Ccircle cx='29' cy='32' r='16' fill='%23ffd45c'/%3E%3Cpath d='M18 17h9L43 47h-9z' fill='%2355c6ff'/%3E%3Cpath d='M44 31l13 7-13 5z' fill='%23ff7a3d'/%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #f8fafc;
+        --muted: #a7b2c7;
+        --panel: rgba(12, 18, 32, 0.74);
+        --line: rgba(255, 255, 255, 0.16);
+        --accent: #ffcf57;
+        --danger: #ff6b7d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #0a1020;
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      body {
+        touch-action: manipulation;
+        user-select: none;
+      }
+
+      #game {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .hud {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        pointer-events: none;
+        padding: clamp(14px, 2.5vw, 28px);
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .brand,
+      .score,
+      .hint,
+      .state-panel,
+      .toast {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.34);
+        backdrop-filter: blur(14px);
+      }
+
+      .brand {
+        min-width: 0;
+        padding: 10px 12px;
+        border-radius: 8px;
+      }
+
+      .brand-title {
+        margin: 0;
+        font-size: clamp(15px, 2vw, 18px);
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .brand-subtitle {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .score {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 148px;
+        padding: 9px 12px;
+        border-radius: 8px;
+      }
+
+      .score strong {
+        display: block;
+        font-size: clamp(24px, 5vw, 42px);
+        line-height: 0.9;
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .score span {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+
+      .center {
+        display: grid;
+        place-items: center;
+      }
+
+      .state-panel {
+        width: min(470px, calc(100vw - 32px));
+        padding: clamp(18px, 4vw, 28px);
+        border-radius: 8px;
+        text-align: center;
+        pointer-events: auto;
+      }
+
+      .state-panel[hidden] {
+        display: none;
+      }
+
+      .state-panel h1 {
+        margin: 0;
+        font-size: clamp(34px, 7vw, 58px);
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      .state-panel p {
+        margin: 14px auto 0;
+        max-width: 32rem;
+        color: var(--muted);
+        font-size: clamp(14px, 2.2vw, 16px);
+        line-height: 1.5;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      button {
+        appearance: none;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 11px 16px;
+        min-width: 132px;
+        color: #111827;
+        background: var(--accent);
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      button.secondary {
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      button:focus-visible {
+        outline: 3px solid rgba(255, 207, 87, 0.4);
+        outline-offset: 2px;
+      }
+
+      .bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 12px;
+      }
+
+      .hint,
+      .toast {
+        max-width: min(440px, calc(100vw - 32px));
+        padding: 10px 12px;
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .toast {
+        color: #ffd5dc;
+        border-color: rgba(255, 107, 125, 0.38);
+      }
+
+      .toast[hidden] {
+        display: none;
+      }
+
+      @media (max-width: 620px) {
+        .hud {
+          padding: 12px;
+        }
+
+        .topbar {
+          align-items: start;
+        }
+
+        .score {
+          min-width: 112px;
+          justify-content: center;
+        }
+
+        .brand-subtitle {
+          display: none;
+        }
+
+        .bottom {
+          justify-content: center;
+        }
+
+        .hint {
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="game" aria-label="Skyline Flap 3D game canvas"></canvas>
+    <main class="hud" aria-live="polite">
+      <div class="topbar">
+        <section class="brand" aria-label="Game title">
+          <p class="brand-title">Skyline Flap 3D</p>
+          <p class="brand-subtitle">Thread the gates above a glass city.</p>
+        </section>
+        <section class="score" aria-label="Score">
+          <div>
+            <span>Score</span>
+            <strong id="score">0</strong>
+          </div>
+          <div>
+            <span>Best</span>
+            <strong id="best">0</strong>
+          </div>
+        </section>
+      </div>
+
+      <section class="center">
+        <div class="state-panel" id="statePanel">
+          <h1 id="stateTitle">Ready</h1>
+          <p id="stateCopy">
+            Press start, then flap through the luminous pipe gaps. Survive long
+            enough and the city speeds up.
+          </p>
+          <div class="actions">
+            <button id="primaryAction" type="button">Start</button>
+            <button id="secondaryAction" class="secondary" type="button">
+              Flap
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div class="bottom">
+        <p class="hint">
+          Controls: Space, Arrow Up, click, tap, or the Flap button.
+        </p>
+        <p class="toast" id="toast" hidden></p>
+      </div>
+    </main>
+
+    <script type="module">
+      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+
+      const WORLD = Object.freeze({
+        birdX: -2.25,
+        gravity: -17.5,
+        flapVelocity: 6.25,
+        ceiling: 3.05,
+        floor: -3.05,
+        pipeWidth: 0.78,
+        gapSize: 1.82,
+        pipeSpacing: 3.35,
+        pipeCount: 7,
+        baseSpeed: 2.85,
+        maxSpeedBonus: 1.75,
+        birdRadius: 0.28,
+        startY: 0.35,
+        spawnX: 4.8,
+        recycleX: -4.8,
+        topBound: 3.35,
+        bottomBound: -3.35,
+      });
+
+      const canvas = document.querySelector("#game");
+      const scoreEl = document.querySelector("#score");
+      const bestEl = document.querySelector("#best");
+      const statePanel = document.querySelector("#statePanel");
+      const stateTitle = document.querySelector("#stateTitle");
+      const stateCopy = document.querySelector("#stateCopy");
+      const primaryAction = document.querySelector("#primaryAction");
+      const secondaryAction = document.querySelector("#secondaryAction");
+      const toast = document.querySelector("#toast");
+
+      const defaultBest = Number(localStorage.getItem("skyline-flap-best") || 0);
+      let bestScore = Number.isFinite(defaultBest) ? defaultBest : 0;
+      bestEl.textContent = String(bestScore);
+
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
+
+      function seededGap(index) {
+        const wave = Math.sin(index * 1.73) * 0.72;
+        const wobble = Math.sin(index * 0.61 + 1.4) * 0.42;
+        return clamp(wave + wobble, -1.45, 1.45);
+      }
+
+      function createInitialState() {
+        const pipes = [];
+        for (let i = 0; i < WORLD.pipeCount; i += 1) {
+          pipes.push({
+            x: WORLD.spawnX + i * WORLD.pipeSpacing,
+            gapY: seededGap(i),
+            passed: false,
+            seed: i,
+          });
+        }
+
+        return {
+          mode: "ready",
+          birdY: WORLD.startY,
+          birdVelocity: 0,
+          score: 0,
+          time: 0,
+          shake: 0,
+          pipes,
+        };
+      }
+
+      function flap(state) {
+        if (state.mode === "over") return state;
+        return {
+          ...state,
+          mode: "playing",
+          birdVelocity: WORLD.flapVelocity,
+        };
+      }
+
+      function resetState() {
+        return createInitialState();
+      }
+
+      function pipeCollidesWithBird(pipe, birdY) {
+        const xOverlap =
+          Math.abs(pipe.x - WORLD.birdX) <
+          WORLD.pipeWidth * 0.5 + WORLD.birdRadius * 0.78;
+        const outsideGap =
+          birdY + WORLD.birdRadius > pipe.gapY + WORLD.gapSize * 0.5 ||
+          birdY - WORLD.birdRadius < pipe.gapY - WORLD.gapSize * 0.5;
+        return xOverlap && outsideGap;
+      }
+
+      function advanceGame(state, rawDelta) {
+        const delta = clamp(rawDelta, 0, 0.034);
+        if (state.mode !== "playing") {
+          return {
+            ...state,
+            time: state.time + delta,
+            birdY: WORLD.startY + Math.sin(state.time * 3.8) * 0.08,
+          };
+        }
+
+        const speed =
+          WORLD.baseSpeed +
+          Math.min(WORLD.maxSpeedBonus, Math.floor(state.score / 6) * 0.22);
+        const birdVelocity = state.birdVelocity + WORLD.gravity * delta;
+        const birdY = state.birdY + birdVelocity * delta;
+        let score = state.score;
+        let nextSeed = Math.max(...state.pipes.map((pipe) => pipe.seed)) + 1;
+
+        const pipes = state.pipes.map((pipe) => {
+          let x = pipe.x - speed * delta;
+          let gapY = pipe.gapY;
+          let passed = pipe.passed;
+          let seed = pipe.seed;
+
+          if (!passed && x + WORLD.pipeWidth * 0.5 < WORLD.birdX) {
+            passed = true;
+            score += 1;
+          }
+
+          if (x < WORLD.recycleX) {
+            x += WORLD.pipeSpacing * WORLD.pipeCount;
+            seed = nextSeed;
+            nextSeed += 1;
+            gapY = seededGap(seed);
+            passed = false;
+          }
+
+          return { x, gapY, passed, seed };
+        });
+
+        const hitBounds =
+          birdY - WORLD.birdRadius < WORLD.floor ||
+          birdY + WORLD.birdRadius > WORLD.ceiling;
+        const hitPipe = pipes.some((pipe) => pipeCollidesWithBird(pipe, birdY));
+        const mode = hitBounds || hitPipe ? "over" : "playing";
+
+        return {
+          ...state,
+          mode,
+          birdY: clamp(birdY, WORLD.floor - 0.15, WORLD.ceiling + 0.15),
+          birdVelocity,
+          score,
+          pipes,
+          time: state.time + delta,
+          shake: mode === "over" && state.mode !== "over" ? 0.35 : state.shake,
+        };
+      }
+
+      function persistBest(score) {
+        if (score <= bestScore) return;
+        bestScore = score;
+        bestEl.textContent = String(bestScore);
+        localStorage.setItem("skyline-flap-best", String(bestScore));
+      }
+
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.Fog(0x0a1020, 8, 19);
+
+      const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 80);
+      camera.position.set(0, 0.42, 8.2);
+      camera.lookAt(0, 0.2, 0);
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: false,
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.setClearColor(0x0a1020, 1);
+
+      const hemiLight = new THREE.HemisphereLight(0xbbe7ff, 0x1a1733, 1.8);
+      scene.add(hemiLight);
+
+      const sun = new THREE.DirectionalLight(0xffe2a8, 3.2);
+      sun.position.set(-3.4, 5.2, 6.2);
+      sun.castShadow = true;
+      sun.shadow.mapSize.set(1024, 1024);
+      scene.add(sun);
+
+      const rim = new THREE.PointLight(0x54d6ff, 4.5, 12);
+      rim.position.set(2.6, 1.4, 3.2);
+      scene.add(rim);
+
+      const bird = new THREE.Group();
+      const birdBody = new THREE.Mesh(
+        new THREE.SphereGeometry(WORLD.birdRadius, 32, 20),
+        new THREE.MeshStandardMaterial({
+          color: 0xffd45c,
+          roughness: 0.36,
+          metalness: 0.08,
+        }),
+      );
+      birdBody.castShadow = true;
+      bird.add(birdBody);
+
+      const beak = new THREE.Mesh(
+        new THREE.ConeGeometry(0.12, 0.32, 18),
+        new THREE.MeshStandardMaterial({ color: 0xff7a3d, roughness: 0.42 }),
+      );
+      beak.rotation.z = -Math.PI / 2;
+      beak.position.set(0.3, 0.02, 0);
+      beak.castShadow = true;
+      bird.add(beak);
+
+      const wingMaterial = new THREE.MeshStandardMaterial({
+        color: 0x55c6ff,
+        roughness: 0.3,
+        metalness: 0.12,
+      });
+      const wingLeft = new THREE.Mesh(
+        new THREE.BoxGeometry(0.08, 0.44, 0.26),
+        wingMaterial,
+      );
+      wingLeft.position.set(-0.08, -0.02, 0.24);
+      wingLeft.castShadow = true;
+      bird.add(wingLeft);
+
+      const wingRight = wingLeft.clone();
+      wingRight.position.z = -0.24;
+      bird.add(wingRight);
+
+      bird.position.x = WORLD.birdX;
+      scene.add(bird);
+
+      const pipeGroup = new THREE.Group();
+      scene.add(pipeGroup);
+      const pipeMaterial = new THREE.MeshStandardMaterial({
+        color: 0x2ee08b,
+        roughness: 0.28,
+        metalness: 0.18,
+        emissive: 0x05361f,
+        emissiveIntensity: 0.36,
+      });
+      const lipMaterial = new THREE.MeshStandardMaterial({
+        color: 0x9afcc7,
+        roughness: 0.22,
+        metalness: 0.22,
+        emissive: 0x0a4a32,
+        emissiveIntensity: 0.42,
+      });
+
+      function buildPipeMesh() {
+        const group = new THREE.Group();
+        const depth = 1.2;
+        const columnGeometry = new THREE.BoxGeometry(WORLD.pipeWidth, 1, depth);
+        const lipGeometry = new THREE.BoxGeometry(WORLD.pipeWidth + 0.24, 0.18, depth + 0.18);
+        const top = new THREE.Mesh(columnGeometry, pipeMaterial);
+        const bottom = new THREE.Mesh(columnGeometry, pipeMaterial);
+        const topLip = new THREE.Mesh(lipGeometry, lipMaterial);
+        const bottomLip = new THREE.Mesh(lipGeometry, lipMaterial);
+
+        for (const mesh of [top, bottom, topLip, bottomLip]) {
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+          group.add(mesh);
+        }
+
+        group.userData = { top, bottom, topLip, bottomLip };
+        return group;
+      }
+
+      const pipeMeshes = Array.from({ length: WORLD.pipeCount }, () => {
+        const mesh = buildPipeMesh();
+        pipeGroup.add(mesh);
+        return mesh;
+      });
+
+      const floor = new THREE.Mesh(
+        new THREE.BoxGeometry(26, 0.12, 6),
+        new THREE.MeshStandardMaterial({
+          color: 0x172134,
+          roughness: 0.45,
+          metalness: 0.2,
+        }),
+      );
+      floor.position.set(0, WORLD.floor - 0.28, -0.4);
+      floor.receiveShadow = true;
+      scene.add(floor);
+
+      const city = new THREE.Group();
+      scene.add(city);
+      const buildingMaterials = [
+        new THREE.MeshStandardMaterial({ color: 0x263957, roughness: 0.5 }),
+        new THREE.MeshStandardMaterial({ color: 0x314d70, roughness: 0.48 }),
+        new THREE.MeshStandardMaterial({
+          color: 0x22324e,
+          roughness: 0.5,
+          emissive: 0x04192c,
+          emissiveIntensity: 0.35,
+        }),
+      ];
+
+      for (let i = 0; i < 34; i += 1) {
+        const width = 0.38 + (i % 4) * 0.07;
+        const height = 0.45 + ((i * 19) % 11) * 0.13;
+        const building = new THREE.Mesh(
+          new THREE.BoxGeometry(width, height, 0.55),
+          buildingMaterials[i % buildingMaterials.length],
+        );
+        building.position.set(
+          -8.6 + i * 0.54,
+          WORLD.floor - 0.18 + height * 0.5,
+          -2.4 - (i % 3) * 0.28,
+        );
+        building.receiveShadow = true;
+        city.add(building);
+      }
+
+      const stars = new THREE.Points(
+        new THREE.BufferGeometry().setAttribute(
+          "position",
+          new THREE.Float32BufferAttribute(
+            Array.from({ length: 180 }, (_, i) => {
+              const slot = i % 3;
+              const row = Math.floor(i / 3);
+              if (slot === 0) return -9 + ((row * 37) % 180) / 10;
+              if (slot === 1) return 1.7 + ((row * 29) % 38) / 10;
+              return -5.5 - ((row * 17) % 25) / 10;
+            }),
+            3,
+          ),
+        ),
+        new THREE.PointsMaterial({
+          color: 0xdff8ff,
+          size: 0.035,
+          transparent: true,
+          opacity: 0.78,
+        }),
+      );
+      scene.add(stars);
+
+      let state = createInitialState();
+      let lastTime = performance.now();
+
+      function setPanel(mode) {
+        if (mode === "playing") {
+          statePanel.hidden = true;
+          return;
+        }
+
+        statePanel.hidden = false;
+        if (mode === "ready") {
+          stateTitle.textContent = "Ready";
+          stateCopy.textContent =
+            "Press start, then flap through the luminous pipe gaps. Survive long enough and the city speeds up.";
+          primaryAction.textContent = "Start";
+        } else {
+          stateTitle.textContent = "Game Over";
+          stateCopy.textContent = `Score ${state.score}. Press restart and try to beat ${Math.max(bestScore, state.score)}.`;
+          primaryAction.textContent = "Restart";
+        }
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.hidden = false;
+      }
+
+      function resize() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        renderer.setSize(width, height, false);
+        camera.aspect = width / Math.max(1, height);
+        camera.updateProjectionMatrix();
+      }
+
+      function updateSceneFromState(delta) {
+        bird.position.y = state.birdY;
+        bird.position.z = Math.sin(state.time * 2.1) * 0.1;
+        bird.rotation.z = clamp(state.birdVelocity / 11, -0.62, 0.48);
+        bird.rotation.y = Math.sin(state.time * 3) * 0.08;
+        wingLeft.rotation.x = Math.sin(state.time * 20) * 0.7;
+        wingRight.rotation.x = -wingLeft.rotation.x;
+
+        for (let i = 0; i < state.pipes.length; i += 1) {
+          const pipe = state.pipes[i];
+          const mesh = pipeMeshes[i];
+          const { top, bottom, topLip, bottomLip } = mesh.userData;
+          const topHeight = WORLD.topBound - (pipe.gapY + WORLD.gapSize * 0.5);
+          const bottomHeight = pipe.gapY - WORLD.gapSize * 0.5 - WORLD.bottomBound;
+
+          mesh.position.x = pipe.x;
+          mesh.position.z = -0.04 + Math.sin(pipe.seed) * 0.16;
+
+          top.scale.y = Math.max(0.01, topHeight);
+          top.position.y = pipe.gapY + WORLD.gapSize * 0.5 + topHeight * 0.5;
+          bottom.scale.y = Math.max(0.01, bottomHeight);
+          bottom.position.y =
+            WORLD.bottomBound + Math.max(0.01, bottomHeight) * 0.5;
+          topLip.position.y = pipe.gapY + WORLD.gapSize * 0.5;
+          bottomLip.position.y = pipe.gapY - WORLD.gapSize * 0.5;
+        }
+
+        city.position.x -= delta * 0.36;
+        if (city.position.x < -0.54) city.position.x += 0.54;
+        stars.rotation.y = Math.sin(state.time * 0.05) * 0.035;
+
+        if (state.shake > 0) {
+          state.shake = Math.max(0, state.shake - delta);
+          camera.position.x = (Math.random() - 0.5) * state.shake * 0.18;
+          camera.position.y = 0.42 + (Math.random() - 0.5) * state.shake * 0.12;
+        } else {
+          camera.position.x += (0 - camera.position.x) * 0.14;
+          camera.position.y += (0.42 - camera.position.y) * 0.14;
+        }
+        camera.lookAt(0, 0.2, 0);
+      }
+
+      function renderFrame(now) {
+        const delta = (now - lastTime) / 1000;
+        lastTime = now;
+
+        const previousMode = state.mode;
+        const previousScore = state.score;
+        state = advanceGame(state, delta);
+
+        if (state.score !== previousScore) {
+          scoreEl.textContent = String(state.score);
+        }
+
+        if (previousMode !== state.mode) {
+          if (state.mode === "over") persistBest(state.score);
+          setPanel(state.mode);
+        }
+
+        updateSceneFromState(delta);
+        renderer.render(scene, camera);
+        requestAnimationFrame(renderFrame);
+      }
+
+      function startOrRestart() {
+        if (state.mode === "over") {
+          state = resetState();
+          scoreEl.textContent = "0";
+          setPanel("ready");
+        }
+        state = flap(state);
+        setPanel("playing");
+      }
+
+      function handleFlapInput(event) {
+        if (event.type === "keydown") {
+          const allowed = event.code === "Space" || event.code === "ArrowUp";
+          if (!allowed) return;
+          event.preventDefault();
+        }
+
+        if (state.mode === "over") {
+          startOrRestart();
+          return;
+        }
+
+        state = flap(state);
+        setPanel(state.mode);
+      }
+
+      primaryAction.addEventListener("click", startOrRestart);
+      secondaryAction.addEventListener("click", handleFlapInput);
+      window.addEventListener("keydown", handleFlapInput);
+      window.addEventListener("pointerdown", (event) => {
+        if (event.target instanceof HTMLButtonElement) return;
+        handleFlapInput(event);
+      });
+      window.addEventListener("resize", resize);
+
+      if (!renderer.capabilities.isWebGL2 && !renderer.capabilities.isWebGL) {
+        showToast("This browser could not start WebGL rendering.");
+      }
+
+      window.__skylineFlap3D = {
+        createInitialState,
+        advanceGame,
+        flap,
+        pipeCollidesWithBird,
+        resetState,
+        constants: WORLD,
+      };
+
+      resize();
+      setPanel("ready");
+      requestAnimationFrame(renderFrame);
+    </script>
+  </body>
+</html>

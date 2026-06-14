@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skybound Flap</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main id="game" aria-label="Skybound Flap 3D game">
+      <canvas id="scene" aria-hidden="true"></canvas>
+
+      <section class="hud" aria-live="polite">
+        <div>
+          <span class="eyebrow">Skybound Flap</span>
+          <strong id="score">0</strong>
+        </div>
+        <button id="restart" type="button" aria-label="Restart game">Restart</button>
+      </section>
+
+      <section id="panel" class="panel">
+        <span class="eyebrow">3D arcade</span>
+        <h1>Skybound Flap</h1>
+        <p>Dodge the emerald gates. Press Space, click, or tap to flap.</p>
+        <button id="start" type="button">Play</button>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
