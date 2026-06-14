@@ -54,6 +54,12 @@
         encodeURIComponent(c.journey) +
         '">JOURNEY.md</a>';
     }
+    if (c.report) {
+      docLinks +=
+        '<a class="md-pill" href="viewer.html?doc=' +
+        encodeURIComponent(c.report) +
+        '">REPORT.md</a>';
+    }
 
     // Coding agent + its plugins.
     var pluginChips = (c.plugins || [])
@@ -97,6 +103,9 @@
       '">' +
       '<p class="contender__role">' +
       esc(c.role) +
+      (c.failed
+        ? '<span class="contender__badge contender__badge--failed">Failed</span>'
+        : "") +
       "</p>" +
       '<h4 class="contender__label">' +
       esc(c.label) +
@@ -110,17 +119,9 @@
       '<ul class="metrics">' +
       metrics +
       "</ul>" +
-      '<a class="result-link' +
-      (c.failed ? " result-link--report" : "") +
-      '" href="' +
-      esc(
-        c.failed && c.report
-          ? "viewer.html?doc=" + encodeURIComponent(c.report)
-          : c.result
-      ) +
-      '">' +
-      (c.failed && c.report ? "Read the report" : "View result") +
-      ' <span class="arrow">→</span></a>' +
+      '<a class="result-link" href="' +
+      esc(c.result) +
+      '">View result <span class="arrow">→</span></a>' +
       (docLinks ? '<div class="md-pills">' + docLinks + "</div>" : "") +
       (refLinks ? '<div class="ref-links">' + refLinks + "</div>" : "") +
       "</div>"
