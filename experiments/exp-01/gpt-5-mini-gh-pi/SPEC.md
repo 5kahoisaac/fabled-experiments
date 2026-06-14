@@ -2,42 +2,42 @@
 
 ## Identity
 
-| Field | Value |
-| --- | --- |
-| Model | gpt-5-mini |
-| Skill | — |
-| Agent | Pi |
-| Role | control |
+| Field   | Value              |
+|---------|--------------------|
+| Model   | gpt-5-mini         |
+| Skill   | —                  |
+| Agent   | Pi                 |
+| Role    | control            |
 | Variant | `gpt-5-mini-gh-pi` |
 
 ## Tooling
 
-| Field | Value |
-| --- | --- |
-| Plugins installed | not recorded |
-| Plugins used this session | none |
-| Tools available | not recorded |
-| Sandbox / environment | Local development machine (macOS); pi session log (model gpt-5-mini accessed via GitHub Copilot provider) |
+| Field                     | Value                                                                                                     |
+|---------------------------|-----------------------------------------------------------------------------------------------------------|
+| Plugins installed         | not recorded                                                                                              |
+| Plugins used this session | none                                                                                                      |
+| Tools available           | not recorded                                                                                              |
+| Sandbox / environment     | Local development machine (macOS); pi session log (model gpt-5-mini accessed via GitHub Copilot provider) |
 
 ## Inputs
 
-| Field | Value |
-| --- | --- |
-| Prompt | Create a webbed Flappy Bird video game, but 3D and I want it to look pretty and playable. |
-| Reference links | — |
+| Field           | Value                                                                                     |
+|-----------------|-------------------------------------------------------------------------------------------|
+| Prompt          | Create a webbed Flappy Bird video game, but 3D and I want it to look pretty and playable. |
+| Reference links | —                                                                                         |
 
 ## Measured
 
-| Field | Value |
-| --- | --- |
-| Tokens in | 118,019 |
-| Tokens out | 42,087 |
-| Cache read tokens | 1,912,960 |
-| Total tokens | 2,073,066 |
-| Cost (USD) | $0.1615 |
-| Wall-clock time | ~470 s (~7.8 min active; idle gaps excluded) |
+| Field             | Value                                                           |
+|-------------------|-----------------------------------------------------------------|
+| Tokens in         | 118,019                                                         |
+| Tokens out        | 42,087                                                          |
+| Cache read tokens | 1,912,960                                                       |
+| Total tokens      | 2,073,066                                                       |
+| Cost (USD)        | $0.1615                                                         |
+| Wall-clock time   | ~470 s (~7.8 min active; idle gaps excluded)                    |
 | Number of prompts | 8 (1 original + 5 steering + 2 human-in-the-loop error reports) |
-| Metrics source | pi session JSONL usage field (scoped: first prompt → give-up) |
+| Metrics source    | pi session JSONL usage field (scoped: first prompt → give-up)   |
 
 > Metrics are scoped to the build session: from the first user prompt
 > (2026-06-14T01:01:40Z) to the developer's give-up message
@@ -48,7 +48,7 @@
 
 ## Verdict
 
-| Field | Value |
-| --- | --- |
-| Outcome | failed |
+| Field   | Value                                                                                 |
+|---------|---------------------------------------------------------------------------------------|
+| Outcome | failed                                                                                |
 | Summary | Developer aborted after repeated unresolved browser errors while verifying the build. |

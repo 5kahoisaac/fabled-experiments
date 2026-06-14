@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>3D Flappy Bird — Pretty & Playable</title>
+  <style>
+    /* Basic reset and layout */
+    html,body { height:100%; margin:0; background:linear-gradient(180deg,#87CEEB,#e0f7ff); font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; }
+    #container { position:relative; width:100%; height:100%; overflow:hidden; }
+    canvas { display:block; width:100%; height:100%; }
+    .ui {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      color: #052;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+      user-select:none;
+      -webkit-user-select:none;
+    }
+    .score {
+      font-size: clamp(18px, 2.8vw, 36px);
+      font-weight:700;
+      background: linear-gradient(90deg,#ffefba,#ffd1dc);
+      padding:6px 12px;
+      border-radius:10px;
+      box-shadow: 0 6px 18px rgba(3,10,18,0.25), inset 0 -2px 6px rgba(0,0,0,0.06);
+      display:inline-block;
+    }
+    .instructions {
+      margin-top:8px;
+      font-size:13px;
+      background: rgba(255,255,255,0.85);
+      padding:8px 10px;
+      border-radius:8px;
+      color:#034;
+      max-width:320px;
+      box-shadow: 0 6px 14px rgba(2,10,18,0.08);
+    }
+    .dead-panel {
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      background:linear-gradient(180deg,rgba(255,255,255,0.98),#fff);
+      padding:18px 22px;
+      border-radius:14px;
+      text-align:center;
+      box-shadow: 0 10px 30px rgba(1,8,16,0.28);
+      display:none;
+      min-width:220px;
+    }
+    .dead-panel.show { display:block; }
+    .btn {
+      margin-top:10px;
+      background:#1e90ff;
+      color:white;
+      border:none;
+      padding:8px 14px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .footer {
+      position:absolute;
+      right:12px;
+      bottom:12px;
+      color:#022;
+      opacity:0.8;
+      font-size:12px;
+      background: rgba(255,255,255,0.6);
+      padding:6px 10px;
+      border-radius:8px;
+    }
+    #loading {
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); background:rgba(255,255,255,0.95); padding:12px 16px; border-radius:10px; box-shadow:0 6px 20px rgba(2,8,16,0.2);
+      font-weight:600;
+    }
+  </style>
+</head>
+<body>
+  <div id="container" aria-label="3D Flappy Bird game container">
+    <div id="loading">Loading engine...</div>
+    <div class="ui" aria-hidden="false">
+      <div class="score" id="score">Score: 0</div>
+      <div class="instructions" id="instructions">
+        Press <kbd>Space</kbd> or tap/click to flap. Avoid the pillars. Best score saved locally.
+      </div>
+    </div>
+    <div class="dead-panel" id="deadPanel" role="dialog" aria-modal="true">
+      <div id="deadText" style="font-size:18px;font-weight:700;color:#041">You crashed</div>
+      <div id="deadScore" style="margin-top:8px;color:#025"></div>
+      <button id="restartBtn" class="btn">Restart</button>
+    </div>
+    <div class="footer">3D Flappy — single-file demo</div>
+  </div>
+
+  <!-- Pinned three.js version (exact) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
+  <script>
+  (function () {
+    // Expose pure logic functions on window for inspection: updateBird, spawnObstacle, checkCollision
+    // All main runtime vars are kept inside this closure; state is the canonical game state object.
+
+    // --- Phase 2 contracts implemented as code-level functions and state shape ---
+    const STATE_DEFAULTS = {
+      mode: 'menu', // 'menu' | 'playing' | 'dead'
+      bird: { y: 1.6, vy: 0, radius: 0.28 },
+      obstacles: [],
+      lastSpawnX: 0,
+      score: 0,
+      bestScore: 0,
+      time: 0
+    };
+
+    // Game tuning: readable names so a user can tweak
+    const TUNING = {
+      gravity: -9.0,            // world units per second^2 (downwards)
+      flapImpulse: 4.1,        // instant upward velocity
+      forwardSpeed: 6.0,       // how fast obstacles move toward the bird (world units per second)
+      spawnGap: 4.2,           // vertical gap between top and bottom pillar
+      spawnInterval: 1.6,      // seconds between obstacles
+      obstacleWidth: 1.4,      // thickness of pillar
+      obstacleDistance: 14,    // initial x distance for spawns
+      maxObstacles: 10
+    };
+
+    // Internal variables for renderer and scene
+    let container, renderer, scene, camera, clock, birdMesh, floorMesh;
+    let width = window.innerWidth, height = window.innerHeight;
+    const state = JSON.parse(JSON.stringify(STATE_DEFAULTS));
+
+    // Helper: safe localStorage read
+    function loadBestScore() {
+      try {
+        const v = localStorage.getItem('flappy3d_best');
+        return v ? parseInt(v,10) || 0 : 0;
+      } catch (e) { return 0; }
+    }
+    function saveBestScore(v) {
+      try { localStorage.setItem('flappy3d_best', String(v)); } catch (e) {}
+    }
+
+    // UI hooks
+    const scoreElId = 'score';
+    const deadPanel = document.getElementById('deadPanel');
+    const deadText = document.getElementById('deadText');
+    const deadScore = document.getElementById('deadScore');
+    const restartBtn = document.getElementById('restartBtn');
+
+    // Initialization & feature-detection
+    function init() {
+      container = document.getElementById('container');
+
+      if (!window.WebGLRenderingContext) {
+        showLoading("WebGL not available — try a modern browser.");
+        return;
+      }
+
+      try {
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+      } catch (e) {
+        showLoading("Unable to create WebGL renderer.");
+        return;
+      }
+
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(width, height);
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      container.appendChild(renderer.domElement);
+
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0xcfeffb, 0.02);
+
+      // Camera: behind and slightly above the bird
+      camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 200);
+      camera.position.set(-6, 2.2, 6);
+      camera.lookAt(0, 1.6, 0);
+
+      // Lighting — soft three-point feel
+      const ambient = new THREE.AmbientLight(0xffffff, 0.45);
+      scene.add(ambient);
+      const dir = new THREE.DirectionalLight(0xffffff, 0.9);
+      dir.position.set(-5, 8, 3);
+      dir.castShadow = true;
+      scene.add(dir);
+      const fill = new THREE.DirectionalLight(0xbfe8ff, 0.2);
+      fill.position.set(5, -3, -1);
+      scene.add(fill);
+
+      // Ground / floor plane for parallax reference (not colliding)
+      const groundMat = new THREE.MeshStandardMaterial({ color: 0x98d98b, roughness: 0.9, metalness: 0.02 });
+      const groundGeo = new THREE.PlaneGeometry(400, 400);
+      floorMesh = new THREE.Mesh(groundGeo, groundMat);
+      floorMesh.rotation.x = -Math.PI/2;
+      floorMesh.position.y = -8;
+      scene.add(floorMesh);
+
+      // Bird (simple sphere + subtle wing bob using a child mesh)
+      const birdGeo = new THREE.SphereGeometry(state.bird.radius, 16, 12);
+      const birdMat = new THREE.MeshStandardMaterial({ color: 0xffd166, metalness: 0.1, roughness: 0.6 });
+      birdMesh = new THREE.Mesh(birdGeo, birdMat);
+      birdMesh.castShadow = true;
+      birdMesh.position.set(0, state.bird.y, 0);
+      scene.add(birdMesh);
+
+      // subtle decorative horizon element
+      const sunGeo = new THREE.SphereGeometry(1.0, 24, 16);
+      const sunMat = new THREE.MeshBasicMaterial({ color: 0xfff1a6 });
+      const sun = new THREE.Mesh(sunGeo, sunMat);
+      sun.position.set(-20, 8, -30);
+      scene.add(sun);
+
+      // Initialize clock and state
+      clock = new THREE.Clock();
+      state.bestScore = loadBestScore();
+      showLoading(null);
+
+      // Event listeners
+      window.addEventListener('resize', onWindowResize, { passive: true });
+      window.addEventListener('keydown', onKeyDown);
+      renderer.domElement.addEventListener('pointerdown', onPointerDown);
+      restartBtn.addEventListener('click', () => resetGame(state));
+
+      // Start main loop
+      resetGame(state);
+      animate();
+    }
+
+    function showLoading(msg) {
+      const el = document.getElementById('loading');
+      if (!msg) { el.style.display = 'none'; return; }
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    // --- Pure game logic functions (exported to window for inspection) --- //
+    // updateBird(state, dt): applies gravity and integrates velocity & position
+    function updateBird(s, dt) {
+      // integrate velocity and position
+      s.bird.vy += TUNING.gravity * dt;
+      s.bird.y += s.bird.vy * dt;
+
+      // clamp vertical bounds to avoid runaway
+      if (s.bird.y < -10) s.bird.y = -10;
+      if (s.bird.y > 12) { s.bird.y = 12; s.bird.vy = Math.min(s.bird.vy, 2); }
+    }
+
+    // spawnObstacle(state): create obstacle pair at a distance ahead
+    function spawnObstacle(s) {
+      const gapCenter = (Math.random() * 4.0) + 0.2; // small random height
+      const x = (s.lastSpawnX || TUNING.obstacleDistance) + TUNING.spawnInterval * TUNING.forwardSpeed;
+      s.lastSpawnX = x;
+
+      // obstacle object shape: { meshTop, meshBottom, passed, posX, gapY }
+      const topHeight = 12;
+      const bottomHeight = 12;
+      const width = TUNING.obstacleWidth;
+      const gap = TUNING.spawnGap;
+
+      // Shared material
+      const mat = new THREE.MeshStandardMaterial({ color: 0x6f7bd9, roughness: 0.7, metalness:0.05 });
+      const topGeo = new THREE.BoxGeometry(width, topHeight, 3);
+      const botGeo = new THREE.BoxGeometry(width, bottomHeight, 3);
+
+      const top = new THREE.Mesh(topGeo, mat);
+      const bot = new THREE.Mesh(botGeo, mat);
+
+      top.position.set(x, gapCenter + gap/2 + topHeight/2, 0);
+      bot.position.set(x, gapCenter - gap/2 - bottomHeight/2, 0);
+
+      top.userData = { isObstacle: true };
+      bot.userData = { isObstacle: true };
+
+      scene.add(top); scene.add(bot);
+
+      s.obstacles.push({ top, bottom: bot, passed: false, posX: x, gapY: gapCenter });
+      // Cap obstacles to avoid memory growth
+      if (s.obstacles.length > TUNING.maxObstacles) {
+        const removed = s.obstacles.splice(0, s.obstacles.length - TUNING.maxObstacles);
+        removed.forEach(o => { scene.remove(o.top); scene.remove(o.bottom); });
+      }
+    }
+
+    // updateObstacles(state, dt): moves obstacles toward the bird
+    function updateObstacles(s, dt) {
+      const move = TUNING.forwardSpeed * dt;
+      for (let i = s.obstacles.length - 1; i >= 0; --i) {
+        const o = s.obstacles[i];
+        o.posX -= move;
+        o.top.position.x = o.posX;
+        o.bottom.position.x = o.posX;
+
+        // Score when an obstacle passes x < bird.x and wasn't flagged
+        if (!o.passed && o.posX < 0 - (TUNING.obstacleWidth/2)) {
+          o.passed = true;
+          s.score += 1;
+          document.getElementById(scoreElId).textContent = "Score: " + s.score;
+          if (s.score > s.bestScore) {
+            s.bestScore = s.score;
+            saveBestScore(s.bestScore);
+          }
+        }
+
+        // Remove obstacles far behind
+        if (o.posX < -40) {
+          scene.remove(o.top);
+          scene.remove(o.bottom);
+          s.obstacles.splice(i,1);
+        }
+      }
+    }
+
+    // checkCollision(state): sphere vs box intersection checks
+    function checkCollision(s) {
+      const birdSphere = new THREE.Sphere(new THREE.Vector3(0, s.bird.y, 0), s.bird.radius);
+      for (const o of s.obstacles) {
+        const boxTop = new THREE.Box3().setFromObject(o.top);
+        const boxBottom = new THREE.Box3().setFromObject(o.bottom);
+        if (boxTop.intersectsSphere(birdSphere) || boxBottom.intersectsSphere(birdSphere)) {
+          return true;
+        }
+      }
+      // Floor collision (approx)
+      if (s.bird.y - s.bird.radius <= -8) return true;
+      // sky top collision (too high)
+      if (s.bird.y + s.bird.radius >= 20) return true;
+      return false;
+    }
+
+    // flap(state): apply instantaneous upward impulse and start the game if in menu
+    function flap(s) {
+      s.bird.vy = TUNING.flapImpulse;
+      if (s.mode !== 'playing') {
+        s.mode = 'playing';
+      }
+    }
+
+    // resetGame(state): clears obstacles and resets bird & scores, keeps bestScore
+    function resetGame(s) {
+      // Remove existing obstacle meshes
+      for (const o of s.obstacles) {
+        scene.remove(o.top);
+        scene.remove(o.bottom);
+      }
+      s.obstacles.length = 0;
+      s.lastSpawnX = 0;
+      s.score = 0;
+      document.getElementById(scoreElId).textContent = "Score: 0";
+      s.bird.y = 1.6;
+      s.bird.vy = 0;
+      s.time = 0;
+      s.mode = 'menu';
+      deadPanel.classList.remove('show');
+      // pre-spawn a few obstacles for nicer pacing
+      for (let i=0;i<3;i++) spawnObstacle(s);
+    }
+
+    // --- Expose pure functions for external inspection (contract) ---
+    window.updateBird = updateBird;
+    window.spawnObstacle = spawnObstacle;
+    window.checkCollision = checkCollision;
+
+    // --- Input handlers ---
+    function onKeyDown(e) {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        flap(state);
+      }
+      if (e.code === 'KeyR' && state.mode === 'dead') {
+        resetGame(state);
+      }
+    }
+    function onPointerDown(e) {
+      flap(state);
+    }
+
+    // --- Resize handler ---
+    function onWindowResize() {
+      width = window.innerWidth; height = window.innerHeight;
+      if (camera && renderer) {
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+      }
+    }
+
+    // Animation loop & game step
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = Math.min(clock.getDelta(), 0.05);
+      step(dt);
+      renderer.render(scene, camera);
+    }
+
+    // step(dt): handles spawning, physics, collision, camera follow
+    function step(dt) {
+      state.time += dt;
+      if (state.mode === 'playing') {
+        // spawn logic
+        if (!state.lastSpawnX || (state.time - (state._lastSpawnTime || 0) > TUNING.spawnInterval)) {
+          spawnObstacle(state);
+          state._lastSpawnTime = state.time;
+        }
+        updateBird(state, dt);
+        updateObstacles(state, dt);
+        // update bird mesh transform
+        birdMesh.position.y = state.bird.y;
+        // slight tilt based on vy
+        birdMesh.rotation.z = THREE.MathUtils.clamp(-state.bird.vy * 0.08, -0.8, 0.6);
+        // camera follows upward/downward smoothly
+        camera.position.y += (state.bird.y - camera.position.y) * 0.06;
+        camera.position.x = -6 + (Math.sin(state.time * 0.2) * 0.12);
+        camera.lookAt(0, state.bird.y + 0.4, 0);
+
+        // collision check
+        if (checkCollision(state)) {
+          state.mode = 'dead';
+          onDead();
+        }
+      } else if (state.mode === 'menu') {
+        // gentle bob for bird in menu
+        state.bird.y = 1.6 + Math.sin(state.time * 2.0) * 0.28;
+        birdMesh.position.y = state.bird.y;
+        camera.lookAt(0, state.bird.y + 0.4, 0);
+      } else if (state.mode === 'dead') {
+        // bird falls out of the sky slightly for effect
+        if (state.bird.y > -12) {
+          state.bird.vy += TUNING.gravity * dt;
+          state.bird.y += state.bird.vy * dt;
+          birdMesh.position.y = state.bird.y;
+        }
+        camera.position.y += (state.bird.y - camera.position.y) * 0.02;
+        camera.lookAt(0, state.bird.y + 0.4, 0);
+      }
+    }
+
+    function onDead() {
+      deadPanel.classList.add('show');
+      deadScore.textContent = "Score: " + state.score + "  • Best: " + state.bestScore;
+      // Play a small beep using WebAudio if available
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.frequency.value = 260;
+        o.type = 'sine';
+        o.connect(g); g.connect(ctx.destination);
+        g.gain.value = 0.0001;
+        o.start();
+        g.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+        o.stop(ctx.currentTime + 0.26);
+      } catch (e) {}
+    }
+
+    // Start initialization after DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    // Expose a minimal API for programmatic play / testing
+    window.__flappy3d_state = state;
+    window.__flappy3d_reset = () => resetGame(state);
+    window.__flappy3d_spawn = () => spawnObstacle(state);
+    window.__flappy3d_step = (dt) => step(dt);
+
+  })();
+  </script>
+</body>
+</html>
