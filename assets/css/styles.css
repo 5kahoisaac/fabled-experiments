@@ -15,7 +15,7 @@
   --challenger: oklch(56% 0.13 165);  /* Fabled — green */
   --challenger-tint: oklch(94% 0.04 165);
   --gold: oklch(72% 0.15 75);
-  --control: oklch(56% 0.03 250);     /* control — no skill, neutral slate */
+  --control: oklch(56% 0.03 250);     /* control — no Fabled skill, neutral slate */
   --control-tint: oklch(95% 0.012 250);
   --report: oklch(60% 0.18 45);       /* failed run / incident — amber-red */
   --report-tint: oklch(94% 0.05 55);

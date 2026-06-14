@@ -14,7 +14,7 @@
  *   folder      string   relative path to this experiment's folder
  *   doc         string   relative path to the experiment write-up (web-viewable)
  *   contenders  array    one entry per build — N builds, compared to each other
- *     role      string   "baseline"   — pure Fable 5, no skill
+ *     role      string   "baseline"   — pure Fable 5, no Fabled skill
  *                        "challenger" — any model + Fabled + tools (may succeed OR fail)
  *                        "control"    — any model WITHOUT Fabled, as a controlled reference
  *     label     string   display name

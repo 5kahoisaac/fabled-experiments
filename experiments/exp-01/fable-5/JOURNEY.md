@@ -5,7 +5,7 @@
 
 ## Setup recap
 
-- Model: `claude-fable-5` (baseline, no skill)
+- Model: `claude-fable-5` (baseline, no Fabled skill)
 - Prompt: `Create a webbed Flappy Bird video game, but 3D and I want it to look pretty and playable.`
 
 ## Sequence (order of work; per-phase timing not recorded)
