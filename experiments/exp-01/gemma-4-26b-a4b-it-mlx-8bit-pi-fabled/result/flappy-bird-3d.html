@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3D Flappy Bird</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        canvas { display: block; }
+        
+        #ui-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .screen {
+            display: none;
+            text-align: center;
+            pointer-events: auto;
+        }
+
+        .screen.active { display: block; }
+
+        h1 { font-size: 4rem; margin: 0; color: #ffeb3b; -webkit-text-stroke: 2px #f57f17; }
+        p { font-size: 1.5rem; }
+        .score-hud {
+            position: absolute;
+            top: 20px;
+            font-size: 3rem;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+        }
+
+        #overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: #ff5252;
+            font-size: 2rem;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body id="game-body">
+
+<div id="ui-layer">
+    <div id="hud" class="score-hud" style="display: none;">0</div>
+    
+    <div id="title-screen" class="screen active">
+        <h1>FLAPPY 3D</h1>
+        <p>Press Space or Click to Flap</p>
+    </div>
+
+    <div id="game-over-screen" class="screen">
+        <h1>GAME OVER</h1>
+        <p id="final-score">Score: 0</p>
+        <p>Click to Restart</p>
+    </div>
+</div>
+
+<div id="overlay">Loading...</div>
+
+<!-- Pinning Three.js to a stable release -->
+<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+
+<script>
+/**
+ * ==LOGIC-START==
+ * PURE GAME LOGIC
+ * No DOM, No Three.js. 
+ */
+
+const CONFIG = {
+    GRAVITY: 15.0,          // Adjusted for better feel
+    FLAP_IMPULSE: 8.0,      // Positive upward impulse
+    PIPE_SPEED: 5.0,
+    PIPE_SPAWN_INTERVAL: 1.8, 
+    PIPE_GAP: 3.5,
+    BIRD_SIZE: 0.4,
+    PIPE_WIDTH: 1.5,
+    FLOOR_Y: -5,
+    CEILING_Y: 10
+};
+
+const STATES = { TITLE: 'TITLE', PLAYING: 'PLAYING', GAMEOVER: 'GAMEOVER' };
+
+function createInitialState() {
+    return {
+        gameState: STATES.TITLE,
+        birdY: 0,
+        velocity: 0,
+        pipes: [], 
+        score: 0,
+        timer: 0,
+        lastPipeTime: 0
+    };
+}
+
+function flap(state) {
+    if (state.gameState === STATES.TITLE) {
+        state.gameState = STATES.PLAYING;
+        state.lastPipeTime = state.timer;
+    }
+    if (state.gameState === STATES.PLAYING) {
+        // UPWARD movement = positive velocity
+        state.velocity = CONFIG.FLAP_IMPULSE;
+    }
+}
+
+function step(state, dt) {
+    if (state.gameState !== STATES.PLAYING) return { scored: false, died: false };
+
+    state.timer += dt;
+    
+    // Physics
+    // Gravity pulls velocity towards negative infinity (downward)
+    state.velocity -= CONFIG.GRAVITY * dt; 
+    state.birdY += state.velocity * dt;
+
+    // Pipe Spawning
+    if (state.timer - state.lastPipeTime > CONFIG.PIPE_SPAWN_INTERVAL) {
+        const gapY = (Math.random() * 6) - 3; 
+        state.pipes.push({ x: 15, gapY: gapY, scored: false });
+        state.lastPipeTime = state.timer;
+    }
+
+    // Move Pipes
+    for (let i = state.pipes.length - 1; i >= 0; i--) {
+        let p = state.pipes[i];
+        p.x -= CONFIG.PIPE_SPEED * dt;
+
+        // Scoring
+        if (!p.scored && p.x < 0) {
+            p.scored = true;
+            state.score++;
+        }
+
+        // Collision detection
+        const pipeTopEdge = p.gapY + (CONFIG.PIPE_GAP / 2);
+        const pipeBottomEdge = p.gapY - (CONFIG.PIPE_GAP / 2);
+        
+        const birdX = 0; 
+        const inPipeXRange = (birdX + CONFIG.BIRD_SIZE > p.x - CONFIG.PIPE_WIDTH/2) && 
+                             (birdX - CONFIG.BIRD_SIZE < p.x + CONFIG.PIPE_WIDTH/2);
+        
+        if (inPipeXRange) {
+            if (state.birdY + CONFIG.BIRD_SIZE > pipeTopEdge || 
+                state.birdY - CONFIG.BIRD_SIZE < pipeBottomEdge) {
+                state.gameState = STATES.GAMEOVER;
+            }
+        }
+
+        if (p.x < -10) state.pipes.splice(i, 1);
+    }
+
+    // Floor/Ceiling collision
+    if (state.birdY < CONFIG.FLOOR_Y || state.birdY > CONFIG.CEILING_Y) {
+        state.gameState = STATES.GAMEOVER;
+    }
+
+    return { scored: false, died: state.gameState === STATES.GAMEOVER };
+}
+
+/**
+ * ==LOGIC-END==
+ */
+
+/**
+ * ==RENDER-START==
+ */
+
+let scene, camera, renderer, bird, clock;
+let state = createInitialState();
+let pipeMeshes = [];
+
+// Audio context
+let audioCtx = null;
+function playSound(freq, type = 'sine', duration = 0.1) {
+    if (!audioCtx) return;
+    try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    } catch(e) {}
+}
+
+function initThree() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87ceeb);
+    scene.fog = new THREE.Fog(0x87ceeb, 5, 30);
+
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 8);
+    camera.lookAt(0, 0, 0);
+
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    document.body.appendChild(renderer.domElement);
+
+    const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambient);
+
+    const sun = new THREE.DirectionalLight(0xffffff, 1.0);
+    sun.position.set(5, 10, 7.5);
+    sun.castShadow = true;
+    scene.add(sun);
+
+    const birdGeo = new THREE.SphereGeometry(CONFIG.BIRD_SIZE, 16, 16);
+    const birdMat = new THREE.MeshStandardMaterial({ color: 0xffeb3b, roughness: 0.4 });
+    bird = new THREE.Mesh(birdGeo, birdMat);
+    bird.castShadow = true;
+    scene.add(bird);
+
+    const groundGeo = new THREE.PlaneGeometry(100, 100);
+    const groundMat = new THREE.MeshStandardMaterial({ color: 0x4caf50 });
+    const groundMesh = new THREE.Mesh(groundGeo, groundMat);
+    groundMesh.rotation.x = -Math.PI / 2;
+    groundMesh.position.y = CONFIG.FLOOR_Y;
+    groundMesh.receiveShadow = true;
+    scene.add(groundMesh);
+
+    clock = new THREE.Clock();
+
+    window.addEventListener('resize', onWindowResize, false);
+}
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function updatePipes() {
+    for (let i = pipeMeshes.length - 1; i >= 0; i--) {
+        const m = pipeMeshes[i];
+        const exists = state.pipes.some(p => p.x === m.userData.x && p.gapY === m.userData.gapY);
+        if (!exists) {
+            scene.remove(m.mesh);
+            pipeMeshes.splice(i, 1);
+        }
+    }
+
+    state.pipes.forEach(p => {
+        const exists = pipeMeshes.some(m => m.userData.x === p.x && m.userData.gapY === p.gapY);
+        if (!exists) {
+            const group = new THREE.Group();
+            const mat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.8 });
+            
+            const topGeo = new THREE.BoxGeometry(CONFIG.PIPE_WIDTH, 20, CONFIG.PIPE_WIDTH);
+            const topPipe = new THREE.Mesh(topGeo, mat);
+            topPipe.position.y = p.gapY + (CONFIG.PIPE_GAP/2) + 10;
+            topPipe.castShadow = true;
+
+            const bottomGeo = new THREE.BoxGeometry(CONFIG.PIPE_WIDTH, 20, CONFIG.PIPE_WIDTH);
+            const bottomPipe = new THREE.Mesh(bottomGeo, mat);
+            bottomPipe.position.y = p.gapY - (CONFIG.PIPE_GAP/2) - 10;
+            bottomPipe.castShadow = true;
+
+            group.add(topPipe, bottomPipe);
+            group.userData = { x: p.x, gapY: p.gapY };
+            scene.add(group);
+            pipeMeshes.push({ mesh: group, userData: group.userData });
+        }
+    });
+
+    pipeMeshes.forEach(m => {
+        const logicPipe = state.pipes.find(p => p.x === m.userData.x && p.gapY === m.userData.gapY);
+        if (logicPipe) {
+            m.mesh.position.x = logicPipe.x;
+        }
+    });
+}
+
+function updateUI() {
+    const hud = document.getElementById('hud');
+    const title = document.getElementById('title-screen');
+    const gameOver = document.getElementById('game-over-screen');
+    const finalScore = document.getElementById('final-score');
+
+    hud.style.display = state.gameState === STATES.PLAYING ? 'block' : 'none';
+    hud.innerText = state.score;
+
+    title.classList.toggle('active', state.gameState === STATES.TITLE);
+    gameOver.classList.toggle('active', state.gameState === STATES.GAMEOVER);
+    
+    if (state.gameState === STATES.GAMEOVER) {
+        finalScore.innerText = `Score: ${state.score}`;
+    }
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    const dt = Math.min(clock.getDelta(), 0.1);
+
+    if (state.gameState === STATES.PLAYING) {
+        step(state, dt);
+        updatePipes();
+    }
+
+    bird.position.y = state.birdY;
+    // Rotation: Pitch up when velocity is positive (going up), pitch down when negative
+    bird.rotation.z = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, -state.velocity * 0.1));
+
+    updateUI();
+    renderer.render(scene, camera);
+}
+
+function handleInput() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    if (state.gameState === STATES.TITLE || state.gameState === STATES.GAMEOVER) {
+        state = createInitialState();
+        pipeMeshes.forEach(m => scene.remove(m.mesh));
+        pipeMeshes = [];
+    }
+
+    flap(state);
+    playSound(300 + (Math.random() * 100), 'triangle', 0.1);
+}
+
+window.onload = () => {
+    if (typeof THREE === 'undefined') {
+        document.getElementById('overlay').innerText = "Error: Failed to load 3D engine.";
+        document.getElementById('overlay').style.display = "flex";
+        return;
+    }
+
+    try {
+        initThree();
+        animate();
+    } catch (e) {
+        document.getElementById('overlay').innerText = "Error: WebGL not supported.";
+        document.getElementById('overlay').style.display = "flex";
+    }
+};
+
+window.addEventListener('keydown', (e) => { if (e.code === 'Space') handleInput(); });
+window.addEventListener('mousedown', handleInput);
+window.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(); }, { passive: false });
+
+</script>
+</body>
+</html>

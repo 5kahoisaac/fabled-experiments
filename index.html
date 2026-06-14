@@ -20,8 +20,9 @@
         <span class="brand__text">Fable <span class="brand__arrow">→</span> Fabled</span>
       </a>
       <div class="nav__links">
-        <a href="#experiments">Experiments</a>
+        <a href="#environments">Environments</a>
         <a href="#method">Method</a>
+        <a href="#experiments">Experiments</a>
         <a class="nav__cta" href="https://medium.com/@5kahoisaac/from-fable-to-fabled-ep-1-token-panic-made-me-build-fabled-8a9d452700ba" target="_blank" rel="noopener">Background ↗</a>
       </div>
     </nav>
@@ -42,23 +43,101 @@
         ship a complete, runnable project. Each run measures whether a cheaper model plus the right skill can
         match the flagship — and what it costs.
       </p>
-      <div class="hero__stats" id="hero-stats" aria-live="polite">
-        <!-- injected by main.js -->
-      </div>
-    </section>
-
-    <!-- EXPERIMENTS -->
-    <section id="experiments" class="experiments" aria-labelledby="exp-heading">
-      <div class="section-head">
-        <h2 id="exp-heading">Experiments</h2>
-        <p class="section-head__note">Each card compares several single-prompt builds of the same prompt — a baseline, challengers, and a control.</p>
-      </div>
-      <div id="experiment-list" class="experiment-list">
-        <!-- injected by main.js -->
-      </div>
     </section>
 
     <!-- METHOD -->
+    <!-- ENVIRONMENTS -->
+    <section id="environments" class="environments" aria-labelledby="env-heading">
+      <div class="section-head">
+        <h2 id="env-heading">Environments</h2>
+        <p class="section-head__note">The coding agents and models put head-to-head across these experiments.</p>
+      </div>
+      <div class="env-groups">
+        <div class="env-group">
+          <h3 class="env-group__title">Machine</h3>
+          <ul class="env-list">
+            <li><span class="k">Model</span><span class="v">MacBook Pro (Mac17,7)</span></li>
+            <li><span class="k">CPU</span><span class="v">Apple M5 Max · 18 cores</span></li>
+            <li><span class="k">RAM</span><span class="v">64 GB unified</span></li>
+            <li><span class="k">Storage</span><span class="v">1.8 TB SSD (1.5 TB free)</span></li>
+            <li><span class="k">OS</span><span class="v">macOS 26.5.1 (build 25F80)</span></li>
+          </ul>
+        </div>
+        <div class="env-group">
+          <h3 class="env-group__title">oMLX</h3>
+          <ul class="env-list">
+            <li><span class="k">App</span><span class="v">oMLX.app + omlx-server, local OpenAI-compatible API on :8080</span></li>
+            <li><span class="k">mlx</span><span class="v">0.31.2</span></li>
+            <li><span class="k">mlx-lm</span><span class="v">0.31.3</span></li>
+            <li><span class="k">Model cache</span><span class="v">Hugging Face cache, local disk (151 MB resident at time of writing)</span></li>
+          </ul>
+        </div>
+        <div class="env-group">
+          <h3 class="env-group__title">Toolchain</h3>
+          <ul class="env-list">
+            <li><span class="k">Node</span><span class="v">v24.16.0</span></li>
+            <li><span class="k">npm</span><span class="v">11.13.0</span></li>
+            <li><span class="k">bun</span><span class="v">1.3.14</span></li>
+            <li><span class="k">Python</span><span class="v">3.14.5</span></li>
+            <li><span class="k">uv</span><span class="v">0.11.16</span></li>
+            <li><span class="k">headroom</span><span class="v">0.22.4</span></li>
+            <li><span class="k">git</span><span class="v">2.50.1</span></li>
+          </ul>
+        </div>
+        <div class="env-group env-group--wide">
+          <h3 class="env-group__title">Global skills (~/.agents/skills)</h3>
+          <p class="env-group__note">Shared across Pi, OpenCode, and Codex via <code>skills.sh</code>. Local-only <code>exp-bundle</code> (used to assemble this showcase) is excluded.</p>
+          <ul class="env-skills">
+            <li>agent-browser</li><li>ai-regression-testing</li><li>algorithmic-art</li><li>api-design</li>
+            <li>backend-development</li><li>backend-patterns</li><li>cavecrew</li><li>caveman</li>
+            <li>caveman-commit</li><li>caveman-compress</li><li>caveman-help</li><li>caveman-review</li>
+            <li>caveman-stats</li><li>coding-standards</li><li>compose-multiplatform-patterns</li><li>configure-ecc</li>
+            <li>continuous-learning</li><li>continuous-learning-v2</li><li>copywriting</li><li>create-readme</li>
+            <li>database-migration</li><li>database-migrations</li><li>documentation-writer</li><li>docx</li>
+            <li>e2e-testing</li><li>eval-harness</li><li>fabled</li><li>figma-code-connect</li>
+            <li>figma-create-new-file</li><li>figma-generate-design</li><li>figma-generate-diagram</li><li>figma-generate-library</li>
+            <li>figma-swiftui</li><li>figma-use</li><li>figma-use-figjam</li><li>figma-use-slides</li>
+            <li>find-skills</li><li>frontend-design</li><li>frontend-patterns</li><li>frontend-slides</li>
+            <li>git-commit</li><li>heuristics</li><li>improve</li><li>iterative-retrieval</li>
+            <li>javascript-testing-patterns</li><li>javascript-typescript-jest</li><li>lesson-learned</li><li>markitdown</li>
+            <li>mcp-server-patterns</li><li>mnemonics</li><li>modern-javascript-patterns</li><li>mongodb</li>
+            <li>mysql</li><li>mysql-best-practices</li><li>mysql-patterns</li><li>neon-postgres</li>
+            <li>next-best-practices</li><li>next-cache-components</li><li>next-upgrade</li><li>pdf</li>
+            <li>plankton-code-quality</li><li>playwright-cli</li><li>postgresql-code-review</li><li>postgresql-optimization</li>
+            <li>postgresql-table-design</li><li>pptx</li><li>receiving-code-review</li><li>remotion-best-practices</li>
+            <li>requesting-code-review</li><li>seo-audit</li><li>simplify</li><li>skill-creator</li>
+            <li>sql-optimization</li><li>stock-analysis</li><li>strategic-compact</li><li>supabase</li>
+            <li>supabase-postgres-best-practices</li><li>tdd-workflow</li><li>typescript-advanced-types</li><li>vercel-react-best-practices</li>
+            <li>vercel-react-native-skills</li><li>verification-loop</li><li>web-design-guidelines</li><li>xlsx</li>
+          </ul>
+        </div>
+        <div class="env-group">
+          <h3 class="env-group__title">OpenCode</h3>
+          <ul class="env-list">
+            <li><span class="k">Version</span><span class="v">1.17.6</span></li>
+            <li><span class="k">Plugins</span><span class="v">opencode-type-inject, opencode-openai-codex-auth, opencode-historian, oh-my-openagent</span></li>
+            <li><span class="k">MCP</span><span class="v">vision (Z.ai), github, atlassian, figma, serena, context7, websearch, grep_app</span></li>
+          </ul>
+        </div>
+        <div class="env-group">
+          <h3 class="env-group__title">Pi</h3>
+          <ul class="env-list">
+            <li><span class="k">Version</span><span class="v">0.79.3</span></li>
+            <li><span class="k">Packages</span><span class="v">pi-delete-session</span></li>
+            <li><span class="k">MCP</span><span class="v">none configured</span></li>
+          </ul>
+        </div>
+        <div class="env-group">
+          <h3 class="env-group__title">Codex</h3>
+          <ul class="env-list">
+            <li><span class="k">Version</span><span class="v">codex-cli 0.139.0</span></li>
+            <li><span class="k">Plugins</span><span class="v">github, documents, spreadsheets, presentations, figma, atlassian-rovo, browser, omo</span></li>
+            <li><span class="k">MCP</span><span class="v">node_repl, serena</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <section id="method" class="method" aria-labelledby="method-heading">
       <div class="section-head">
         <h2 id="method-heading">How a run works</h2>
@@ -81,6 +160,21 @@
         </li>
       </ol>
     </section>
+
+    <section id="experiments" class="experiments" aria-labelledby="exp-heading">
+      <div class="section-head">
+        <h2 id="exp-heading">Experiments</h2>
+        <p class="section-head__note">Each card compares several single-prompt builds of the same prompt — a baseline, challengers, and a control.</p>
+      </div>
+      <div class="hero__stats" id="hero-stats" aria-live="polite">
+        <!-- injected by main.js -->
+      </div>
+      <br/>
+      <div id="experiment-list" class="experiment-list">
+        <!-- injected by main.js -->
+      </div>
+    </section>
+
   </main>
 
   <footer class="site-footer">

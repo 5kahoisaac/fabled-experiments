@@ -253,76 +253,6 @@ window.EXPERIMENTS = [
             },
             {
                 role: "control",
-                label: "Gemma 4 26B A4B (local)",
-                model: "gemma-4-26B-A4B-it-MLX-8bit",
-                skill: "—",
-                agent: "Pi",
-                plugins: [],
-                links: [
-                    {
-                        label: "Benchmarks",
-                        url: "https://openrouter.ai/google/gemma-4-26b-a4b-it#benchmarks",
-                    },
-                    {
-                        label: "oMLX",
-                        url: "https://omlx.ai/",
-                    },
-                    {
-                        label: "Gemma",
-                        url: "https://ai.google.dev/gemma",
-                    },
-                    {
-                        label: "Pi",
-                        url: "https://pi.dev/",
-                    },
-                ],
-                dir: "experiments/exp-01/gemma-4-26b-a4b-it-mlx-8bit-pi/",
-                result: "experiments/exp-01/gemma-4-26b-a4b-it-mlx-8bit-pi/index.html",
-                spec: "experiments/exp-01/gemma-4-26b-a4b-it-mlx-8bit-pi/SPEC.md",
-                journey: "experiments/exp-01/gemma-4-26b-a4b-it-mlx-8bit-pi/JOURNEY.md",
-                tokens: "610,997 total (606,084 in · 4,913 out)",
-                cost: "$0 (local on-device MLX inference)",
-                time: "~9.8 min (591s)",
-                prompts: "4 (1 original + 3 steering: vite-hang recovery, render() bug-fix, make-bundleable)",
-                outcome: "Delivered (caveat) — multi-file Three.js+Vite 3D Flappy Bird; vite build compiles to static dist/; NOT browser-verified for gameplay; absolute /assets paths mean file:// won't load, a static server is still required",
-            },
-            {
-                role: "challenger",
-                label: "Gemma 4 26B A4B (local)",
-                model: "gemma-4-26B-A4B-it-MLX-8bit",
-                skill: "fabled",
-                agent: "Pi",
-                plugins: [],
-                links: [
-                    {
-                        label: "Benchmarks",
-                        url: "https://openrouter.ai/google/gemma-4-26b-a4b-it#benchmarks",
-                    },
-                    {
-                        label: "oMLX",
-                        url: "https://omlx.ai/",
-                    },
-                    {
-                        label: "Gemma",
-                        url: "https://ai.google.dev/gemma",
-                    },
-                    {
-                        label: "Pi",
-                        url: "https://pi.dev/",
-                    },
-                ],
-                dir: "experiments/exp-01/gemma-4-26b-a4b-it-mlx-8bit-pi-fabled/",
-                result: "experiments/exp-01/gemma-4-26b-a4b-it-mlx-8bit-pi-fabled/index.html",
-                spec: "experiments/exp-01/gemma-4-26b-a4b-it-mlx-8bit-pi-fabled/SPEC.md",
-                journey: "experiments/exp-01/gemma-4-26b-a4b-it-mlx-8bit-pi-fabled/JOURNEY.md",
-                tokens: "843,823 total (822,446 in · 21,377 out)",
-                cost: "$0 (local on-device MLX inference)",
-                time: "~24.7 min (1,483s)",
-                prompts: "6 (1 original build + 5 corrective: continue, file-not-stored, 3× inverted-control fix)",
-                outcome: "Delivered (caveat) — single-file Three.js r158 3D Flappy Bird with logic/render split; flight physics correct only in the final (6th) iteration after three user-driven control-bug corrections; static-trace verified (node --check OK), NOT browser-verified",
-            },
-            {
-                role: "control",
                 label: "GPT-5 Mini",
                 model: "gpt-5-mini",
                 skill: "—",
@@ -569,7 +499,42 @@ window.EXPERIMENTS = [
                 prompts: 1,
                 outcome:
                     "Delivered — browser-verified 3D Flappy Bird, no page or console errors",
-            }
+            },
+            {
+                role: "control",
+                label: "Gemma 4 26B A4B (local)",
+                model: "gemma-4-26B-A4B-it-MLX-8bit",
+                skill: "—",
+                agent: "Pi",
+                plugins: [],
+                links: [
+                    {
+                        label: "Benchmarks",
+                        url: "https://openrouter.ai/google/gemma-4-26b-a4b-it#benchmarks",
+                    },
+                    {
+                        label: "oMLX",
+                        url: "https://omlx.ai/",
+                    },
+                    {
+                        label: "Gemma",
+                        url: "https://ai.google.dev/gemma",
+                    },
+                    {
+                        label: "Pi",
+                        url: "https://pi.dev/",
+                    },
+                ],
+                dir: "experiments/exp-01/gemma-4-26b-a4b-it-mlx-8bit-pi/",
+                result: "experiments/exp-01/gemma-4-26b-a4b-it-mlx-8bit-pi/index.html",
+                spec: "experiments/exp-01/gemma-4-26b-a4b-it-mlx-8bit-pi/SPEC.md",
+                journey: "experiments/exp-01/gemma-4-26b-a4b-it-mlx-8bit-pi/JOURNEY.md",
+                tokens: "610,997 total (606,084 in · 4,913 out)",
+                cost: "$0 (local on-device MLX inference)",
+                time: "~9.8 min (591s)",
+                prompts: "4 (1 original + 3 steering: vite-hang recovery, render() bug-fix, make-bundleable)",
+                outcome: "Delivered (caveat) — multi-file Three.js+Vite 3D Flappy Bird; vite build compiles to static dist/; NOT browser-verified for gameplay; absolute /assets paths mean file:// won't load, a static server is still required",
+            },
         ],
         winner: "tbd",
         notes:
