@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Flappy 3D - Pretty Web Game</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="importmap">{
+    "imports": {
+      "three": "https://unpkg.com/three@0.154.0/build/three.module.js"
+    }
+  }</script>
+</head>
+<body>
+  <div id="ui">
+    <div id="title">Flappy 3D</div>
+    <div id="score">Score: 0</div>
+    <button id="muteBtn" title="Mute" aria-label="Mute">🔊</button>
+    <div id="instructions">Press Space / Click / Tap to flap. Avoid the pillars.</div>
+    <div id="overlay">
+      <div id="start-box">
+        <h1>Flappy 3D</h1>
+        <p>Pretty & playable. Click or press Space to start.</p>
+        <div class="leaderboard">
+          <div class="lb-title">Top Scores</div>
+          <ol id="leaderboardList" aria-label="Top Scores">
+          </ol>
+        </div>
+        <button id="startBtn">Start</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
