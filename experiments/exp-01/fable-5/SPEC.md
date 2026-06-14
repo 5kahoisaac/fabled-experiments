@@ -37,9 +37,9 @@
 |----------------------|-----------------------------------------------------------------------------------|
 | Input tokens         | not measured — est. ~55k (incl. plan derivation)                                  |
 | Output tokens        | not measured — est. ~35k; ~8.8k of it is on-disk artifacts                        |
-| Total tokens         | not measured — est. ~90k                                                          |
-| Est. cost (USD)      | ~$2.30 (est., your $10/M in · $50/M out)                                          |
-| Wall-clock           | ~4 min                                                                            |
+| Total tokens         | not measured — est. ~180k (incl. cache/context across session)                   |
+| Est. cost (USD)      | ~$10-18 (est., ~64% of 5h Pro quota at max effort)                                |
+| Wall-clock           | ~5 min                                                                            |
 | Runnable end-to-end? | Yes — opens in browser; 36/36 logic assertions pass                               |
 | Files produced       | 4 — `flappy-bird-3d.html`, `test/logic.js`, `test/render.js`, `test/run-tests.js` |
 
