@@ -35,14 +35,14 @@
 | Cache read tokens | 1,912,960 |
 | Total tokens | 2,073,066 |
 | Cost (USD) | $0.1615 |
-| Wall-clock time | 1,760 s (~29.3 min calendar; ~7.8 min active, ~21.5 min idle) |
+| Wall-clock time | ~470 s (~7.8 min active; idle gaps excluded) |
 | Number of prompts | 1 |
 | Metrics source | pi session JSONL usage field (scoped: first prompt → give-up) |
 
 > Metrics are scoped to the build session: from the first user prompt
 > (2026-06-14T01:01:40Z) to the developer's give-up message
-> (2026-06-14T01:31:00Z). Wall-clock is calendar span; "active" subtracts idle
-> gaps >60s between events (developer testing in browser / reading).
+> (2026-06-14T01:31:00Z). Wall-clock is active time only — idle gaps >60s
+> between events (developer testing in browser / reading) are excluded.
 > Any field that could not be measured is recorded as "not recorded" rather
 > than estimated or omitted.
 

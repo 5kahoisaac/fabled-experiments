@@ -27,7 +27,7 @@ This run was marked as failed after the developer was unable to get the delivere
   - Cache read tokens: 1,912,960
   - Total tokens: 2,073,066
   - Cost: $0.1615
-  - Wall-clock: 1,760 s (~29.3 min calendar; ~7.8 min active, ~21.5 min idle while testing in browser)
+  - Wall-clock: ~470 s (~7.8 min active; idle gaps while testing in browser excluded)
 - On mid-range hardware the page frequently dropped frames when postprocessing passes were active.
 - On mobile/low-end devices the game was effectively unplayable until heavy passes were disabled.
 

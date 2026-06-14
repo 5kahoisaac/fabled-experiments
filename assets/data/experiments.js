@@ -219,11 +219,11 @@ window.EXPERIMENTS = [{
         failed: true,
         tokens: "2,073,066 (118,019 in · 42,087 out · 1,912,960 cache)",
         cost: "$0.1615",
-        time: "1,760 s (~29.3 min calendar; ~7.8 min active, ~21.5 min idle while testing in browser)",
+        time: "~470 s active (~7.8 min, idle gaps excluded)",
         prompts: 1,
         outcome: "Failed — developer aborted after unresolved browser errors",
     },
     ],
     winner: "tbd",
-    notes: "Six single-prompt builds of the same game. Baseline is raw Fable 5; challengers include GLM-5.1 + Fabled on Pi, GLM-5.1 + Fabled on OpenCode, and gpt-5.5-codex + Fabled on Codex. OpenCode hit a fatal GLM-5.1 streaming loop (see its REPORT.md). Controls isolate the model bare vs. with the skill: GLM-5.1 on Pi (no Fabled) and gpt-5-mini via GitHub Copilot (no Fabled, failed). Codex Fabled used 196,410 total tokens plus 1,146,624 cached tokens for $2.874655 exact ($2.87 rounded); exact return time was not recorded, with a checked lower bound of 33m56s. The Codex no-skill control used 3,019,341 total tokens with 188,004 new input tokens, 2,803,584 cached input tokens, 27,753 output tokens, 1,243.055 s wall time, and $5.27709 calculated cost. The gpt-5-mini (GitHub Copilot) control used 2,073,066 total tokens (118,019 in · 42,087 out · 1,912,960 cache), $0.1615, 1,760 s calendar wall-clock from first prompt to give-up (~29.3 min; ~7.8 min active with ~21.5 min idle while the developer tested in the browser), and failed verification.",
+    notes: "Six single-prompt builds of the same game. Baseline is raw Fable 5; challengers include GLM-5.1 + Fabled on Pi, GLM-5.1 + Fabled on OpenCode, and gpt-5.5-codex + Fabled on Codex. OpenCode hit a fatal GLM-5.1 streaming loop (see its REPORT.md). Controls isolate the model bare vs. with the skill: GLM-5.1 on Pi (no Fabled) and gpt-5-mini via GitHub Copilot (no Fabled, failed). Codex Fabled used 196,410 total tokens plus 1,146,624 cached tokens for $2.874655 exact ($2.87 rounded); exact return time was not recorded, with a checked lower bound of 33m56s. The Codex no-skill control used 3,019,341 total tokens with 188,004 new input tokens, 2,803,584 cached input tokens, 27,753 output tokens, 1,243.055 s wall time, and $5.27709 calculated cost. The gpt-5-mini (GitHub Copilot) control used 2,073,066 total tokens (118,019 in · 42,087 out · 1,912,960 cache), $0.1615, ~470 s active wall-clock (idle gaps while testing in browser excluded; ~29.3 min calendar), and failed verification.",
 }, ];
