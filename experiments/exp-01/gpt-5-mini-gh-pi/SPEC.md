@@ -30,15 +30,19 @@
 
 | Field | Value |
 | --- | --- |
-| Tokens in | 306,550 |
-| Tokens out | 49,447 |
-| Cache read tokens | 3,943,552 |
-| Total tokens | 4,299,549 |
-| Cost (USD) | $0.2435 |
-| Wall-clock time | 2,134 s (~35.6 min) |
+| Tokens in | 118,019 |
+| Tokens out | 42,087 |
+| Cache read tokens | 1,912,960 |
+| Total tokens | 2,073,066 |
+| Cost (USD) | $0.1615 |
+| Wall-clock time | 1,760 s (~29.3 min calendar; ~7.8 min active, ~21.5 min idle) |
 | Number of prompts | 1 |
-| Metrics source | pi session JSONL usage field |
+| Metrics source | pi session JSONL usage field (scoped: first prompt → give-up) |
 
+> Metrics are scoped to the build session: from the first user prompt
+> (2026-06-14T01:01:40Z) to the developer's give-up message
+> (2026-06-14T01:31:00Z). Wall-clock is calendar span; "active" subtracts idle
+> gaps >60s between events (developer testing in browser / reading).
 > Any field that could not be measured is recorded as "not recorded" rather
 > than estimated or omitted.
 

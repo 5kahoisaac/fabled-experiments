@@ -21,13 +21,13 @@ This run was marked as failed after the developer was unable to get the delivere
 
 ## Performance Signals
 
-- Session metrics (from pi session JSONL usage field):
-  - Tokens in: 306,550
-  - Tokens out: 49,447
-  - Cache read tokens: 3,943,552
-  - Total tokens: 4,299,549
-  - Cost: $0.2435
-  - Wall-clock: 2,134 s (~35.6 min)
+- Session metrics (from pi session JSONL usage field, scoped first prompt → give-up):
+  - Tokens in: 118,019
+  - Tokens out: 42,087
+  - Cache read tokens: 1,912,960
+  - Total tokens: 2,073,066
+  - Cost: $0.1615
+  - Wall-clock: 1,760 s (~29.3 min calendar; ~7.8 min active, ~21.5 min idle while testing in browser)
 - On mid-range hardware the page frequently dropped frames when postprocessing passes were active.
 - On mobile/low-end devices the game was effectively unplayable until heavy passes were disabled.
 
