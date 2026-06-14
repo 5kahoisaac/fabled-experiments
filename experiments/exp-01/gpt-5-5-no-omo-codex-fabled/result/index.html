@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Skyweave 3D Flap</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f7fbff;
+      --muted: #b5c4d6;
+      --panel: rgba(8, 16, 28, 0.68);
+      --line: rgba(255, 255, 255, 0.18);
+      --gold: #ffd36b;
+      --aqua: #54d8d8;
+      --rose: #ff6f91;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #06101d;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      touch-action: manipulation;
+      user-select: none;
+    }
+
+    #game {
+      position: fixed;
+      inset: 0;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hud {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .topbar {
+      position: absolute;
+      top: max(14px, env(safe-area-inset-top));
+      left: max(14px, env(safe-area-inset-left));
+      right: max(14px, env(safe-area-inset-right));
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: grid;
+      gap: 3px;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .brand strong {
+      font-size: clamp(18px, 2.4vw, 28px);
+      letter-spacing: 0;
+      line-height: 1;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .score {
+      min-width: 96px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      text-align: right;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .score b {
+      display: block;
+      font-size: clamp(26px, 6vw, 52px);
+      line-height: 0.9;
+      color: var(--gold);
+    }
+
+    .score small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .center-panel {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(520px, calc(100vw - 28px));
+      transform: translate(-50%, -50%);
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(10, 22, 38, 0.78), rgba(6, 12, 23, 0.68));
+      backdrop-filter: blur(18px);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      text-align: center;
+      pointer-events: auto;
+    }
+
+    .center-panel[hidden] { display: none; }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(34px, 8vw, 72px);
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    .copy {
+      margin: 0 auto 18px;
+      max-width: 34rem;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 18px 0;
+    }
+
+    .stat {
+      min-height: 72px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .stat b {
+      display: block;
+      font-size: 24px;
+      color: var(--aqua);
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--gold);
+      color: #161207;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(255, 211, 107, 0.28);
+    }
+
+    button:focus-visible {
+      outline: 3px solid var(--aqua);
+      outline-offset: 3px;
+    }
+
+    .hint {
+      position: absolute;
+      left: 50%;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      width: min(560px, calc(100vw - 28px));
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(5, 10, 19, 0.5);
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+      backdrop-filter: blur(10px);
+    }
+
+    .fatal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: #07101c;
+      color: var(--ink);
+      z-index: 10;
+    }
+
+    .fatal.show { display: grid; }
+
+    .fatal div {
+      max-width: 560px;
+      padding: 20px;
+      border: 1px solid rgba(255, 111, 145, 0.45);
+      border-radius: 8px;
+      background: rgba(255, 111, 145, 0.08);
+    }
+
+    @media (max-width: 560px) {
+      .topbar { align-items: stretch; }
+      .brand span { display: none; }
+      .score { min-width: 82px; padding: 8px 10px; }
+      .center-panel { padding: 18px 14px; }
+      .stats { grid-template-columns: 1fr; }
+      .stat { min-height: 58px; }
+    }
+  </style>
+</head>
+<body>
+  <main id="game" aria-label="Skyweave 3D Flap game"></main>
+
+  <section class="hud" aria-live="polite">
+    <div class="topbar">
+      <div class="brand">
+        <strong>Skyweave 3D Flap</strong>
+        <span>Thread the glowing gates.</span>
+      </div>
+      <div class="score">
+        <b id="score">0</b>
+        <small id="best">Best 0</small>
+      </div>
+    </div>
+
+    <div id="startPanel" class="center-panel">
+      <h1>Flap in 3D</h1>
+      <p class="copy">Press Space, click, or tap to lift the bird. Pass through each gate and keep altitude before the skyline catches you.</p>
+      <button id="startButton" type="button">Start flight</button>
+    </div>
+
+    <div id="gameOverPanel" class="center-panel" hidden>
+      <h1>Flight ended</h1>
+      <p class="copy" id="endMessage">The next run starts clean.</p>
+      <div class="stats">
+        <div class="stat"><b id="finalScore">0</b><span>Score</span></div>
+        <div class="stat"><b id="finalBest">0</b><span>Best</span></div>
+        <div class="stat"><b id="finalTime">0s</b><span>Air time</span></div>
+      </div>
+      <button id="restartButton" type="button">Fly again</button>
+    </div>
+
+    <div class="hint">Space / click / tap to flap</div>
+  </section>
+
+  <div id="fatal" class="fatal" role="alert">
+    <div>
+      <h2>Unable to start the 3D game</h2>
+      <p id="fatalText">The renderer did not load.</p>
+    </div>
+  </div>
+
+  <script id="game-logic">
+  /* ==LOGIC-START== */
+  (function attachGameLogic(root) {
+    "use strict";
+
+    const C = Object.freeze({
+      gravity: -17.6,
+      flapVelocity: 6.7,
+      floorY: -3.35,
+      ceilingY: 3.15,
+      birdRadius: 0.34,
+      gateWidth: 1.12,
+      gapHeight: 2.25,
+      pipeSpacing: 3.15,
+      pipeStartX: 7.4,
+      despawnX: -2.4,
+      initialSpeed: 3.35,
+      speedGain: 0.035,
+      maxSpeed: 5.25,
+      maxPipes: 8,
+      seedFallback: 24681357
+    });
+
+    function makeRng(seed) {
+      let value = (Number.isFinite(seed) ? seed : C.seedFallback) >>> 0;
+      if (value === 0) value = C.seedFallback;
+      return function rng() {
+        value = (value * 1664525 + 1013904223) >>> 0;
+        return value / 4294967296;
+      };
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function nextGapY(previous, rng) {
+      const drift = (rng() - 0.5) * 2.1;
+      const wave = Math.sin(rng() * Math.PI * 2) * 0.58;
+      return clamp(previous + drift + wave, -1.72, 1.72);
+    }
+
+    function makePipe(x, gapY, id) {
+      return { id, x, gapY, scored: false };
+    }
+
+    function createState(seed) {
+      const rng = makeRng(seed);
+      const pipes = [];
+      let gapY = 0.25;
+      for (let i = 0; i < C.maxPipes; i += 1) {
+        gapY = nextGapY(gapY, rng);
+        pipes.push(makePipe(C.pipeStartX + i * C.pipeSpacing, gapY, i + 1));
+      }
+      return {
+        status: "ready",
+        seed: Number.isFinite(seed) ? seed : C.seedFallback,
+        rng,
+        birdY: 0,
+        birdV: 0,
+        score: 0,
+        best: 0,
+        time: 0,
+        speed: C.initialSpeed,
+        nextPipeId: C.maxPipes + 1,
+        pipes
+      };
+    }
+
+    function start(state) {
+      if (state.status === "ready" || state.status === "over") {
+        const best = state.best || 0;
+        const fresh = createState((state.seed + 977) >>> 0);
+        Object.assign(state, fresh, { status: "playing", best });
+      }
+      return flap(state);
+    }
+
+    function flap(state) {
+      if (state.status === "playing") {
+        state.birdV = C.flapVelocity;
+      }
+      return state;
+    }
+
+    function collide(birdY, pipe) {
+      const withinGateX = Math.abs(pipe.x) < (C.gateWidth * 0.5 + C.birdRadius);
+      const outsideGap = Math.abs(birdY - pipe.gapY) > (C.gapHeight * 0.5 - C.birdRadius);
+      return withinGateX && outsideGap;
+    }
+
+    function recyclePipe(state, pipe) {
+      const farthestX = state.pipes.reduce((max, item) => Math.max(max, item.x), pipe.x);
+      pipe.x = farthestX + C.pipeSpacing;
+      pipe.gapY = nextGapY(pipe.gapY, state.rng);
+      pipe.scored = false;
+      pipe.id = state.nextPipeId;
+      state.nextPipeId += 1;
+    }
+
+    function step(state, dt) {
+      if (state.status !== "playing") return { scored: 0, died: false };
+
+      const elapsed = clamp(dt, 0, 1 / 24);
+      state.time += elapsed;
+      state.speed = Math.min(C.maxSpeed, C.initialSpeed + state.score * C.speedGain);
+      state.birdV += C.gravity * elapsed;
+      state.birdY += state.birdV * elapsed;
+
+      let scored = 0;
+      let died = state.birdY - C.birdRadius <= C.floorY || state.birdY + C.birdRadius >= C.ceilingY;
+
+      for (const pipe of state.pipes) {
+        pipe.x -= state.speed * elapsed;
+        if (!pipe.scored && pipe.x < -C.gateWidth * 0.5) {
+          pipe.scored = true;
+          state.score += 1;
+          scored += 1;
+        }
+        if (collide(state.birdY, pipe)) died = true;
+        if (pipe.x < C.despawnX) recyclePipe(state, pipe);
+      }
+
+      if (died) {
+        state.status = "over";
+        state.best = Math.max(state.best, state.score);
+      }
+
+      return { scored, died };
+    }
+
+    root.GameLogic = { C, makeRng, nextGapY, createState, start, flap, collide, step };
+  })(globalThis);
+  /* ==LOGIC-END== */
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
+
+  <script>
+  (function runGame() {
+    "use strict";
+
+    const mount = document.getElementById("game");
+    const scoreEl = document.getElementById("score");
+    const bestEl = document.getElementById("best");
+    const startPanel = document.getElementById("startPanel");
+    const gameOverPanel = document.getElementById("gameOverPanel");
+    const startButton = document.getElementById("startButton");
+    const restartButton = document.getElementById("restartButton");
+    const finalScore = document.getElementById("finalScore");
+    const finalBest = document.getElementById("finalBest");
+    const finalTime = document.getElementById("finalTime");
+    const endMessage = document.getElementById("endMessage");
+    const fatal = document.getElementById("fatal");
+    const fatalText = document.getElementById("fatalText");
+
+    function fail(message) {
+      fatalText.textContent = message;
+      fatal.classList.add("show");
+    }
+
+    if (!globalThis.THREE) {
+      fail("Three.js did not load. Check the network connection and reload.");
+      return;
+    }
+
+    const logic = globalThis.GameLogic;
+    const THREE = globalThis.THREE;
+    const state = logic.createState(Date.now());
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const clock = new THREE.Clock();
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x8bbde8, 12, 34);
+
+    const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 100);
+    camera.position.set(0, 1.25, 8.8);
+    camera.lookAt(0, 0.2, 0);
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+    } catch (error) {
+      fail("WebGL is unavailable in this browser.");
+      return;
+    }
+
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.setClearColor(0x8fc9ee, 1);
+    mount.appendChild(renderer.domElement);
+
+    const hemi = new THREE.HemisphereLight(0xcfefff, 0x24384d, 2.1);
+    scene.add(hemi);
+
+    const sun = new THREE.DirectionalLight(0xffe4ac, 2.8);
+    sun.position.set(-5, 8, 5);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(1024, 1024);
+    scene.add(sun);
+
+    const materials = {
+      bird: new THREE.MeshStandardMaterial({ color: 0xffd36b, roughness: 0.52, metalness: 0.08 }),
+      wing: new THREE.MeshStandardMaterial({ color: 0xff6f91, roughness: 0.48 }),
+      eye: new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.3 }),
+      gate: new THREE.MeshStandardMaterial({ color: 0x25d6c8, roughness: 0.36, metalness: 0.22, emissive: 0x083836 }),
+      gateBand: new THREE.MeshStandardMaterial({ color: 0xffd36b, roughness: 0.42, emissive: 0x2d2105 }),
+      ground: new THREE.MeshStandardMaterial({ color: 0x314657, roughness: 0.86 }),
+      cloud: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9, transparent: true, opacity: 0.72 })
+    };
+
+    const bird = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.36, 32, 20), materials.bird);
+    body.scale.set(1.18, 0.86, 0.82);
+    body.castShadow = true;
+    bird.add(body);
+
+    const beak = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.34, 18), materials.gateBand);
+    beak.rotation.z = -Math.PI / 2;
+    beak.position.set(0.39, 0.03, 0);
+    beak.castShadow = true;
+    bird.add(beak);
+
+    const leftWing = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.58, 24), materials.wing);
+    leftWing.rotation.set(0.25, 0, Math.PI * 0.72);
+    leftWing.position.set(-0.06, 0, 0.33);
+    bird.add(leftWing);
+
+    const rightWing = leftWing.clone();
+    rightWing.position.z = -0.33;
+    rightWing.rotation.z = -Math.PI * 0.72;
+    bird.add(rightWing);
+
+    const eyeGeo = new THREE.SphereGeometry(0.045, 12, 8);
+    const eyeA = new THREE.Mesh(eyeGeo, materials.eye);
+    eyeA.position.set(0.24, 0.14, 0.23);
+    const eyeB = eyeA.clone();
+    eyeB.position.z = -0.23;
+    bird.add(eyeA, eyeB);
+    scene.add(bird);
+
+    const gateGroups = [];
+    const gateGeo = new THREE.BoxGeometry(0.72, 1, 0.72);
+    const capGeo = new THREE.BoxGeometry(0.86, 0.12, 0.86);
+    for (let i = 0; i < logic.C.maxPipes; i += 1) {
+      const group = new THREE.Group();
+      const top = new THREE.Mesh(gateGeo, materials.gate);
+      const bottom = new THREE.Mesh(gateGeo, materials.gate);
+      const topBand = new THREE.Mesh(capGeo, materials.gateBand);
+      const bottomBand = new THREE.Mesh(capGeo, materials.gateBand);
+      top.castShadow = bottom.castShadow = true;
+      top.receiveShadow = bottom.receiveShadow = true;
+      group.add(top, bottom, topBand, bottomBand);
+      group.userData = { top, bottom, topBand, bottomBand };
+      gateGroups.push(group);
+      scene.add(group);
+    }
+
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 12, 1, 1), materials.ground);
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.set(10, logic.C.floorY - 0.05, 0);
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    const laneLines = new THREE.Group();
+    const lineMat = new THREE.MeshBasicMaterial({ color: 0xb9f6ef, transparent: true, opacity: 0.35 });
+    for (let i = 0; i < 18; i += 1) {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.025, 0.8), lineMat);
+      line.position.set(i * 2.4 - 8, logic.C.floorY + 0.015, -2.75);
+      laneLines.add(line);
+    }
+    scene.add(laneLines);
+
+    const clouds = new THREE.Group();
+    for (let i = 0; i < 16; i += 1) {
+      const puff = new THREE.Mesh(new THREE.SphereGeometry(0.45 + (i % 3) * 0.16, 18, 10), materials.cloud);
+      puff.position.set((i * 3.7) % 28 - 10, 2.4 + (i % 5) * 0.45, -5.5 - (i % 4) * 1.2);
+      puff.scale.x = 1.8;
+      clouds.add(puff);
+    }
+    scene.add(clouds);
+
+    let audioContext = null;
+    function tone(frequency, duration, gainValue) {
+      try {
+        audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        oscillator.frequency.value = frequency;
+        oscillator.type = "sine";
+        gain.gain.setValueAtTime(gainValue, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+        oscillator.connect(gain).connect(audioContext.destination);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + duration);
+      } catch (error) {
+        audioContext = null;
+      }
+    }
+
+    function setPanels() {
+      startPanel.hidden = state.status !== "ready";
+      gameOverPanel.hidden = state.status !== "over";
+      scoreEl.textContent = String(state.score);
+      bestEl.textContent = `Best ${state.best}`;
+      finalScore.textContent = String(state.score);
+      finalBest.textContent = String(state.best);
+      finalTime.textContent = `${Math.round(state.time)}s`;
+      endMessage.textContent = state.score >= state.best && state.score > 0
+        ? "New best flight through the gates."
+        : "Stay centered and flap before the drop steepens.";
+    }
+
+    function flapInput(event) {
+      if (event.type === "keydown" && event.repeat) return;
+      if (event.type === "keydown" && event.code !== "Space" && event.code !== "ArrowUp" && event.code !== "KeyW") return;
+      event.preventDefault();
+      if (state.status !== "playing") {
+        logic.start(state);
+      } else {
+        logic.flap(state);
+      }
+      tone(440, 0.08, 0.03);
+      setPanels();
+    }
+
+    addEventListener("keydown", flapInput, { passive: false });
+    addEventListener("pointerdown", flapInput, { passive: false });
+    startButton.addEventListener("click", flapInput);
+    restartButton.addEventListener("click", flapInput);
+
+    function resize() {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    }
+    addEventListener("resize", resize);
+    resize();
+
+    function updateMeshes() {
+      bird.position.set(0, state.birdY, 0);
+      bird.rotation.z = THREE.MathUtils.clamp(-state.birdV * 0.055, -0.55, 0.75);
+      const wingAngle = Math.sin(performance.now() * 0.018) * (state.status === "playing" ? 0.34 : 0.08);
+      leftWing.rotation.y = wingAngle;
+      rightWing.rotation.y = -wingAngle;
+
+      for (let i = 0; i < state.pipes.length; i += 1) {
+        const pipe = state.pipes[i];
+        const group = gateGroups[i];
+        const topHeight = Math.max(0.2, logic.C.ceilingY - (pipe.gapY + logic.C.gapHeight * 0.5));
+        const bottomHeight = Math.max(0.2, (pipe.gapY - logic.C.gapHeight * 0.5) - logic.C.floorY);
+        group.position.x = pipe.x;
+        group.userData.top.scale.y = topHeight;
+        group.userData.top.position.y = pipe.gapY + logic.C.gapHeight * 0.5 + topHeight * 0.5;
+        group.userData.bottom.scale.y = bottomHeight;
+        group.userData.bottom.position.y = logic.C.floorY + bottomHeight * 0.5;
+        group.userData.topBand.position.y = pipe.gapY + logic.C.gapHeight * 0.5;
+        group.userData.bottomBand.position.y = pipe.gapY - logic.C.gapHeight * 0.5;
+        group.rotation.y = Math.sin((pipe.id + state.time) * 0.75) * 0.04;
+      }
+
+      laneLines.children.forEach((line) => {
+        line.position.x -= state.speed * 0.016;
+        if (line.position.x < -10) line.position.x += 43.2;
+      });
+      clouds.position.x = (clouds.position.x - 0.003 * state.speed) % 3.7;
+    }
+
+    let accumulator = 0;
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = reducedMotion ? Math.min(clock.getDelta(), 1 / 30) : clock.getDelta();
+      accumulator += dt;
+      let soundScore = 0;
+      while (accumulator >= 1 / 120) {
+        const result = logic.step(state, 1 / 120);
+        soundScore += result.scored;
+        if (result.died) tone(120, 0.16, 0.045);
+        accumulator -= 1 / 120;
+      }
+      if (soundScore > 0) tone(720, 0.07, 0.035);
+      setPanels();
+      updateMeshes();
+      renderer.render(scene, camera);
+    }
+
+    setPanels();
+    updateMeshes();
+    animate();
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "skyweave-3d-flap",
+  "version": "1.0.0",
+  "description": "A self-contained 3D Flappy Bird style browser game.",
+  "private": true,
+  "scripts": {
+    "serve": "python3 -m http.server 4174",
+    "test": "node scripts/test-logic.mjs"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "playwright": "1.57.0"
+  }
+}

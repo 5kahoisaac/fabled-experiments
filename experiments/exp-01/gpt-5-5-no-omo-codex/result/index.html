@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skyline Flap</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main id="game-shell" aria-label="Skyline Flap game">
+      <canvas id="game-canvas"></canvas>
+
+      <section class="hud" aria-live="polite">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <span>Skyline Flap</span>
+        </div>
+        <div class="stats">
+          <div>
+            <span class="label">Score</span>
+            <strong id="score">0</strong>
+          </div>
+          <div>
+            <span class="label">Best</span>
+            <strong id="best">0</strong>
+          </div>
+        </div>
+      </section>
+
+      <section id="overlay" class="overlay">
+        <div class="panel">
+          <p class="eyebrow" id="state-label">Ready</p>
+          <h1 id="state-title">Thread the skyline</h1>
+          <p id="state-copy">
+            Tap, click, or press space to flap through the glowing gates.
+          </p>
+          <button id="start-button" type="button">Start flight</button>
+        </div>
+      </section>
+    </main>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js"
+        }
+      }
+    </script>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

@@ -312,60 +312,6 @@ window.EXPERIMENTS = [
                 model: "gpt-5.5",
                 skill: "—",
                 agent: "Codex",
-                plugins: ["Browser"],
-                links: [
-                    {
-                        label: "Benchmarks",
-                        url: "https://openrouter.ai/openai/gpt-5.5#benchmarks",
-                    },
-                    {
-                        label: "Codex",
-                        url: "https://openai.com/codex",
-                    },
-                ],
-                dir: "experiments/exp-01/gpt-5-5-no-omo-codex/",
-                result: "experiments/exp-01/gpt-5-5-no-omo-codex/index.html",
-                spec: "experiments/exp-01/gpt-5-5-no-omo-codex/SPEC.md",
-                journey: "experiments/exp-01/gpt-5-5-no-omo-codex/JOURNEY.md",
-                tokens:
-                    "1,101,243 total (1,085,773 in · 15,470 out · 945,024 cache)",
-                cost: "~$3.0",
-                time: "7m 29s",
-                prompts: 1,
-                outcome:
-                    "Delivered — 3D Skyline Flap static web game, Chrome-render verified",
-            },
-            {
-                role: "challenger",
-                label: "GPT-5.5",
-                model: "gpt-5.5",
-                skill: "fabled",
-                agent: "Codex",
-                plugins: [
-                    "Browser",
-                ],
-                links: [
-                    {
-                        label: "Codex",
-                        url: "https://openai.com/codex/",
-                    },
-                ],
-                dir: "experiments/exp-01/gpt-5-5-no-omo-codex-fabled/",
-                result: "experiments/exp-01/gpt-5-5-no-omo-codex-fabled/index.html",
-                spec: "experiments/exp-01/gpt-5-5-no-omo-codex-fabled/SPEC.md",
-                journey: "experiments/exp-01/gpt-5-5-no-omo-codex-fabled/JOURNEY.md",
-                tokens: "2,758,095 total (2,732,909 in · 25,186 out · 2,557,824 cache · 3,599 reasoning)",
-                cost: "~$4.82",
-                time: "~17m 48s",
-                prompts: 1,
-                outcome: "Delivered — browser-verified 3D Flappy Bird with logic tests and desktop/mobile screenshots",
-            },
-            {
-                role: "control",
-                label: "GPT-5.5",
-                model: "gpt-5.5",
-                skill: "—",
-                agent: "Codex",
                 plugins: ["OMO"],
                 links: [
                     {
@@ -426,6 +372,35 @@ window.EXPERIMENTS = [
                 outcome:
                     "Delivered — browser-verified 3D Flappy Bird, no page or console errors",
             },
+                    {
+                        role: "control",
+                        label: "GPT-5.5",
+                        model: "gpt-5.5",
+                        skill: "—",
+                        agent: "Codex",
+                        plugins: ["Browser"],
+                        links: [
+                            {
+                                label: "Benchmarks",
+                                url: "https://openrouter.ai/openai/gpt-5.5#benchmarks",
+                            },
+                            {
+                                label: "Codex",
+                                url: "https://openai.com/codex",
+                            },
+                        ],
+                        dir: "experiments/exp-01/gpt-5-5-no-omo-codex/",
+                        result: "experiments/exp-01/gpt-5-5-no-omo-codex/index.html",
+                        spec: "experiments/exp-01/gpt-5-5-no-omo-codex/SPEC.md",
+                        journey: "experiments/exp-01/gpt-5-5-no-omo-codex/JOURNEY.md",
+                        tokens:
+                            "1,101,243 total (1,085,773 in · 15,470 out · 945,024 cache)",
+                        cost: "~$3.0",
+                        time: "7m 29s",
+                        prompts: 1,
+                        outcome:
+                            "Delivered — 3D Skyline Flap static web game, Chrome-render verified",
+                    },
                 ],
                 winner: "tbd",
         notes:

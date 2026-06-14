@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skyweave Flap — 3D Web Game</title>
+  <style>
+    :root {
+      --ink: #15122a;
+      --mist: #eef9ff;
+      --shell: rgba(255, 255, 255, 0.72);
+      --shell-strong: rgba(255, 255, 255, 0.9);
+      --coral: #ff6f61;
+      --gold: #ffd166;
+      --teal: #2ec4b6;
+      --violet: #6c63ff;
+      --shadow: rgba(21, 18, 42, 0.24);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 50% 20%, #f9fdff 0%, #b9ebff 38%, #75c9f5 68%, #5488de 100%);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    #game {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      outline: none;
+    }
+
+    .hud {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: clamp(16px, 3vw, 34px);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand, .panel, .status {
+      pointer-events: auto;
+      backdrop-filter: blur(18px) saturate(1.24);
+      -webkit-backdrop-filter: blur(18px) saturate(1.24);
+      background: var(--shell);
+      border: 1px solid rgba(255,255,255,0.72);
+      box-shadow: 0 20px 60px var(--shadow), inset 0 1px 0 rgba(255,255,255,0.8);
+      border-radius: 28px;
+    }
+
+    .brand {
+      padding: 14px 18px;
+      max-width: min(450px, 72vw);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(22px, 4vw, 48px);
+      line-height: 0.95;
+      letter-spacing: -0.065em;
+      font-weight: 900;
+    }
+
+    .brand p {
+      margin: 8px 0 0;
+      font-size: clamp(12px, 1.6vw, 15px);
+      line-height: 1.35;
+      color: rgba(21, 18, 42, 0.74);
+    }
+
+    .scorecard {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .scorepill {
+      min-width: 86px;
+      padding: 12px 14px;
+      text-align: center;
+      border-radius: 22px;
+      background: var(--shell-strong);
+      border: 1px solid rgba(255,255,255,0.86);
+      box-shadow: 0 10px 30px rgba(21,18,42,0.16);
+    }
+
+    .scorepill b {
+      display: block;
+      font-size: clamp(28px, 6vw, 54px);
+      line-height: 0.9;
+      font-weight: 950;
+      letter-spacing: -0.055em;
+    }
+
+    .scorepill span {
+      display: block;
+      margin-top: 5px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(21,18,42,0.58);
+      font-weight: 800;
+    }
+
+    .center {
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+    }
+
+    .panel {
+      width: min(560px, calc(100vw - 32px));
+      padding: clamp(22px, 5vw, 42px);
+      text-align: center;
+      transform: translateY(6px);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .panel.hidden {
+      opacity: 0;
+      transform: translateY(18px) scale(0.98);
+      pointer-events: none;
+    }
+
+    .panel .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 7px 11px;
+      border-radius: 999px;
+      color: #423372;
+      background: linear-gradient(135deg, rgba(255,209,102,0.62), rgba(46,196,182,0.42));
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .panel h2 {
+      margin: 15px 0 8px;
+      font-size: clamp(36px, 8vw, 78px);
+      line-height: 0.9;
+      letter-spacing: -0.08em;
+      font-weight: 950;
+    }
+
+    .panel p {
+      margin: 0 auto 20px;
+      max-width: 36rem;
+      color: rgba(21,18,42,0.72);
+      font-size: clamp(15px, 2vw, 18px);
+      line-height: 1.5;
+    }
+
+    .buttonrow {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 20px;
+      font: inherit;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: white;
+      background: linear-gradient(135deg, var(--coral), var(--violet));
+      box-shadow: 0 16px 35px rgba(108,99,255,0.32), inset 0 1px 0 rgba(255,255,255,0.38);
+      cursor: pointer;
+      transition: transform 120ms ease, filter 120ms ease;
+    }
+
+    button.secondary {
+      color: var(--ink);
+      background: rgba(255,255,255,0.82);
+      box-shadow: inset 0 0 0 1px rgba(21,18,42,0.08), 0 12px 24px rgba(21,18,42,0.12);
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    button:active { transform: translateY(1px) scale(0.99); }
+    button:focus-visible { outline: 4px solid rgba(255,209,102,0.78); outline-offset: 3px; }
+
+    .status {
+      justify-self: center;
+      align-self: end;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 11px 16px;
+      font-size: 13px;
+      font-weight: 800;
+      color: rgba(21,18,42,0.72);
+      pointer-events: none;
+    }
+
+    .key {
+      display: inline-grid;
+      place-items: center;
+      min-width: 30px;
+      height: 26px;
+      padding: 0 8px;
+      border-radius: 9px;
+      color: var(--ink);
+      background: white;
+      box-shadow: inset 0 -2px 0 rgba(21,18,42,0.12);
+      font-size: 12px;
+    }
+
+    .flash {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: white;
+      opacity: 0;
+      transition: opacity 140ms ease;
+    }
+
+    .flash.on { opacity: 0.42; transition: none; }
+
+    @media (max-width: 640px) {
+      .hud { padding: 12px; }
+      .topbar { align-items: stretch; }
+      .brand { display: none; }
+      .scorecard { margin-left: auto; }
+      .scorepill { min-width: 72px; padding: 10px 12px; }
+      .status { font-size: 12px; border-radius: 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game" tabindex="0" aria-label="Skyweave Flap 3D game canvas"></canvas>
+
+  <div class="hud" aria-live="polite">
+    <div class="topbar">
+      <section class="brand" aria-label="Game title">
+        <h1>Skyweave Flap</h1>
+        <p>A polished 3D Flappy Bird-inspired web game: slip through floating vine gates, bank past clouds, and chase your best score.</p>
+      </section>
+      <section class="scorecard" aria-label="Scoreboard">
+        <div class="scorepill"><b id="score">0</b><span>score</span></div>
+        <div class="scorepill"><b id="best">0</b><span>best</span></div>
+      </section>
+    </div>
+
+    <main class="center">
+      <section id="panel" class="panel" aria-label="Game menu">
+        <div id="panelEyebrow" class="eyebrow">Ready to fly</div>
+        <h2 id="panelTitle">Thread the sky.</h2>
+        <p id="panelText">Press space, click, or tap to flap. Glide through the glowing vine hoops without touching them or the waterline.</p>
+        <div class="buttonrow">
+          <button id="primaryButton" type="button">Start flight</button>
+          <button id="practiceButton" class="secondary" type="button">Gentle mode</button>
+        </div>
+      </section>
+    </main>
+
+    <div class="status">
+      <span class="key">Space</span>
+      <span class="key">Click</span>
+      <span class="key">Tap</span>
+      <span id="statusText">Flap to begin</span>
+    </div>
+  </div>
+  <div id="flash" class="flash"></div>
+
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js';
+
+    const CONFIG = Object.freeze({
+      worldDepth: 72,
+      gravity: -24,
+      flapImpulse: 8.6,
+      maxFallSpeed: -16,
+      birdRadius: 0.72,
+      pipeWidth: 2.05,
+      pipeDepth: 3.4,
+      pipeSpacing: 8.2,
+      pipeStartX: 15,
+      pipeCount: 7,
+      baseSpeed: 7.4,
+      gapNormal: 5.0,
+      gapGentle: 6.2,
+      topBound: 7.6,
+      bottomBound: -6.2
+    });
+
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+    const panel = document.getElementById('panel');
+    const panelEyebrow = document.getElementById('panelEyebrow');
+    const panelTitle = document.getElementById('panelTitle');
+    const panelText = document.getElementById('panelText');
+    const primaryButton = document.getElementById('primaryButton');
+    const practiceButton = document.getElementById('practiceButton');
+    const statusText = document.getElementById('statusText');
+    const flash = document.getElementById('flash');
+    const canvas = document.getElementById('game');
+
+    const storage = {
+      read(key, fallback) {
+        try {
+          const value = window.localStorage.getItem(key);
+          return value === null ? fallback : Number(value);
+        } catch (_) {
+          return fallback;
+        }
+      },
+      write(key, value) {
+        try { window.localStorage.setItem(key, String(value)); } catch (_) {}
+      }
+    };
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function mulberry32(seed) {
+      return function random() {
+        let t = seed += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+
+    function nextGateHeight(random, index) {
+      const wave = Math.sin(index * 0.92) * 1.85;
+      const jitter = (random() - 0.5) * 4.2;
+      return clamp(wave + jitter, -3.9, 4.6);
+    }
+
+    function circleRectHit(circle, rect) {
+      const nearestX = clamp(circle.x, rect.left, rect.right);
+      const nearestY = clamp(circle.y, rect.bottom, rect.top);
+      const dx = circle.x - nearestX;
+      const dy = circle.y - nearestY;
+      return dx * dx + dy * dy <= circle.radius * circle.radius;
+    }
+
+    function hitsGate(bird, gate, gap) {
+      const halfW = CONFIG.pipeWidth / 2;
+      const halfGap = gap / 2;
+      const gateBounds = {
+        left: gate.x - halfW,
+        right: gate.x + halfW,
+        lowerTop: gate.gapY - halfGap,
+        upperBottom: gate.gapY + halfGap
+      };
+      const upper = { left: gateBounds.left, right: gateBounds.right, bottom: gateBounds.upperBottom, top: 14 };
+      const lower = { left: gateBounds.left, right: gateBounds.right, bottom: -14, top: gateBounds.lowerTop };
+      return circleRectHit(bird, upper) || circleRectHit(bird, lower);
+    }
+
+    function runLogicSelfTest() {
+      const clearBird = { x: 0, y: 0, radius: 0.7 };
+      const gate = { x: 0, gapY: 0 };
+      const hitBird = { x: 0, y: 4, radius: 0.7 };
+      console.assert(hitsGate(clearBird, gate, 5) === false, 'Bird in the gap should be safe');
+      console.assert(hitsGate(hitBird, gate, 5) === true, 'Bird overlapping upper vine should collide');
+      console.assert(nextGateHeight(() => 0.5, 2) <= 4.6, 'Gate height remains bounded');
+    }
+    runLogicSelfTest();
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x9bdcf6, 0.028);
+
+    const camera = new THREE.PerspectiveCamera(54, window.innerWidth / window.innerHeight, 0.1, 140);
+    camera.position.set(0, 2.2, 18);
+    camera.lookAt(0, 0.9, 0);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.18;
+
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x4e78a8, 2.7);
+    scene.add(hemi);
+
+    const sun = new THREE.DirectionalLight(0xfff2d7, 3.1);
+    sun.position.set(-6, 12, 9);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.left = -22;
+    sun.shadow.camera.right = 22;
+    sun.shadow.camera.top = 18;
+    sun.shadow.camera.bottom = -18;
+    scene.add(sun);
+
+    const fill = new THREE.PointLight(0x7be3ff, 2.4, 38);
+    fill.position.set(8, 5, 10);
+    scene.add(fill);
+
+    const materials = {
+      bird: new THREE.MeshStandardMaterial({ color: 0xffd166, roughness: 0.42, metalness: 0.04 }),
+      belly: new THREE.MeshStandardMaterial({ color: 0xfff2c7, roughness: 0.56 }),
+      wing: new THREE.MeshStandardMaterial({ color: 0xff6f61, roughness: 0.46 }),
+      eye: new THREE.MeshStandardMaterial({ color: 0x17152a, roughness: 0.2 }),
+      beak: new THREE.MeshStandardMaterial({ color: 0xff8b3d, roughness: 0.5 }),
+      vine: new THREE.MeshStandardMaterial({ color: 0x2ec4b6, roughness: 0.72, metalness: 0.02 }),
+      vineDark: new THREE.MeshStandardMaterial({ color: 0x238f91, roughness: 0.78 }),
+      flower: new THREE.MeshStandardMaterial({ color: 0xff6f91, roughness: 0.6 }),
+      cloud: new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.72, roughness: 0.35 }),
+      water: new THREE.MeshStandardMaterial({ color: 0x42b9f5, transparent: true, opacity: 0.66, roughness: 0.22, metalness: 0.1 }),
+      ring: new THREE.MeshStandardMaterial({ color: 0xffd166, emissive: 0xff9f1c, emissiveIntensity: 0.22, roughness: 0.38 })
+    };
+
+    function makeBird() {
+      const group = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.SphereGeometry(0.72, 40, 26), materials.bird);
+      body.scale.set(1.05, 0.88, 0.95);
+      body.castShadow = true;
+      group.add(body);
+
+      const belly = new THREE.Mesh(new THREE.SphereGeometry(0.43, 28, 18), materials.belly);
+      belly.position.set(0.18, -0.18, 0.52);
+      belly.scale.set(0.9, 0.72, 0.33);
+      group.add(belly);
+
+      const beak = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.72, 4), materials.beak);
+      beak.rotation.z = -Math.PI / 2;
+      beak.position.set(0.78, 0.05, 0.05);
+      beak.castShadow = true;
+      group.add(beak);
+
+      for (const z of [-0.3, 0.3]) {
+        const eye = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 10), materials.eye);
+        eye.position.set(0.58, 0.24, z);
+        group.add(eye);
+      }
+
+      const wingGeo = new THREE.CapsuleGeometry(0.17, 0.86, 8, 18);
+      const leftWing = new THREE.Mesh(wingGeo, materials.wing);
+      leftWing.name = 'leftWing';
+      leftWing.position.set(-0.08, -0.04, 0.78);
+      leftWing.rotation.set(0.85, 0, -0.42);
+      leftWing.castShadow = true;
+      group.add(leftWing);
+
+      const rightWing = new THREE.Mesh(wingGeo, materials.wing);
+      rightWing.name = 'rightWing';
+      rightWing.position.set(-0.08, -0.04, -0.78);
+      rightWing.rotation.set(-0.85, 0, -0.42);
+      rightWing.castShadow = true;
+      group.add(rightWing);
+
+      group.position.set(-4.8, 0.4, 0);
+      return group;
+    }
+
+    function makeGate() {
+      const group = new THREE.Group();
+      const top = new THREE.Mesh(new THREE.BoxGeometry(CONFIG.pipeWidth, 10, CONFIG.pipeDepth), materials.vine);
+      top.name = 'top';
+      top.castShadow = true;
+      top.receiveShadow = true;
+      const bottom = top.clone();
+      bottom.name = 'bottom';
+      const topCap = new THREE.Mesh(new THREE.TorusGeometry(1.1, 0.13, 12, 42), materials.ring);
+      topCap.name = 'topCap';
+      topCap.rotation.x = Math.PI / 2;
+      const bottomCap = topCap.clone();
+      bottomCap.name = 'bottomCap';
+      const spiral = new THREE.Mesh(new THREE.TorusKnotGeometry(0.48, 0.035, 46, 8), materials.vineDark);
+      spiral.name = 'spiral';
+      spiral.scale.set(1.2, 2.35, 1.2);
+      const flower = new THREE.Mesh(new THREE.DodecahedronGeometry(0.25, 0), materials.flower);
+      flower.name = 'flower';
+      flower.position.set(0.88, 0, 1.76);
+      group.add(top, bottom, topCap, bottomCap, spiral, flower);
+      return group;
+    }
+
+    function setGateGeometry(gate, x, gapY, gap) {
+      const halfGap = gap / 2;
+      gate.position.x = x;
+      gate.userData.x = x;
+      gate.userData.gapY = gapY;
+      gate.getObjectByName('top').position.y = gapY + halfGap + 5;
+      gate.getObjectByName('bottom').position.y = gapY - halfGap - 5;
+      gate.getObjectByName('topCap').position.y = gapY + halfGap;
+      gate.getObjectByName('bottomCap').position.y = gapY - halfGap;
+      gate.getObjectByName('spiral').position.y = gapY + halfGap + 0.7;
+      gate.getObjectByName('flower').position.y = gapY + halfGap + 1.2;
+      gate.userData.scored = false;
+    }
+
+    function makeCloud(seed) {
+      const random = mulberry32(seed);
+      const cloud = new THREE.Group();
+      const lumps = 4 + Math.floor(random() * 4);
+      for (let i = 0; i < lumps; i++) {
+        const lump = new THREE.Mesh(new THREE.SphereGeometry(1, 18, 12), materials.cloud);
+        lump.position.set((random() - 0.5) * 3.2, (random() - 0.5) * 0.72, (random() - 0.5) * 0.85);
+        const s = 0.5 + random() * 0.75;
+        lump.scale.set(s * 1.45, s * 0.78, s);
+        lump.receiveShadow = true;
+        cloud.add(lump);
+      }
+      cloud.position.set((random() - 0.5) * 42, 4 + random() * 5.2, -8 - random() * 35);
+      cloud.userData.speed = 0.35 + random() * 0.55;
+      cloud.userData.homeZ = cloud.position.z;
+      return cloud;
+    }
+
+    const bird = makeBird();
+    scene.add(bird);
+
+    const water = new THREE.Mesh(new THREE.PlaneGeometry(150, 42, 42, 10), materials.water);
+    water.rotation.x = -Math.PI / 2;
+    water.position.set(0, CONFIG.bottomBound - 0.75, -10);
+    water.receiveShadow = true;
+    scene.add(water);
+
+    const horizon = new THREE.Mesh(new THREE.TorusGeometry(26, 0.035, 8, 120), materials.ring);
+    horizon.position.set(5, 0.8, -36);
+    horizon.scale.y = 0.22;
+    scene.add(horizon);
+
+    const gates = Array.from({ length: CONFIG.pipeCount }, () => makeGate());
+    gates.forEach(gate => scene.add(gate));
+
+    const clouds = Array.from({ length: 18 }, (_, i) => makeCloud(900 + i * 97));
+    clouds.forEach(cloud => scene.add(cloud));
+
+    const state = {
+      mode: 'menu',
+      gentle: false,
+      birdY: 0.5,
+      velocity: 0,
+      score: 0,
+      best: storage.read('skyweave-best', 0) || 0,
+      speed: CONFIG.baseSpeed,
+      random: mulberry32(42),
+      nextGateIndex: 0,
+      elapsed: 0,
+      shake: 0
+    };
+
+    bestEl.textContent = state.best;
+
+    function currentGap() {
+      return state.gentle ? CONFIG.gapGentle : CONFIG.gapNormal;
+    }
+
+    function resetGates() {
+      state.random = mulberry32(Date.now() % 1000000 || 42);
+      state.nextGateIndex = 0;
+      gates.forEach((gate, i) => {
+        setGateGeometry(gate, CONFIG.pipeStartX + i * CONFIG.pipeSpacing, nextGateHeight(state.random, state.nextGateIndex++), currentGap());
+      });
+    }
+
+    function resetRun(gentle = false) {
+      state.mode = 'playing';
+      state.gentle = gentle;
+      state.birdY = 0.6;
+      state.velocity = CONFIG.flapImpulse * 0.62;
+      state.score = 0;
+      state.speed = gentle ? CONFIG.baseSpeed * 0.84 : CONFIG.baseSpeed;
+      state.elapsed = 0;
+      state.shake = 0;
+      scoreEl.textContent = '0';
+      statusText.textContent = gentle ? 'Gentle mode is on' : 'Keep weaving';
+      panel.classList.add('hidden');
+      resetGates();
+      flapVisual();
+      canvas.focus({ preventScroll: true });
+    }
+
+    function showMenu() {
+      state.mode = 'menu';
+      panelEyebrow.textContent = 'Ready to fly';
+      panelTitle.textContent = 'Thread the sky.';
+      panelText.textContent = 'Press space, click, or tap to flap. Glide through the glowing vine hoops without touching them or the waterline.';
+      primaryButton.textContent = 'Start flight';
+      statusText.textContent = 'Flap to begin';
+      panel.classList.remove('hidden');
+    }
+
+    function gameOver() {
+      if (state.mode !== 'playing') return;
+      state.mode = 'over';
+      state.shake = 0.42;
+      const newBest = state.score > state.best;
+      if (newBest) {
+        state.best = state.score;
+        storage.write('skyweave-best', state.best);
+        bestEl.textContent = state.best;
+      }
+      panelEyebrow.textContent = state.score > 0 ? 'Flight ended' : 'Splash landing';
+      panelTitle.textContent = newBest ? 'New best!' : `${state.score} gates`;
+      panelText.textContent = state.score === 0
+        ? 'That first vine was rude. Try an earlier flap and keep the bird centered in the opening.'
+        : `You cleared ${state.score} ${state.score === 1 ? 'gate' : 'gates'}. Restart to chase a cleaner line through the cloud corridor.`;
+      primaryButton.textContent = 'Restart flight';
+      statusText.textContent = 'Restart when ready';
+      panel.classList.remove('hidden');
+      flash.classList.add('on');
+      setTimeout(() => flash.classList.remove('on'), 60);
+    }
+
+    function flapVisual() {
+      const leftWing = bird.getObjectByName('leftWing');
+      const rightWing = bird.getObjectByName('rightWing');
+      leftWing.rotation.z = -1.05;
+      rightWing.rotation.z = -1.05;
+    }
+
+    function flap() {
+      if (state.mode === 'menu') {
+        resetRun(false);
+        return;
+      }
+      if (state.mode === 'over') {
+        resetRun(state.gentle);
+        return;
+      }
+      state.velocity = CONFIG.flapImpulse;
+      flapVisual();
+    }
+
+    function updateBird(dt) {
+      state.velocity = Math.max(CONFIG.maxFallSpeed, state.velocity + CONFIG.gravity * dt);
+      state.birdY += state.velocity * dt;
+      bird.position.y = state.birdY;
+      bird.rotation.z = clamp(state.velocity / 14, -0.92, 0.56);
+      bird.rotation.y = Math.sin(state.elapsed * 5) * 0.08;
+      const relax = Math.min(1, dt * 12);
+      const leftWing = bird.getObjectByName('leftWing');
+      const rightWing = bird.getObjectByName('rightWing');
+      leftWing.rotation.z += (-0.42 - leftWing.rotation.z) * relax;
+      rightWing.rotation.z += (-0.42 - rightWing.rotation.z) * relax;
+      leftWing.rotation.x = 0.85 + Math.sin(state.elapsed * 18) * 0.08;
+      rightWing.rotation.x = -0.85 - Math.sin(state.elapsed * 18) * 0.08;
+    }
+
+    function recycleGate(gate) {
+      const farthest = gates.reduce((max, item) => Math.max(max, item.position.x), -Infinity);
+      setGateGeometry(gate, farthest + CONFIG.pipeSpacing, nextGateHeight(state.random, state.nextGateIndex++), currentGap());
+    }
+
+    function updateGates(dt) {
+      const birdCircle = { x: bird.position.x, y: state.birdY, radius: CONFIG.birdRadius };
+      for (const gate of gates) {
+        gate.position.x -= state.speed * dt;
+        gate.userData.x = gate.position.x;
+        gate.rotation.y = Math.sin(state.elapsed * 0.9 + gate.position.x) * 0.035;
+        gate.getObjectByName('topCap').rotation.z += dt * 0.8;
+        gate.getObjectByName('bottomCap').rotation.z -= dt * 0.8;
+        gate.getObjectByName('flower').rotation.y += dt * 1.8;
+
+        if (!gate.userData.scored && gate.position.x + CONFIG.pipeWidth / 2 < bird.position.x - CONFIG.birdRadius) {
+          gate.userData.scored = true;
+          state.score += 1;
+          scoreEl.textContent = state.score;
+          state.speed += state.gentle ? 0.06 : 0.11;
+          statusText.textContent = state.score % 5 === 0 ? 'Nice rhythm' : 'Clean gate';
+        }
+
+        if (hitsGate(birdCircle, gate.userData, currentGap())) gameOver();
+        if (gate.position.x < -16) recycleGate(gate);
+      }
+    }
+
+    function updateScenery(dt) {
+      water.material.opacity = 0.6 + Math.sin(state.elapsed * 1.7) * 0.04;
+      water.position.x = Math.sin(state.elapsed * 0.2) * 1.5;
+      horizon.rotation.z += dt * 0.025;
+      for (const cloud of clouds) {
+        cloud.position.x -= (state.speed * 0.12 + cloud.userData.speed) * dt;
+        cloud.rotation.y += dt * 0.035;
+        if (cloud.position.x < -28) cloud.position.x = 29 + Math.random() * 8;
+      }
+    }
+
+    function updateCamera(dt) {
+      const targetY = 2.2 + clamp(state.birdY * 0.18, -0.9, 1.1);
+      camera.position.y += (targetY - camera.position.y) * Math.min(1, dt * 2.5);
+      if (state.shake > 0) {
+        state.shake = Math.max(0, state.shake - dt);
+        camera.position.x = (Math.random() - 0.5) * state.shake * 0.7;
+      } else {
+        camera.position.x += (0 - camera.position.x) * Math.min(1, dt * 4);
+      }
+      camera.lookAt(-0.8, 0.6, 0);
+    }
+
+    let last = performance.now();
+    function animate(now) {
+      const dt = Math.min(0.033, (now - last) / 1000 || 0.016);
+      last = now;
+      state.elapsed += dt;
+
+      if (state.mode === 'playing') {
+        updateBird(dt);
+        updateGates(dt);
+        if (state.birdY > CONFIG.topBound || state.birdY < CONFIG.bottomBound) gameOver();
+      } else {
+        bird.position.y = state.birdY + Math.sin(state.elapsed * 2.6) * 0.18;
+        bird.rotation.z = Math.sin(state.elapsed * 2.3) * 0.16;
+        bird.getObjectByName('leftWing').rotation.z = -0.42 + Math.sin(state.elapsed * 8) * 0.22;
+        bird.getObjectByName('rightWing').rotation.z = -0.42 + Math.sin(state.elapsed * 8) * 0.22;
+      }
+
+      updateScenery(dt);
+      updateCamera(dt);
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    function resize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function handleKey(event) {
+      if (event.code === 'Space' || event.code === 'ArrowUp' || event.code === 'KeyW') {
+        event.preventDefault();
+        flap();
+      }
+      if (event.code === 'Escape' && state.mode !== 'playing') showMenu();
+    }
+
+    primaryButton.addEventListener('click', () => resetRun(false));
+    practiceButton.addEventListener('click', () => resetRun(true));
+    window.addEventListener('keydown', handleKey);
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('pointerdown', event => {
+      event.preventDefault();
+      flap();
+    });
+
+    resetGates();
+    showMenu();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
