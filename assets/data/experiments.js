@@ -102,6 +102,10 @@ window.EXPERIMENTS = [
                         url: "https://openrouter.ai/z-ai/glm-5.1#benchmarks",
                     },
                     {
+                        label: "ZAI",
+                        href: "https://chat.z.ai/",
+                    },
+                    {
                         label: "OpenCode",
                         url: "https://opencode.ai",
                     },
@@ -131,6 +135,10 @@ window.EXPERIMENTS = [
                         url: "https://openrouter.ai/z-ai/glm-5.1#benchmarks",
                     },
                     {
+                        label: "ZAI",
+                        href: "https://chat.z.ai/",
+                    },
+                    {
                         label: "Pi",
                         url: "https://pi.dev/",
                     },
@@ -157,6 +165,10 @@ window.EXPERIMENTS = [
                     {
                         label: "Benchmarks",
                         url: "https://openrouter.ai/z-ai/glm-5.1#benchmarks",
+                    },
+                    {
+                        label: "ZAI",
+                        href: "https://chat.z.ai/",
                     },
                     {
                         label: "Pi",
@@ -487,6 +499,10 @@ window.EXPERIMENTS = [
                 agent: "Codex",
                 plugins: ["Browser"],
                 links: [
+                    {
+                        label: "Benchmarks",
+                        url: "https://openrouter.ai/openai/gpt-5.5#benchmarks",
+                    },
                     {
                         label: "Codex",
                         url: "https://openai.com/codex/",
