@@ -30,75 +30,188 @@
       <p>Each contender lives in its own <code>MODEL_NAME/</code> folder containing the
         result HTML, a <code>SPEC.md</code> (params, for comparing) and a
         <code>JOURNEY.md</code> (thinking process). Markdown opens in the in-browser viewer.</p>
-      <ul>
-        <li><strong>Baseline · <span class="mono">fable-5</span> —</strong>
-          <span class="mono">claude-fable-5</span>, no Fabled skill. Delivered (36/36 assertions, ~$2.30 est.).<br />
-          <a href="fable-5/index.html">Result →</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Ffable-5%2FSPEC.md">SPEC.md</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Ffable-5%2FJOURNEY.md">JOURNEY.md</a></li>
-        <li><strong>Challenger · variant <span class="mono">glm-5-1-fabled</span></strong> — <span class="mono">glm-5.1</span> + <span class="mono">Fabled</span> skill on <span class="mono">Pi</span>.
-          Delivered (72,086 assertions, ~$0.73).<br />
-          <a href="glm-5-1-fabled/index.html">Result →</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled%2FSPEC.md">SPEC.md</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled%2FJOURNEY.md">JOURNEY.md</a></li>
-        <li><strong>Challenger · variant <span class="mono">gpt-5-5-codex-fabled</span></strong> — gpt-5.5 + Fabled skill on Codex. Delivered (browser-verified, 0 page errors, 0 console errors).<br />
-          <a href="gpt-5-5-codex-fabled/index.html">Result →</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex-fabled%2FSPEC.md">SPEC.md</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex-fabled%2FJOURNEY.md">JOURNEY.md</a></li>
-        <li><strong>Challenger · variant <span class="mono">gpt-5-5-pi-fabled</span></strong> — <span class="mono">gpt-5.5</span> + <span class="mono">Fabled</span> skill on <span class="mono">Pi</span>. Delivered an HTTP-verified playable single-file Three.js build (≈173k total tokens, $0.516; 216.149 s / ~3.6 min active wall-clock).<br />
-          <a href="gpt-5-5-pi-fabled/index.html">Result →</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi-fabled%2FSPEC.md">SPEC.md</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi-fabled%2FJOURNEY.md">JOURNEY.md</a></li>
-        <li><strong>Challenger · variant <span class="mono">glm-5-1-fabled-oc</span></strong> — <span class="mono">glm-5.1</span> + <span class="mono">Fabled</span> skill on <span class="mono">OpenCode</span>.
-          <strong>Failed</strong> — GLM-5.1 stream closed in a ~60 s loop, no deliverable.<br />
-          <a href="glm-5-1-fabled-oc/index.html">Result →</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2FSPEC.md">SPEC.md</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2FJOURNEY.md">JOURNEY.md</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2Fresult%2FREPORT.md">REPORT.md</a></li>
-        <li><strong>Control · variant <span class="mono">glm-5-1-pi</span></strong> — <span class="mono">glm-5.1</span> on <span class="mono">Pi</span> with <strong>no Fabled skill</strong>, to isolate what Fabled adds.
-          Delivered (browser-verified, 0 console errors, ~$0.50).<br />
-          <a href="glm-5-1-pi/index.html">Result →</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-pi%2FSPEC.md">SPEC.md</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-pi%2FJOURNEY.md">JOURNEY.md</a></li>
-        <li><strong>Control · variant <span class="mono">gpt-5-5-codex</span></strong> — gpt-5.5 on Codex with <strong>no Fabled skill</strong>. Delivered (browser-verified, score reached 3, 3,019,341 total tokens, ~20.7 min wall time, $5.28, 0 final browser errors).<br />
-          <a href="gpt-5-5-codex/index.html">Result →</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex%2FSPEC.md">SPEC.md</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex%2FJOURNEY.md">JOURNEY.md</a>
-        </li>
-        <li><strong>Control · variant <span class="mono">gpt-5-5-pi</span></strong> — gpt-5.5 on Pi with <strong>no Fabled skill</strong>. Delivered a browser-verified multi-file Skythread Three.js build (≈287.2k total tokens, $0.730; 209.731 s / ~3.5 min active wall-clock).<br />
-          <a href="gpt-5-5-pi/index.html">Result →</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi%2FSPEC.md">SPEC.md</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi%2FJOURNEY.md">JOURNEY.md</a>
-        </li>
-        <li><strong>Challenger · variant <span class="mono">gpt-5-mini-gh-pi-fabled</span></strong> — <span class="mono">gpt-5-mini</span> + <span class="mono">Fabled</span> skill on <span class="mono">Pi</span> (accessed via GitHub Copilot). Delivered a single-file Three.js game (78,402 tokens, ~$0.03, ~2.1 min active); <strong>static-trace verification only</strong> — not run in a browser, and needed a corrective 2nd turn to write the file.<br />
-          <a href="gpt-5-mini-gh-pi-fabled/index.html">Result →</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi-fabled%2FSPEC.md">SPEC.md</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi-fabled%2FJOURNEY.md">JOURNEY.md</a></li>
-        <li><strong>Control · variant <span class="mono">gemma-4-26b-a4b-it-mlx-8bit-pi</span></strong> — <span class="mono">gemma-4-26B-A4B-it-MLX-8bit</span> (local on-device, MLX 8-bit) on <span class="mono">Pi</span> with <strong>no Fabled skill</strong>. Delivered (caveat) a multi-file Three.js + Vite 3D Flappy Bird that <span class="mono">vite build</span> compiles to a static <span class="mono">dist/</span> (610,997 total tokens / 606,084 in · 4,913 out, $0 local, ~9.8 min / 591s wall incl. a ~5.5min <span class="mono">npx vite</span> hang; 4 prompts). <strong>Not browser-verified</strong>; absolute <span class="mono">/assets</span> paths mean <span class="mono">file://</span> won't load, so a static server is still required.<br />
-          <a href="gemma-4-26b-a4b-it-mlx-8bit-pi/index.html">Result →</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi%2FSPEC.md">SPEC.md</a> ·
-          <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi%2FJOURNEY.md">JOURNEY.md</a></li>
-      </ul>
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <caption>16 contenders · 1 baseline · 8 challengers · 7 controls. Columns mirror the four comparison quadrants noted below: cost, running time, outcome (delivered vs. failed), and total tokens.</caption>
+          <thead>
+            <tr>
+              <th>Variant</th>
+              <th>Setup (model · skill · agent)</th>
+              <th class="num">Tokens</th>
+              <th class="num">Cost</th>
+              <th class="num">Time</th>
+              <th class="num">Prompts</th>
+              <th>Outcome</th>
+              <th>Links</th>
+            </tr>
+          </thead>
+          <tbody>
+        <tr class="row--baseline">
+          <td><span class="role-badge">Baseline</span><br /><span class="variant-name mono">fable-5</span></td>
+          <td>claude-fable-5 · — skill · Claude Chat (Web)</td>
+          <td class="num">~180,000 total (est.)</td>
+          <td class="num">~$10-18 (est.)</td>
+          <td class="num">~5 min (est.)</td>
+          <td class="num">1</td>
+          <td>Delivered — 36/36 logic assertions pass</td>
+          <td><div class="variant-links"><a href="fable-5/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Ffable-5%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Ffable-5%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+        <tr class="row--challenger row--failed">
+          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">glm-5-1-fabled-oc</span></td>
+          <td>glm-5.1 · fabled skill · OpenCode</td>
+          <td class="num">not logged</td>
+          <td class="num">n/a</td>
+          <td class="num">n/a (aborted)</td>
+          <td class="num">1 + recovery loop</td>
+          <td class="outcome--failed">Failed — stream closed in a loop, no deliverable</td>
+          <td><div class="variant-links"><a href="glm-5-1-fabled-oc/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2FJOURNEY.md">JOURNEY</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2Fresult%2FREPORT.md">REPORT</a></div></td>
+        </tr>
+        <tr class="row--control">
+          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">glm-5-1-pi</span></td>
+          <td>glm-5.1 · — skill · Pi</td>
+          <td class="num">~316,000 total (31k in · 19k out · 267k cache)</td>
+          <td class="num">~$0.50</td>
+          <td class="num">~7.6 min</td>
+          <td class="num">1</td>
+          <td>Delivered — single-file 3D Flappy Bird, browser-verified</td>
+          <td><div class="variant-links"><a href="glm-5-1-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-pi%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+        <tr class="row--challenger">
+          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">glm-5-1-fabled</span></td>
+          <td>glm-5.1 · fabled skill · Pi</td>
+          <td class="num">~449,000 total (40k in · 34k out · 374k cache)</td>
+          <td class="num">~$0.73</td>
+          <td class="num">~8.3 min</td>
+          <td class="num">1</td>
+          <td>Delivered — 72,086 logic assertions pass, Gate B clean</td>
+          <td><div class="variant-links"><a href="glm-5-1-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+        <tr class="row--control">
+          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">qwen3.6-35b-a3b-ud-mlx-4bit-pi</span></td>
+          <td>qwen3.6-35b-a3b-ud-mlx-4bit · — skill · Pi</td>
+          <td class="num">139,363 total (130,806 in · 8,557 out)</td>
+          <td class="num">$0 (local)</td>
+          <td class="num">~2.6 min (158s)</td>
+          <td class="num">2</td>
+          <td>Delivered — single-file build; one-line bug-fix turn resolved</td>
+          <td><div class="variant-links"><a href="qwen3.6-35b-a3b-ud-mlx-4bit-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+        <tr class="row--challenger row--failed">
+          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">qwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled</span></td>
+          <td>qwen3.6-35b-a3b-ud-mlx-4bit · fabled skill · Pi</td>
+          <td class="num">506,052 total (474,880 in · 31,172 out)</td>
+          <td class="num">$0 (local)</td>
+          <td class="num">~13.3 min (796s)</td>
+          <td class="num">3</td>
+          <td class="outcome--failed">Failed — built but unplayable across 3 prompts; never browser-verified</td>
+          <td><div class="variant-links"><a href="qwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled%2FJOURNEY.md">JOURNEY</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled%2Fresult%2FREPORT.md">REPORT</a></div></td>
+        </tr>
+        <tr class="row--control">
+          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">gemma-4-26b-a4b-it-mlx-8bit-pi</span></td>
+          <td>gemma-4-26B-A4B-it-MLX-8bit · — skill · Pi</td>
+          <td class="num">610,997 total (606,084 in · 4,913 out)</td>
+          <td class="num">$0 (local)</td>
+          <td class="num">~9.8 min (591s)</td>
+          <td class="num">4</td>
+          <td>Delivered (caveat) — multi-file Vite build, NOT browser-verified</td>
+          <td><div class="variant-links"><a href="gemma-4-26b-a4b-it-mlx-8bit-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+        <tr class="row--challenger">
+          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">gemma-4-26b-a4b-it-mlx-8bit-pi-fabled</span></td>
+          <td>gemma-4-26B-A4B-it-MLX-8bit · fabled skill · Pi</td>
+          <td class="num">843,823 total (822,446 in · 21,377 out)</td>
+          <td class="num">$0 (local)</td>
+          <td class="num">~24.7 min (1,483s)</td>
+          <td class="num">6</td>
+          <td>Delivered (caveat) — single-file build, correct only after 3 corrections, NOT browser-verified</td>
+          <td><div class="variant-links"><a href="gemma-4-26b-a4b-it-mlx-8bit-pi-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi-fabled%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+        <tr class="row--control row--failed">
+          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">gpt-5-mini-gh-pi</span></td>
+          <td>gpt-5-mini · — skill · Pi (Copilot)</td>
+          <td class="num">2,073,066 total (118k in · 42k out · 1,912,960 cache)</td>
+          <td class="num">$0.1615</td>
+          <td class="num">~7.8 min (470s)</td>
+          <td class="num">8</td>
+          <td class="outcome--failed">Failed — developer aborted after unresolved browser errors</td>
+          <td><div class="variant-links"><a href="gpt-5-mini-gh-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi%2FJOURNEY.md">JOURNEY</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi%2Fresult%2FREPORT.md">REPORT</a></div></td>
+        </tr>
+        <tr class="row--challenger">
+          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">gpt-5-mini-gh-pi-fabled</span></td>
+          <td>gpt-5-mini · fabled skill · Pi (Copilot)</td>
+          <td class="num">78,402 total (16,185 in · 14,345 out · 47,872 cache)</td>
+          <td class="num">$0.0339</td>
+          <td class="num">~2.1 min (127s)</td>
+          <td class="num">2</td>
+          <td>Delivered — single-file build, static-trace verification only</td>
+          <td><div class="variant-links"><a href="gpt-5-mini-gh-pi-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi-fabled%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+        <tr class="row--control">
+          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">gpt-5-5-pi</span></td>
+          <td>gpt-5.5 · — skill · Pi (frontend-design, agent-browser)</td>
+          <td class="num">~287,200 total (76k in · 8.2k out · 203k cache)</td>
+          <td class="num">$0.730</td>
+          <td class="num">~3.5 min (209.731s)</td>
+          <td class="num">1</td>
+          <td>Delivered — browser-verified multi-file Three.js build</td>
+          <td><div class="variant-links"><a href="gpt-5-5-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+        <tr class="row--challenger">
+          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">gpt-5-5-pi-fabled</span></td>
+          <td>gpt-5.5 · fabled skill · Pi (frontend-design)</td>
+          <td class="num">~173,000 total (29k in · 10k out · 134k cache)</td>
+          <td class="num">$0.516</td>
+          <td class="num">~3.6 min (216.149s)</td>
+          <td class="num">1</td>
+          <td>Delivered — HTTP-verified playable single-file Three.js build</td>
+          <td><div class="variant-links"><a href="gpt-5-5-pi-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi-fabled%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+        <tr class="row--control">
+          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">gpt-5-5-no-omo-codex</span></td>
+          <td>gpt-5.5 · — skill · Codex (Browser)</td>
+          <td class="num">1,101,243 total (1,085,773 in · 15,470 out · 945,024 cache)</td>
+          <td class="num">~$3.0</td>
+          <td class="num">7m 29s</td>
+          <td class="num">1</td>
+          <td>Delivered — Skyline Flap static web game, Chrome-render verified</td>
+          <td><div class="variant-links"><a href="gpt-5-5-no-omo-codex/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-no-omo-codex%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-no-omo-codex%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+        <tr class="row--challenger">
+          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">gpt-5-5-no-omo-codex-fabled</span></td>
+          <td>gpt-5.5 · fabled skill · Codex (Browser)</td>
+          <td class="num">2,758,095 total (2.73M in · 25,186 out · 2.56M cache · 3,599 reasoning)</td>
+          <td class="num">~$4.82</td>
+          <td class="num">~17m 48s</td>
+          <td class="num">1</td>
+          <td>Delivered — browser-verified 3D Flappy Bird w/ logic tests + screenshots</td>
+          <td><div class="variant-links"><a href="gpt-5-5-no-omo-codex-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-no-omo-codex-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-no-omo-codex-fabled%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+        <tr class="row--control">
+          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">gpt-5-5-codex</span></td>
+          <td>gpt-5.5 · — skill · Codex (OMO)</td>
+          <td class="num">3,019,341 total (2.99M in · 27,753 out · 2.80M cache · 4,048 reasoning)</td>
+          <td class="num">$5.28</td>
+          <td class="num">~20.7 min (1,243.1s)</td>
+          <td class="num">1</td>
+          <td>Delivered — browser-verified, score reached 3, 0 final browser errors</td>
+          <td><div class="variant-links"><a href="gpt-5-5-codex/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+        <tr class="row--challenger">
+          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">gpt-5-5-codex-fabled</span></td>
+          <td>gpt-5.5 · fabled skill · Codex (OMO)</td>
+          <td class="num">196,410 total (178k in · 18,373 out · 1,146,624 cache · 2,625 reasoning)</td>
+          <td class="num">$2.87</td>
+          <td class="num">~34 min (&gt;=1,980s)</td>
+          <td class="num">1</td>
+          <td>Delivered — browser-verified, no page or console errors</td>
+          <td><div class="variant-links"><a href="gpt-5-5-codex-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex-fabled%2FJOURNEY.md">JOURNEY</a></div></td>
+        </tr>
+          </tbody>
+        </table>
+      </div>
 
       <h2>Result</h2>
-      <p>Both runnable builds shipped a complete single-file 3D Flappy Bird with a pure logic/render
-        split and passing assertions. The <span class="mono">Fabled</span> challenger on Pi delivered for
-        <strong>~$0.73</strong> against the baseline's estimated <strong>~$2.30</strong>, with far more
-        assertions (72,086 vs 36) — though the baseline's cost bundles plan-derivation the skill provides for
-        free, so read it as indicative, not a clean ledger. The same GLM-5.1 + Fabled combination on
-        <strong>OpenCode failed</strong>: the stream closed roughly every 60 s in a loop and produced no
-        deliverable — full analysis in its
-        <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2Fresult%2FREPORT.md">REPORT.md</a>.
-        The <strong>control</strong> (<span class="mono">glm-5-1-pi</span>) ran the same model/agent with no Fabled skill:
-        it shipped a single polished file verified directly in a real browser (0 console errors) for
-        <strong>~$0.50</strong> in ~7.6 min, but skipped the logic/render split and 72k-assertion test
-        suite the skill drove — making the delta the value of the skill itself.
-        The <strong>Codex challenger</strong> (<span class="mono">gpt-5-5-codex-fabled</span>) shipped the same prompt as a single-file Three.js game, verified through local Chrome with no page or console errors; it used 196,410 total tokens plus 1,146,624 cached tokens for $2.874655 exact ($2.87 rounded). Exact return time was not recorded; the checked lower bound is 33m56s.
-        The <strong>Codex control</strong> (gpt-5-5-codex) shipped a browser-verified Three.js build with score reaching 3, 3,019,341 total tokens, 1,243.055 s wall time, and $5.27709 calculated cost.
-        The <strong>Pi gpt-5.5 + Fabled challenger</strong> (<span class="mono">gpt-5-5-pi-fabled</span>) shipped a polished Skyweave Flap single-file Three.js build with keyboard/click/touch controls, gentle mode, persistent best score, inline logic self-checks, and local HTTP verification; recorded metrics were ~173k total tokens, $0.516, and 216.149 s (~3.6 min) active wall-clock from the Pi session log.
-        The <strong>Pi gpt-5.5 control</strong> (<span class="mono">gpt-5-5-pi</span>) shipped the Skythread multi-file Three.js build with browser smoke testing and a saved screenshot; build-only metrics were ~287.2k total tokens, $0.730, and 209.731 s (~3.5 min) active wall-clock.
-        The <strong>gpt-5-mini + Fabled challenger</strong> (<span class="mono">gpt-5-mini-gh-pi-fabled</span>) is the cheapest delivered run in exp-01 — 78,402 tokens, $0.0339, ~2.1 min active — and followed the full Fabled process (contracts, no placeholders, evidence-backed checklist). Caveats: turn 1 emitted the code as chat text without writing the file (fixed by a nudge), and Phase 4 ran as a static trace (Mode A), so the artifact was not executed in a browser.
-        Overall winner: <em>tbd</em>.</p>
+      <p>tbd</p>
     </section>
   </main>
 </body>

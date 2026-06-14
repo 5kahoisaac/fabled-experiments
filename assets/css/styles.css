@@ -366,6 +366,7 @@ main > section:last-child { padding-bottom: var(--space-section); }
   border-bottom: 2px solid var(--challenger);
   transition: gap var(--duration) var(--ease);
 }
+.doc-section { padding-top: 0; }
 .doc-link:hover { gap: 0.8rem; }
 .doc-link .arrow { transition: transform var(--duration) var(--ease); }
 .doc-link:hover .arrow { transform: translateX(3px); }
