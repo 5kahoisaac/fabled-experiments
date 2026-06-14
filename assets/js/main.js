@@ -173,7 +173,7 @@
         : "") +
       "</div>" +
       (exp.notes
-        ? '<p class="exp__notes">' + esc(exp.notes) + "</p>"
+        ? '<div class="exp__notes">' + exp.notes + "</div>"
         : "") +
       "</article>"
     );

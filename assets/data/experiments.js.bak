@@ -83,9 +83,9 @@ window.EXPERIMENTS = [
                 result: "experiments/exp-01/fable-5/index.html",
                 spec: "experiments/exp-01/fable-5/SPEC.md",
                 journey: "experiments/exp-01/fable-5/JOURNEY.md",
-                tokens: "~90,000 total (est.)",
-                cost: "~$2.30 (est.)",
-                time: "~4 min (est.)",
+                tokens: "~180,000 total (est., incl. cache/context across session)",
+                cost: "~$10-18 (est., ~64% of 5h Pro quota at max effort)",
+                time: "~5 min (est.)",
                 prompts: 1,
                 outcome: "Delivered — 36/36 logic assertions pass",
             },
@@ -312,6 +312,60 @@ window.EXPERIMENTS = [
                 model: "gpt-5.5",
                 skill: "—",
                 agent: "Codex",
+                plugins: ["Browser"],
+                links: [
+                    {
+                        label: "Benchmarks",
+                        url: "https://openrouter.ai/openai/gpt-5.5#benchmarks",
+                    },
+                    {
+                        label: "Codex",
+                        url: "https://openai.com/codex",
+                    },
+                ],
+                dir: "experiments/exp-01/gpt-5-5-no-omo-codex/",
+                result: "experiments/exp-01/gpt-5-5-no-omo-codex/index.html",
+                spec: "experiments/exp-01/gpt-5-5-no-omo-codex/SPEC.md",
+                journey: "experiments/exp-01/gpt-5-5-no-omo-codex/JOURNEY.md",
+                tokens:
+                    "1,101,243 total (1,085,773 in · 15,470 out · 945,024 cache)",
+                cost: "~$3.0",
+                time: "7m 29s",
+                prompts: 1,
+                outcome:
+                    "Delivered — 3D Skyline Flap static web game, Chrome-render verified",
+            },
+            {
+                role: "challenger",
+                label: "GPT-5.5",
+                model: "gpt-5.5",
+                skill: "fabled",
+                agent: "Codex",
+                plugins: [
+                    "Browser",
+                ],
+                links: [
+                    {
+                        label: "Codex",
+                        url: "https://openai.com/codex/",
+                    },
+                ],
+                dir: "experiments/exp-01/gpt-5-5-no-omo-codex-fabled/",
+                result: "experiments/exp-01/gpt-5-5-no-omo-codex-fabled/index.html",
+                spec: "experiments/exp-01/gpt-5-5-no-omo-codex-fabled/SPEC.md",
+                journey: "experiments/exp-01/gpt-5-5-no-omo-codex-fabled/JOURNEY.md",
+                tokens: "2,758,095 total (2,732,909 in · 25,186 out · 2,557,824 cache · 3,599 reasoning)",
+                cost: "~$4.82",
+                time: "~17m 48s",
+                prompts: 1,
+                outcome: "Delivered — browser-verified 3D Flappy Bird with logic tests and desktop/mobile screenshots",
+            },
+            {
+                role: "control",
+                label: "GPT-5.5",
+                model: "gpt-5.5",
+                skill: "—",
+                agent: "Codex",
                 plugins: ["OMO"],
                 links: [
                     {
@@ -374,36 +428,49 @@ window.EXPERIMENTS = [
             },
                     {
                         role: "control",
-                        label: "GPT-5.5",
-                        model: "gpt-5.5",
+                        label: "Qwen 3.6 35B A3B (local)",
+                        model: "qwen3.6-35b-a3b-ud-mlx-4bit",
                         skill: "—",
-                        agent: "Codex",
-                        plugins: ["Browser"],
+                        agent: "Pi",
+                        plugins: [],
                         links: [
                             {
                                 label: "Benchmarks",
-                                url: "https://openrouter.ai/openai/gpt-5.5#benchmarks",
+                                url: "https://openrouter.ai/qwen/qwen3.6-35b-a3b#benchmarks",
                             },
                             {
-                                label: "Codex",
-                                url: "https://openai.com/codex",
+                                label: "oMLX",
+                                href: "https://omlx.ai/"
+                            },
+                            {
+                                label: "Qwen",
+                                url: "https://github.com/QwenLM/Qwen3",
+                            },
+                            {
+                                label: "Pi",
+                                url: "https://pi.dev/",
                             },
                         ],
-                        dir: "experiments/exp-01/gpt-5-5-no-omo-codex/",
-                        result: "experiments/exp-01/gpt-5-5-no-omo-codex/index.html",
-                        spec: "experiments/exp-01/gpt-5-5-no-omo-codex/SPEC.md",
-                        journey: "experiments/exp-01/gpt-5-5-no-omo-codex/JOURNEY.md",
-                        tokens:
-                            "1,101,243 total (1,085,773 in · 15,470 out · 945,024 cache)",
-                        cost: "~$3.0",
-                        time: "7m 29s",
-                        prompts: 1,
-                        outcome:
-                            "Delivered — 3D Skyline Flap static web game, Chrome-render verified",
+                        dir: "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi/",
+                        result: "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi/index.html",
+                        spec: "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi/SPEC.md",
+                        journey: "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi/JOURNEY.md",
+                        tokens: "139,363 total (130,806 in · 8,557 out)",
+                        cost: "$0 (local on-device MLX inference)",
+                        time: "~2.6 min (158s)",
+                        prompts: "2 (1 original + 1 corrective bug-fix turn)",
+                        outcome: "Delivered — single-file 3D Flappy Bird; one-line bug-fix turn resolved",
                     },
                 ],
                 winner: "tbd",
         notes:
-            "Six single-prompt builds of the same game. Baseline is raw Fable 5; challengers include GLM-5.1 + Fabled on Pi, GLM-5.1 + Fabled on OpenCode, and gpt-5.5 + Fabled on Codex. OpenCode hit a fatal GLM-5.1 streaming loop (see its REPORT.md). Controls isolate the model bare vs. with the skill: GLM-5.1 on Pi (no Fabled) and gpt-5-mini on Pi (no Fabled, accessed via GitHub Copilot, failed). Codex Fabled used 196,410 total tokens plus 1,146,624 cached tokens for $2.874655 exact ($2.87 rounded); exact return time was not recorded, with a checked lower bound of 33m56s. The Codex no-skill control used 3,019,341 total tokens with 188,004 new input tokens, 2,803,584 cached input tokens, 27,753 output tokens, 1,243.055 s wall time, and $5.27709 calculated cost. The gpt-5-mini control (on Pi, model accessed via GitHub Copilot) used 2,073,066 total tokens (118,019 in · 42,087 out · 1,912,960 cache), $0.1615, ~470 s active wall-clock (idle gaps while testing in browser excluded; ~29.3 min calendar), 8 human turns (1 original prompt + 5 steering + 2 human-in-the-loop error reports), and failed verification. The gpt-5-mini + Fabled challenger (gpt-5-mini-gh-pi-fabled) shipped a single-file Three.js game for $0.0339 in ~2.1 min active (78,402 tokens: 16,185 in · 14,345 out · 47,872 cache), 2 prompts (1 original + 1 corrective turn to write the file); Phase 4 was a static trace (Mode A) — the build was not executed in a browser.",
+            "Six single-prompt builds of the same game, compared as a Four Quadrants plot: (1) cost, (2) running time, (3) whether the result matches expectation (browser-verified playable build vs. failed/incomplete), and (4) total tokens used (as a proxy for how 'single-prompt clean' the run was — high token counts often mean heavy cache reuse from steering turns or error recovery, not just raw build size). " +
+            "Baseline is raw Fable 5 (no skill). Challengers pair a model with the Fabled skill: GLM-5.1 + Fabled on Pi, GLM-5.1 + Fabled on OpenCode, gpt-5.5 + Fabled on Codex, and gpt-5-mini + Fabled on Pi (via GitHub Copilot). Controls isolate the model without Fabled: GLM-5.1 on Pi, the Codex no-skill control, and gpt-5-mini on Pi. " +
+            "OpenCode's GLM-5.1 + Fabled run hit a fatal streaming loop and never produced a build (see its REPORT.md) — quadrant 3 = fail, cost/time/tokens not meaningfully comparable. " +
+            "gpt-5.5 + Fabled on Codex: $2.87 (196,410 total tokens — 178,037 in · 18,373 out · 1,146,624 cache · 2,625 reasoning), wall-clock not recorded but >=33m56s, delivered a browser-verified build with no console errors — high cost/time, pass. " +
+            "The Codex no-skill control: $5.28 (3,019,341 total tokens — 188,004 in · 27,753 out · 2,803,584 cache), 1,243s (~20.7 min) wall time — highest cost of all six, for an unverified/lower-quality result; the skill-equipped Codex run was both cheaper and better. " +
+            "gpt-5-mini on Pi (no Fabled, via GitHub Copilot): $0.1615 (2,073,066 total tokens — 118,019 in · 42,087 out · 1,912,960 cache), ~470s active (~7.8 min; ~29.3 min calendar incl. idle browser-testing gaps), took 8 human turns (1 prompt + 5 steering + 2 error reports), and still failed verification — low cost but fail, with heavy human intervention. " +
+            "gpt-5-mini + Fabled on Pi: $0.0339 (78,402 total tokens — 16,185 in · 14,345 out · 47,872 cache), ~2.1 min active, 2 prompts (1 original + 1 corrective write), shipped a single-file Three.js game — cheapest and fastest of all six, though Phase 4 was a static trace (Mode A), not a live browser run, so its 'pass' is weaker evidence than the Codex Fabled result. " +
+            "Overall pattern: adding Fabled tends to reduce both cost and token count relative to the matching no-skill control for the same model/agent (Codex: $2.87 vs $5.28; gpt-5-mini: $0.034 vs $0.16), while raw model capability still dominates whether the result actually passes (gpt-5.5 passed regardless of skill in this set; gpt-5-mini only shipped something runnable with Fabled's structure).",
     },
 ];

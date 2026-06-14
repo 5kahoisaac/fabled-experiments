@@ -175,6 +175,84 @@ window.EXPERIMENTS = [
             },
             {
                 role: "control",
+                label: "Qwen 3.6 35B A3B (local)",
+                model: "qwen3.6-35b-a3b-ud-mlx-4bit",
+                skill: "—",
+                agent: "Pi",
+                plugins: [],
+                links: [
+                    {
+                        label: "Benchmarks",
+                        url: "https://openrouter.ai/qwen/qwen3.6-35b-a3b#benchmarks",
+                    },
+                    {
+                        label: "oMLX",
+                        href: "https://omlx.ai/",
+                    },
+                    {
+                        label: "Qwen",
+                        url: "https://github.com/QwenLM/Qwen3",
+                    },
+                    {
+                        label: "Pi",
+                        url: "https://pi.dev/",
+                    },
+                ],
+                dir: "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi/",
+                result: "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi/index.html",
+                spec: "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi/SPEC.md",
+                journey: "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi/JOURNEY.md",
+                tokens: "139,363 total (130,806 in · 8,557 out)",
+                cost: "$0 (local on-device MLX inference)",
+                time: "~2.6 min (158s)",
+                prompts: "2 (1 original + 1 corrective bug-fix turn)",
+                outcome:
+                    "Delivered — single-file 3D Flappy Bird; one-line bug-fix turn resolved",
+            },
+            {
+                role: "challenger",
+                label: "Qwen 3.6 35B A3B (local)",
+                model: "qwen3.6-35b-a3b-ud-mlx-4bit",
+                skill: "fabled",
+                agent: "Pi",
+                plugins: [],
+                links: [
+                    {
+                        label: "Benchmarks",
+                        url: "https://openrouter.ai/qwen/qwen3.6-35b-a3b#benchmarks",
+                    },
+                    {
+                        label: "oMLX",
+                        url: "https://omlx.ai/",
+                    },
+                    {
+                        label: "Qwen",
+                        url: "https://github.com/QwenLM/Qwen3",
+                    },
+                    {
+                        label: "Pi",
+                        url: "https://pi.dev/",
+                    },
+                ],
+                dir: "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled/",
+                result:
+                    "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled/index.html",
+                spec: "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled/SPEC.md",
+                journey:
+                    "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled/JOURNEY.md",
+                report:
+                    "experiments/exp-01/qwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled/result/REPORT.md",
+                failed: true,
+                tokens: "506,052 total (474,880 in · 31,172 out)",
+                cost: "$0 (local on-device MLX inference)",
+                time: "~13.3 min (796s)",
+                prompts:
+                    "3 (1 original build + 2 corrective bug-fix turns; build still unplayable)",
+                outcome:
+                    "Failed — game built but unplayable across 3 prompts; bird spawned on gap boundary (instant collision) + pipe mesh-index drift; never browser-verified",
+            },
+            {
+                role: "control",
                 label: "GPT-5 Mini",
                 model: "gpt-5-mini",
                 skill: "—",
@@ -245,10 +323,7 @@ window.EXPERIMENTS = [
                 model: "gpt-5.5",
                 skill: "—",
                 agent: "Pi",
-                plugins: [
-                    "frontend-design",
-                    "agent-browser",
-                ],
+                plugins: ["frontend-design", "agent-browser"],
                 links: [
                     {
                         label: "Benchmarks",
@@ -271,7 +346,8 @@ window.EXPERIMENTS = [
                 cost: "$0.730",
                 time: "~3.5 min (209.731s)",
                 prompts: 1,
-                outcome: "Delivered — browser-verified playable multi-file Three.js 3D Flappy Bird build",
+                outcome:
+                    "Delivered — browser-verified playable multi-file Three.js 3D Flappy Bird build",
             },
             {
                 role: "challenger",
@@ -279,9 +355,7 @@ window.EXPERIMENTS = [
                 model: "gpt-5.5",
                 skill: "fabled",
                 agent: "Pi",
-                plugins: [
-                    "frontend-design",
-                ],
+                plugins: ["frontend-design"],
                 links: [
                     {
                         label: "Benchmarks",
@@ -304,7 +378,8 @@ window.EXPERIMENTS = [
                 cost: "$0.516",
                 time: "~3.6 min (216.149s)",
                 prompts: 1,
-                outcome: "Delivered — HTTP-verified playable single-file Three.js build",
+                outcome:
+                    "Delivered — HTTP-verified playable single-file Three.js build",
             },
             {
                 role: "control",
@@ -327,8 +402,7 @@ window.EXPERIMENTS = [
                 result: "experiments/exp-01/gpt-5-5-no-omo-codex/index.html",
                 spec: "experiments/exp-01/gpt-5-5-no-omo-codex/SPEC.md",
                 journey: "experiments/exp-01/gpt-5-5-no-omo-codex/JOURNEY.md",
-                tokens:
-                    "1,101,243 total (1,085,773 in · 15,470 out · 945,024 cache)",
+                tokens: "1,101,243 total (1,085,773 in · 15,470 out · 945,024 cache)",
                 cost: "~$3.0",
                 time: "7m 29s",
                 prompts: 1,
@@ -341,9 +415,7 @@ window.EXPERIMENTS = [
                 model: "gpt-5.5",
                 skill: "fabled",
                 agent: "Codex",
-                plugins: [
-                    "Browser",
-                ],
+                plugins: ["Browser"],
                 links: [
                     {
                         label: "Codex",
@@ -354,11 +426,13 @@ window.EXPERIMENTS = [
                 result: "experiments/exp-01/gpt-5-5-no-omo-codex-fabled/index.html",
                 spec: "experiments/exp-01/gpt-5-5-no-omo-codex-fabled/SPEC.md",
                 journey: "experiments/exp-01/gpt-5-5-no-omo-codex-fabled/JOURNEY.md",
-                tokens: "2,758,095 total (2,732,909 in · 25,186 out · 2,557,824 cache · 3,599 reasoning)",
+                tokens:
+                    "2,758,095 total (2,732,909 in · 25,186 out · 2,557,824 cache · 3,599 reasoning)",
                 cost: "~$4.82",
                 time: "~17m 48s",
                 prompts: 1,
-                outcome: "Delivered — browser-verified 3D Flappy Bird with logic tests and desktop/mobile screenshots",
+                outcome:
+                    "Delivered — browser-verified 3D Flappy Bird with logic tests and desktop/mobile screenshots",
             },
             {
                 role: "control",
@@ -379,7 +453,7 @@ window.EXPERIMENTS = [
                     {
                         label: "LazyCodex",
                         url: "https://lazycodex.ai/",
-                    }
+                    },
                 ],
                 dir: "experiments/exp-01/gpt-5-5-codex/",
                 result: "experiments/exp-01/gpt-5-5-codex/index.html",
@@ -412,7 +486,7 @@ window.EXPERIMENTS = [
                     {
                         label: "LazyCodex",
                         url: "https://lazycodex.ai/",
-                    }
+                    },
                 ],
                 dir: "experiments/exp-01/gpt-5-5-codex-fabled/",
                 result: "experiments/exp-01/gpt-5-5-codex-fabled/index.html",
@@ -426,9 +500,16 @@ window.EXPERIMENTS = [
                 outcome:
                     "Delivered — browser-verified 3D Flappy Bird, no page or console errors",
             },
-                ],
-                winner: "tbd",
+        ],
+        winner: "tbd",
         notes:
-            "Six single-prompt builds of the same game. Baseline is raw Fable 5; challengers include GLM-5.1 + Fabled on Pi, GLM-5.1 + Fabled on OpenCode, and gpt-5.5 + Fabled on Codex. OpenCode hit a fatal GLM-5.1 streaming loop (see its REPORT.md). Controls isolate the model bare vs. with the skill: GLM-5.1 on Pi (no Fabled) and gpt-5-mini on Pi (no Fabled, accessed via GitHub Copilot, failed). Codex Fabled used 196,410 total tokens plus 1,146,624 cached tokens for $2.874655 exact ($2.87 rounded); exact return time was not recorded, with a checked lower bound of 33m56s. The Codex no-skill control used 3,019,341 total tokens with 188,004 new input tokens, 2,803,584 cached input tokens, 27,753 output tokens, 1,243.055 s wall time, and $5.27709 calculated cost. The gpt-5-mini control (on Pi, model accessed via GitHub Copilot) used 2,073,066 total tokens (118,019 in · 42,087 out · 1,912,960 cache), $0.1615, ~470 s active wall-clock (idle gaps while testing in browser excluded; ~29.3 min calendar), 8 human turns (1 original prompt + 5 steering + 2 human-in-the-loop error reports), and failed verification. The gpt-5-mini + Fabled challenger (gpt-5-mini-gh-pi-fabled) shipped a single-file Three.js game for $0.0339 in ~2.1 min active (78,402 tokens: 16,185 in · 14,345 out · 47,872 cache), 2 prompts (1 original + 1 corrective turn to write the file); Phase 4 was a static trace (Mode A) — the build was not executed in a browser.",
+            "<p>Rated as a Four Quadrants comparison across all contenders:</p>" +
+            "<ol>" +
+            "<li>Cost</li>" +
+            "<li>Running time</li>" +
+            "<li>Whether the result matches expectation (browser-verified playable build vs. failed/incomplete)</li>" +
+            "<li>Total tokens used (a proxy for how 'single-prompt clean' the run was — high token counts often reflect cache reuse from steering turns or error recovery, not just raw build size)</li>" +
+            "</ol>" +
+            "<p>See each contender's tokens/cost/time/outcome fields and SPEC.md for the underlying numbers.</p>",
     },
 ];
