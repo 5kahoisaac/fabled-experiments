@@ -4,7 +4,7 @@
 
 | Field | Value |
 | --- | --- |
-| Model | `gpt-5.5-codex` |
+| Model | `gpt-5.5` |
 | Skill | `—` |
 | Agent | Codex |
 | Role | control |

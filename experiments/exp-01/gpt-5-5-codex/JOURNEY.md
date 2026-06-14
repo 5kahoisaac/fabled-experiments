@@ -2,7 +2,7 @@
 
 ## Setup recap
 
-- **Model**: `gpt-5.5-codex`
+- **Model**: `gpt-5.5`
 - **Skill**: `—`
 - **Agent**: Codex
 - **Variant**: `gpt-5-5-codex`

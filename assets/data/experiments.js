@@ -242,7 +242,7 @@ window.EXPERIMENTS = [
             {
                 role: "control",
                 label: "GPT-5.5",
-                model: "gpt-5.5-codex",
+                model: "gpt-5.5",
                 skill: "—",
                 agent: "Codex",
                 plugins: ["OMO"],
@@ -271,7 +271,7 @@ window.EXPERIMENTS = [
             {
                 role: "challenger",
                 label: "GPT-5.5",
-                model: "gpt-5.5-codex",
+                model: "gpt-5.5",
                 skill: "fabled",
                 agent: "Codex",
                 plugins: ["OMO"],
@@ -300,6 +300,6 @@ window.EXPERIMENTS = [
         ],
         winner: "tbd",
         notes:
-            "Six single-prompt builds of the same game. Baseline is raw Fable 5; challengers include GLM-5.1 + Fabled on Pi, GLM-5.1 + Fabled on OpenCode, and gpt-5.5-codex + Fabled on Codex. OpenCode hit a fatal GLM-5.1 streaming loop (see its REPORT.md). Controls isolate the model bare vs. with the skill: GLM-5.1 on Pi (no Fabled) and gpt-5-mini on Pi (no Fabled, accessed via GitHub Copilot, failed). Codex Fabled used 196,410 total tokens plus 1,146,624 cached tokens for $2.874655 exact ($2.87 rounded); exact return time was not recorded, with a checked lower bound of 33m56s. The Codex no-skill control used 3,019,341 total tokens with 188,004 new input tokens, 2,803,584 cached input tokens, 27,753 output tokens, 1,243.055 s wall time, and $5.27709 calculated cost. The gpt-5-mini control (on Pi, model accessed via GitHub Copilot) used 2,073,066 total tokens (118,019 in · 42,087 out · 1,912,960 cache), $0.1615, ~470 s active wall-clock (idle gaps while testing in browser excluded; ~29.3 min calendar), 8 human turns (1 original prompt + 5 steering + 2 human-in-the-loop error reports), and failed verification. The gpt-5-mini + Fabled challenger (gpt-5-mini-gh-pi-fabled) shipped a single-file Three.js game for $0.0339 in ~2.1 min active (78,402 tokens: 16,185 in · 14,345 out · 47,872 cache), 2 prompts (1 original + 1 corrective turn to write the file); Phase 4 was a static trace (Mode A) — the build was not executed in a browser.",
+            "Six single-prompt builds of the same game. Baseline is raw Fable 5; challengers include GLM-5.1 + Fabled on Pi, GLM-5.1 + Fabled on OpenCode, and gpt-5.5 + Fabled on Codex. OpenCode hit a fatal GLM-5.1 streaming loop (see its REPORT.md). Controls isolate the model bare vs. with the skill: GLM-5.1 on Pi (no Fabled) and gpt-5-mini on Pi (no Fabled, accessed via GitHub Copilot, failed). Codex Fabled used 196,410 total tokens plus 1,146,624 cached tokens for $2.874655 exact ($2.87 rounded); exact return time was not recorded, with a checked lower bound of 33m56s. The Codex no-skill control used 3,019,341 total tokens with 188,004 new input tokens, 2,803,584 cached input tokens, 27,753 output tokens, 1,243.055 s wall time, and $5.27709 calculated cost. The gpt-5-mini control (on Pi, model accessed via GitHub Copilot) used 2,073,066 total tokens (118,019 in · 42,087 out · 1,912,960 cache), $0.1615, ~470 s active wall-clock (idle gaps while testing in browser excluded; ~29.3 min calendar), 8 human turns (1 original prompt + 5 steering + 2 human-in-the-loop error reports), and failed verification. The gpt-5-mini + Fabled challenger (gpt-5-mini-gh-pi-fabled) shipped a single-file Three.js game for $0.0339 in ~2.1 min active (78,402 tokens: 16,185 in · 14,345 out · 47,872 cache), 2 prompts (1 original + 1 corrective turn to write the file); Phase 4 was a static trace (Mode A) — the build was not executed in a browser.",
     },
 ];

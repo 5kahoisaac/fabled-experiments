@@ -2,7 +2,7 @@
 
 ## Setup recap
 
-- **Model**: `gpt-5.5-codex`
+- **Model**: `gpt-5.5`
 - **Skill**: `fabled`
 - **Agent**: Codex
 - **Variant**: `gpt-5-5-codex-fabled`
@@ -23,4 +23,4 @@
 
 ## Takeaway
 
-`gpt-5.5-codex` with the `fabled` skill produced a complete playable 3D Flappy Bird in a single HTML file, then verified it through the actual browser surface rather than stopping at static checks.
+`gpt-5.5` with the `fabled` skill produced a complete playable 3D Flappy Bird in a single HTML file, then verified it through the actual browser surface rather than stopping at static checks.
