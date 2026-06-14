@@ -580,6 +580,6 @@ window.EXPERIMENTS = [
             "<li>Whether the result matches expectation (browser-verified playable build vs. failed/incomplete)</li>" +
             "<li>Total tokens used (a proxy for how 'single-prompt clean' the run was — high token counts often reflect cache reuse from steering turns or error recovery, not just raw build size)</li>" +
             "</ol>" +
-            "<p>See each contender's tokens/cost/time/outcome fields and SPEC.md for the underlying numbers.</p>",
+            "<p>See each contender's tokens/cost/time/outcome fields and <code>SPEC.md</code> for the underlying numbers.</p>",
     },
 ];
