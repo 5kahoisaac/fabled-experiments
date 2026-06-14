@@ -187,12 +187,15 @@
     var builds = experiments.reduce(function (n, e) {
       return n + (e.contenders ? (e.contenders.filter(c => !c.failed)).length : 0);
     }, 0);
+    var failed = experiments.reduce(function (n, e) {
+      return n + (e.contenders ? (e.contenders.filter(c => c.failed)).length : 0);
+    }, 0);
 
     var stats = [
       [total, total === 1 ? "Experiment" : "Experiments"],
-      [builds, "Project builds"],
       [ready, "Ready to view"],
-      ["1", "Prompt each"],
+      [builds, "Success builds"],
+      [failed, "Failure builds"],
     ];
 
     return stats
