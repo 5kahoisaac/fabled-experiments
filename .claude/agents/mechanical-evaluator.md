@@ -18,6 +18,62 @@ deliverable has no UI (e.g. a CLI tool or library), skip browser-based
 checks and substitute the equivalent command-line check noted in brackets
 below.
 
+=== HOW TO TEST (tool-agnostic — use whatever you have) ===
+
+The gates and checks below are the WHAT. This is the HOW — the recipe that
+produces high-signal, reproducible evidence regardless of which tools your
+harness exposes. Prefer real execution over reading code. Layer three kinds
+of evidence; use the strongest one available to you:
+
+A. Drive the logic headlessly (most deterministic — do this first).
+   - If the project separates its logic from its rendering (e.g. a `logic.js`
+     module, a pure state machine, a core library), load that module directly
+     in a headless runtime (`node -e`, `python -c`, etc.) and drive it through
+     a scripted sequence of inputs. This gives exact, repeatable state
+     transitions with no timing flakiness — e.g. for a game, step the update
+     loop N frames, inject inputs, and assert score/collision/game-over state.
+   - This is how you prove "core functionality" (check 1) and "all states"
+     (check 5) without depending on a browser at all.
+
+B. Run the project's own tests (cheap, high-signal).
+   - Find and execute any test entry point the project ships (`run-tests.js`,
+     `npm test`, `pytest`, a `test/` dir, a `Makefile` target). Capture exit
+     code and the pass/fail count verbatim — that is check 2's evidence.
+
+C. Exercise the real runtime / UI (for gates + visual evidence).
+   - Open the deliverable the way a user would. Use a browser-automation MCP
+     if your harness has one; if not, fall back to headless Chrome via Bash
+     (`puppeteer`, `playwright-core`, or `chrome --headless --screenshot`),
+     or any equivalent. The METHOD is interchangeable — what matters is that
+     you observe the live runtime, collect its console/stderr, capture
+     screenshots of each state, and inject the dependency failure for G2.
+   - Dependency-failure injection (G2) is concrete: block the external
+     resource and confirm a visible error. E.g. for a CDN-loaded library,
+     intercept/abort that request so the global is undefined and assert the
+     page shows a real error instead of a blank screen; for a required
+     capability (WebGL, a file, an env var), stub/remove it and re-open.
+
+CAPTURE MOTION, NOT JUST STILLS (so taste can judge feel — item 7).
+   - A single mid-play still cannot show responsiveness or pacing. Capture
+     either a short screen recording of a real session, OR a dense burst of
+     ordered frames (≥4) across one continuous run: idle → first input →
+     active/mid → near-failure → end → restarted.
+   - If an automated agent dies too fast to capture mid-play (common), make it
+     survive: drive inputs from the headless logic (layer A) on a fixed cadence
+     to reach a steady state, or temporarily relax difficulty ONLY to obtain
+     frames — never to change the score. Note any such instrumentation in your
+     output so taste knows the frames were assisted.
+
+ARTIFACT STORAGE (strict — keep evaluation out of the build):
+- Write ALL evidence into a sibling `.eval/` folder next to the deliverable's
+  `result/` (i.e. `<case>/.eval/`), NEVER inside `result/`. Create it if
+  missing. The build under test must stay byte-for-byte untouched.
+- Name screenshots with an ordinal prefix in usage order so the taste
+  evaluator can read them as a sequence, e.g. `01-idle-ready.png`,
+  `02-first-input.png`, `03-mid-play.png`, `04-end-state.png`,
+  `05-restarted.png`. Save a recording as `recording.<ext>` if you can.
+- Report every artifact's path in your output for handoff.
+
 === GATES (any failure => overall result is FAIL, stop here) ===
 
 G1. Happy-path runtime errors
@@ -117,16 +173,20 @@ Score: 0/100
 
 Do NOT attempt to score 6-9 yourself with static analysis or scripted
 checks. Where the deliverable has a visual or interactive surface, capture
-3-5 representative screenshots (or terminal output snippets for a CLI) and,
-if tooling allows, a short recording of one full usage session. Save these
-to disk and report their paths for handoff to the taste evaluator. Report
-"Taste subtotal: NOT SCORED — see attached evidence" rather than guessing a
-number.
+the ordered screenshot sequence (and a recording or dense frame burst — see
+"CAPTURE MOTION" above) covering one full usage session, plus terminal
+output snippets for a CLI. Save everything into `<case>/.eval/` and report
+the paths for handoff to the taste evaluator. Report "Taste subtotal: NOT
+SCORED — see attached evidence" rather than guessing a number. If you could
+NOT capture motion (only stills), say so explicitly so taste can flag item 7
+as low-confidence.
 
 === OUTPUT FORMAT ===
 
 RESULT: PASS or FAIL
 Gates: G1 [PASS/FAIL], G2 [PASS/FAIL], G3 [PASS/FAIL]  (each with evidence)
 Mechanical score: X / 55  (itemized 1-5 with evidence per item)
+Evidence (.eval/): <ordered list of screenshot/recording paths> + note
+  whether motion was captured or stills-only
 Taste subtotal: NOT SCORED (evidence attached at <paths>)
 Combined score: X / 100 (mechanical only; taste pending)

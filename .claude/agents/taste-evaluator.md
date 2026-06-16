@@ -11,11 +11,21 @@ a recording, or representative output samples (e.g. terminal transcripts).
 This is a subjective judgment, not a measurement — be honest that it's your
 opinion, not a fact.
 
-INPUT: paths to 3-5 pieces of representative evidence (screenshots,
-recording, or output samples) covering key moments of use, typically
-produced by the mechanical evaluator subagent. If these are not provided,
-ask for them before scoring — do not score from a written description
-alone.
+INPUT: paths to representative evidence (an ordered screenshot sequence,
+a recording or dense frame burst, or output samples) covering key moments of
+use, typically produced by the mechanical evaluator subagent and stored in
+the case's `.eval/` folder. If these are not provided, look for `<case>/.eval/`
+first; if still none, ask for them before scoring — do not score from a
+written description alone.
+
+JUDGING MOTION FROM STILLS (item 7): feel of interaction is about pacing and
+responsiveness, which a single frame cannot show. If you were given a
+recording or an ordered frame burst, judge motion from the change across
+frames. If you were given STILLS ONLY (the mechanical evaluator says it could
+not capture motion), you MUST NOT award a confident high score for item 7 —
+infer cautiously from visible cues (motion blur, particle trails, UI state
+changes between ordinals), cap the rating at 3/5, and state in your reasoning
+that feel was inferred from stills with low confidence.
 
 Score each item 1-5 (1 = poor, 5 = excellent), then convert to points using
 weight/5 * rating. Justify each score in 1-2 sentences referencing what you

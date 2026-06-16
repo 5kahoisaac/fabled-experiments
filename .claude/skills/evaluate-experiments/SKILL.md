@@ -23,14 +23,45 @@ experiments/
     <case>/                       # one contender (model/agent variant)
       SPEC.md                     # Identity table — has the Role (baseline / contender)
       JOURNEY.md
-      result/                     # the built game — what gets evaluated
+      result/                     # the built game — what gets evaluated (READ-ONLY)
         index.html | flappy-bird-3d.html | <other>.html
+      .eval/                      # ← evidence the agents capture (screenshots, recording)
+        01-idle-ready.png … 05-restarted.png | recording.<ext>
       EVALUATION.md               # ← THIS SKILL WRITES THIS
     index.html                    # experiment write-up (NOT a contender, skip)
 ```
 
 `exp-*` may be `exp-01`, `exp-02`, … — always glob `experiments/exp-*/`, never
 hardcode one.
+
+## Testing methodology (the part that makes scores trustworthy)
+
+This is the recipe that produced the reference fable-5 evaluation. It is
+**tool-agnostic** — the `mechanical-evaluator` agent owns the details, but the
+orchestrator must know the shape so it can hand off correctly and so any coding
+agent (not just one with a browser MCP) can reproduce it. Three layers of
+evidence, strongest first:
+
+1. **Drive the logic headlessly.** If the build separates logic from rendering
+   (e.g. `logic.js` / a pure state machine), load it in `node`/`python` and
+   step it through a scripted input sequence. Deterministic, no timing flake —
+   this is the spine of "core functionality" and "all states" evidence.
+2. **Run the project's own tests.** Execute whatever it ships (`run-tests.js`,
+   `npm test`, `pytest`, …) and capture exit code + pass count verbatim.
+3. **Exercise the real runtime for gates + visuals.** A browser-automation MCP
+   if available, else headless Chrome via Bash (`puppeteer`, `playwright-core`,
+   `chrome --headless`). Collect console/stderr, capture an **ordered**
+   screenshot sequence, and **inject a dependency failure** (block the CDN/lib,
+   stub WebGL, remove a required file) to prove the G2 fallback.
+
+**Capture motion, not just stills.** Item 7 (feel) needs pacing evidence. Get a
+short recording or a dense ordered frame burst across one run. If the automated
+player dies too fast for a mid-play frame, drive inputs from the headless logic
+to reach a steady state — never alter the score. Stills-only runs cap item 7's
+confidence (the taste agent enforces this).
+
+**Evidence lives in `<case>/.eval/`, never in `result/`.** The build under test
+stays byte-for-byte untouched; only `.eval/` and `EVALUATION.md` are written.
 
 ## Procedure
 
@@ -105,4 +136,5 @@ If multiple `exp-*` folders were processed, give one leaderboard per experiment.
   output. "Looks fine" with no output is not an acceptable score line — reflect
   that faithfully rather than inflating.
 - **Don't touch `result/`.** Evaluation is read-only against the contender's
-  build; only `EVALUATION.md` is created/updated.
+  build; only `EVALUATION.md` and the sibling `.eval/` evidence folder are
+  created/updated. Never write screenshots or scratch files into `result/`.
