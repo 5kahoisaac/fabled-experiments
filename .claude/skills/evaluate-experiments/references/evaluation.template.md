@@ -11,8 +11,8 @@
 
 ## Result
 
-**RESULT: {{PASS \| FAIL}}**
-**Combined score: {{N}}/100**  (Mechanical {{X}}/55 + Taste {{Y}}/45)
+**RESULT: {{PASS \| PASS-WITH-DEFECTS \| FAIL}}**
+**Combined score: {{N}}/100**  (Mechanical {{X}}/55 + Taste {{Y}}/45 − gate penalty {{P}})
 
 ## Gates (mechanical-evaluator)
 
@@ -22,8 +22,9 @@
 | G2 — failure fallback (no blank page) | {{PASS/FAIL}} | {{exact output}} |
 | G3 — zero placeholders/stubs | {{PASS/FAIL}} | {{exact output}} |
 
-> If any gate FAILED, score is 0/100 and taste was not run. List the failed
-> gate(s) above and stop here.
+> If any gate FAILED, it is a penalty (G1 −8, G3 −7, G2 −5), NOT a zero — taste
+> is still scored and the project still gets a combined score. List the failed
+> gate(s) above with their penalties, and continue to the scored sections below.
 
 ## Mechanical checks — {{X}}/55
 

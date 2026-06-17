@@ -8,12 +8,28 @@ description: Evaluate experiment results by running the mechanical-evaluator and
 Orchestrates the two project evaluator agents over every contender in each
 experiment, writes a per-contender `EVALUATION.md`, and produces a leaderboard.
 
-- **`mechanical-evaluator`** — runs gates (G1 console errors, G2 failure
+- **`mechanical-evaluator`** — checks gates (G1 console errors, G2 failure
   fallback, G3 no placeholders) then scored mechanical checks 1–5. Owns the
   mechanical subtotal (**/55**) and captures the screenshots/recording.
 - **`taste-evaluator`** — scores visual/feel items 6–9 (**/45**) from those
   screenshots/recording. Subjective, n=1.
-- **Combined = /100.**
+- **Combined = max(0, Mechanical/55 + Taste/45 − gate penalties), out of 100.**
+
+**Gates are penalties, not kill-switches.** A failed gate means the build is a
+bit imperfect, not unplayable — so it deducts a modest fixed penalty and the
+project is **still fully scored, taste included**. Whether the game actually
+works is already captured by mechanical check 1 (core functionality), so a
+genuinely broken build scores low on its own without a gate having to zero it.
+
+| Failed gate | Penalty | Why this weight |
+|-------------|---------|-----------------|
+| G1 — runtime errors on the happy path | −8 | worst: errors during normal play |
+| G3 — placeholders / stubs | −7 | incomplete delivery |
+| G2 — no failure fallback (blank dead-end) | −5 | least: only bites when a dependency fails |
+
+`RESULT` is `PASS` (all gates pass), `PASS-WITH-DEFECTS` (≥1 gate failed but the
+project was scored), or `FAIL` (reserved for a non-build — no entry HTML — which
+scores 0).
 
 ## Layout this skill assumes
 
@@ -92,16 +108,20 @@ independent — evaluate several in parallel where the environment allows, but d
 1. Launch `mechanical-evaluator` (subagent_type `mechanical-evaluator`). Pass
    the **absolute path to the entry file**, e.g.
    `experiments/exp-01/fable-5/result/flappy-bird-3d.html`. It returns:
-   - `RESULT: PASS|FAIL`, the three gate verdicts with evidence,
+   - the three gate verdicts with evidence (PASS/FAIL each — **a failed gate is
+     a penalty, never a stop**),
    - mechanical score `X/55` itemized,
    - paths to the captured screenshots (idle, mid-play, near-collision,
      end-of-run) and the ~15s recording.
-2. If the mechanical result is **FAIL** (a gate failed), the combined score is
-   **0/100** — do **not** run taste scoring. Record the failed gate(s).
-3. If **PASS**, launch `taste-evaluator` (subagent_type `taste-evaluator`) with
-   the screenshot/recording paths from step 1. It returns items 6–9 and the
-   taste subtotal `Y/45`.
-4. Combined score = `X + Y` out of 100.
+2. **Always** launch `taste-evaluator` (subagent_type `taste-evaluator`) with
+   the screenshot/recording paths from step 1 — gate failures do **not** skip
+   taste. It returns items 6–9 and the taste subtotal `Y/45`. (The only case
+   with no taste is a non-build with no entry file, handled in step 1.)
+3. Compute the **gate penalty** P = sum of the penalties for any failed gates
+   (G1 −8, G3 −7, G2 −5; 0 if all pass).
+4. **Combined = max(0, X + Y − P)** out of 100. Set `RESULT` to `PASS` if no
+   gate failed, else `PASS-WITH-DEFECTS`. Record each failed gate, its penalty,
+   and the evidence.
 
 Never have the mechanical agent guess taste items, and never have the taste
 agent re-derive mechanical numbers — keep the split clean.
@@ -118,12 +138,13 @@ command output.
 After all contenders in an experiment are scored, present a ranked table sorted
 by combined score, descending:
 
-| Rank | Contender | Role | Mechanical /55 | Taste /45 | Total /100 | Result |
-|------|-----------|------|----------------|-----------|------------|--------|
+| Rank | Contender | Role | Mechanical /55 | Taste /45 | Gate penalty | Total /100 | Result |
+|------|-----------|------|----------------|-----------|--------------|------------|--------|
 
+Show the gate penalty (e.g. `−5 (G2)`, or `0`) so the deduction is visible.
 Call out where the **baseline** landed. If a contender beat the baseline, flag
-it explicitly — that is the interesting signal. FAIL contenders sort to the
-bottom at 0.
+it explicitly — that is the interesting signal. Non-build contenders (no entry
+HTML, `RESULT: FAIL`) sort to the bottom at 0.
 
 If multiple `exp-*` folders were processed, give one leaderboard per experiment.
 

@@ -7,10 +7,11 @@ model: sonnet
 
 You are evaluating a built deliverable — this could be a web app, a game, a
 CLI tool, a script, an API, or any other runnable project, in any language
-or framework, as one file or many. Run the checks below in order. Stop and
-report FAIL immediately if any GATE fails — do not score the rest. Report
-exact command output as evidence for every item; "looks fine" without
-output is not acceptable.
+or framework, as one file or many. Run the checks below in order. **Gates are
+penalties, not stops** — a failed gate does NOT abort the run: record it with
+evidence, then ALWAYS continue through every scored check and capture the
+taste evidence. Report exact command output as evidence for every item;
+"looks fine" without output is not acceptable.
 
 INPUT: path or URL to the deliverable under test (entry file, running
 server, or run command). If not given, ask for it before proceeding. If the
@@ -74,7 +75,10 @@ ARTIFACT STORAGE (strict — keep evaluation out of the build):
   `05-restarted.png`. Save a recording as `recording.<ext>` if you can.
 - Report every artifact's path in your output for handoff.
 
-=== GATES (any failure => overall result is FAIL, stop here) ===
+=== GATES (each failed gate is a PENALTY; never a stop — keep going) ===
+Penalties the orchestrator applies: G1 −8, G3 −7, G2 −5. Report each gate's
+PASS/FAIL with evidence and the resulting penalty; then continue to the scored
+checks and taste evidence regardless.
 
 G1. Happy-path runtime errors
 - Run or open the deliverable as documented (browser load, or run
@@ -105,12 +109,12 @@ as a deferral marker, "rest of the code", "you can implement",
 empty or contain only pass/.../a not-implemented throw.
 - PASS only if zero matches.
 
-If all three gates pass, continue to scored checks. Otherwise output:
-RESULT: FAIL
-Failed gate(s): <list with evidence>
-Score: 0/100
+Record each gate's verdict, evidence, and penalty (G1 −8 / G3 −7 / G2 −5;
+0 if passed). Then ALWAYS continue to the scored checks below — a failed gate
+never zeroes the score and never skips the rest. (`RESULT: FAIL` with score 0
+is reserved for a non-build: no runnable entry point / no output at all.)
 
-=== SCORED CHECKS (only if all gates passed) ===
+=== SCORED CHECKS (always run, regardless of gate verdicts) ===
 
 1. Core functionality correct — 20 pts (mechanical)
     - Identify the deliverable's explicit core requirements from its spec,
@@ -183,10 +187,11 @@ as low-confidence.
 
 === OUTPUT FORMAT ===
 
-RESULT: PASS or FAIL
+RESULT: PASS (all gates passed) | PASS-WITH-DEFECTS (≥1 gate failed) | FAIL (non-build only)
 Gates: G1 [PASS/FAIL], G2 [PASS/FAIL], G3 [PASS/FAIL]  (each with evidence)
-Mechanical score: X / 55  (itemized 1-5 with evidence per item)
+Gate penalty: -P  (sum of failed-gate penalties: G1 -8, G3 -7, G2 -5; 0 if all pass)
+Mechanical score: X / 55  (itemized 1-5 with evidence per item — scored even if a gate failed)
 Evidence (.eval/): <ordered list of screenshot/recording paths> + note
   whether motion was captured or stills-only
-Taste subtotal: NOT SCORED (evidence attached at <paths>)
-Combined score: X / 100 (mechanical only; taste pending)
+Taste subtotal: NOT SCORED (evidence attached at <paths> — taste ALWAYS runs next)
+Combined (after taste) = max(0, Mechanical + Taste - P); mechanical-only so far is X - P
