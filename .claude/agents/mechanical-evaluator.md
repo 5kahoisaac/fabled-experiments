@@ -48,6 +48,19 @@ C. Exercise the real runtime / UI (for gates + visual evidence).
      or any equivalent. The METHOD is interchangeable — what matters is that
      you observe the live runtime, collect its console/stderr, capture
      screenshots of each state, and inject the dependency failure for G2.
+   - WEBGL / 3D ON A HEADLESS HOST (critical): a GPU-less host (and many
+     browser-automation MCPs) cannot create a hardware WebGL context, so a
+     Three.js/WebGL canvas renders BLANK and screenshots are worthless. Do NOT
+     report that as the game's fault — it's the host. Force SOFTWARE WebGL with
+     real Chrome via Bash (proven to render Three.js scenes here):
+       CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"  # or your chrome
+       "$CHROME" --headless=new --use-gl=angle --use-angle=swiftshader \
+         --enable-unsafe-swiftshader --hide-scrollbars --window-size=1280,720 \
+         --virtual-time-budget=4000 --screenshot=<out.png> "<served URL>"
+     Serve the build over a local static server first (file:// breaks ES
+     modules/asset paths). If the MCP browser gives blank frames, switch to
+     this direct-CLI path. Only call WebGL genuinely broken if it stays blank
+     even under SwiftShader (e.g. a real context-loss/shader bug).
    - Dependency-failure injection (G2) is concrete: block the external
      resource and confirm a visible error. E.g. for a CDN-loaded library,
      intercept/abort that request so the global is undefined and assert the

@@ -30,188 +30,332 @@
       <p>Each contender lives in its own <code>MODEL_NAME/</code> folder containing the
         result HTML, a <code>SPEC.md</code> (params, for comparing) and a
         <code>JOURNEY.md</code> (thinking process). Markdown opens in the in-browser viewer.</p>
-      <div class="compare-table-wrap">
-        <table class="compare-table">
-          <caption>16 contenders · 1 baseline · 8 challengers · 7 controls. Columns mirror the four comparison quadrants noted below: cost, running time, outcome (delivered vs. failed), and total tokens.</caption>
-          <thead>
-            <tr>
-              <th>Variant</th>
-              <th>Setup (model · skill · agent)</th>
-              <th class="num">Tokens</th>
-              <th class="num">Cost</th>
-              <th class="num">Time</th>
-              <th class="num">Prompts</th>
-              <th>Outcome</th>
-              <th>Links</th>
-            </tr>
-          </thead>
-          <tbody>
-        <tr class="row--baseline">
-          <td><span class="role-badge">Baseline</span><br /><span class="variant-name mono">fable-5</span></td>
-          <td>claude-fable-5 · — skill · Claude Chat (Web)</td>
-          <td class="num">~180,000 total (est.)</td>
-          <td class="num">~$10-18 (est.)</td>
-          <td class="num">~5 min (est.)</td>
-          <td class="num">1</td>
-          <td>Delivered — 36/36 logic assertions pass</td>
-          <td><div class="variant-links"><a href="fable-5/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Ffable-5%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Ffable-5%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-        <tr class="row--challenger row--failed">
-          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">glm-5-1-fabled-oc</span></td>
-          <td>glm-5.1 · fabled skill · OpenCode</td>
-          <td class="num">not logged</td>
-          <td class="num">n/a</td>
-          <td class="num">n/a (aborted)</td>
-          <td class="num">1 + recovery loop</td>
-          <td class="outcome--failed">Failed — stream closed in a loop, no deliverable</td>
-          <td><div class="variant-links"><a href="glm-5-1-fabled-oc/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2FJOURNEY.md">JOURNEY</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2Fresult%2FREPORT.md">REPORT</a></div></td>
-        </tr>
-        <tr class="row--control">
-          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">glm-5-1-pi</span></td>
-          <td>glm-5.1 · — skill · Pi</td>
-          <td class="num">~316,000 total (31k in · 19k out · 267k cache)</td>
-          <td class="num">~$0.50</td>
-          <td class="num">~7.6 min</td>
-          <td class="num">1</td>
-          <td>Delivered — single-file 3D Flappy Bird, browser-verified</td>
-          <td><div class="variant-links"><a href="glm-5-1-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-pi%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-        <tr class="row--challenger">
-          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">glm-5-1-fabled</span></td>
-          <td>glm-5.1 · fabled skill · Pi</td>
-          <td class="num">~449,000 total (40k in · 34k out · 374k cache)</td>
-          <td class="num">~$0.73</td>
-          <td class="num">~8.3 min</td>
-          <td class="num">1</td>
-          <td>Delivered — 72,086 logic assertions pass, Gate B clean</td>
-          <td><div class="variant-links"><a href="glm-5-1-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-        <tr class="row--control">
-          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">qwen3.6-35b-a3b-ud-mlx-4bit-pi</span></td>
-          <td>qwen3.6-35b-a3b-ud-mlx-4bit · — skill · Pi</td>
-          <td class="num">139,363 total (130,806 in · 8,557 out)</td>
-          <td class="num">$0 (local)</td>
-          <td class="num">~2.6 min (158s)</td>
-          <td class="num">2</td>
-          <td>Delivered — single-file build; one-line bug-fix turn resolved</td>
-          <td><div class="variant-links"><a href="qwen3.6-35b-a3b-ud-mlx-4bit-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-        <tr class="row--challenger row--failed">
-          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">qwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled</span></td>
-          <td>qwen3.6-35b-a3b-ud-mlx-4bit · fabled skill · Pi</td>
-          <td class="num">506,052 total (474,880 in · 31,172 out)</td>
-          <td class="num">$0 (local)</td>
-          <td class="num">~13.3 min (796s)</td>
-          <td class="num">3</td>
-          <td class="outcome--failed">Failed — built but unplayable across 3 prompts; never browser-verified</td>
-          <td><div class="variant-links"><a href="qwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled%2FJOURNEY.md">JOURNEY</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled%2Fresult%2FREPORT.md">REPORT</a></div></td>
-        </tr>
-        <tr class="row--control">
-          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">gemma-4-26b-a4b-it-mlx-8bit-pi</span></td>
-          <td>gemma-4-26B-A4B-it-MLX-8bit · — skill · Pi</td>
-          <td class="num">610,997 total (606,084 in · 4,913 out)</td>
-          <td class="num">$0 (local)</td>
-          <td class="num">~9.8 min (591s)</td>
-          <td class="num">4</td>
-          <td>Delivered (caveat) — multi-file Vite build, NOT browser-verified</td>
-          <td><div class="variant-links"><a href="gemma-4-26b-a4b-it-mlx-8bit-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-        <tr class="row--challenger">
-          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">gemma-4-26b-a4b-it-mlx-8bit-pi-fabled</span></td>
-          <td>gemma-4-26B-A4B-it-MLX-8bit · fabled skill · Pi</td>
-          <td class="num">843,823 total (822,446 in · 21,377 out)</td>
-          <td class="num">$0 (local)</td>
-          <td class="num">~24.7 min (1,483s)</td>
-          <td class="num">6</td>
-          <td>Delivered (caveat) — single-file build, correct only after 3 corrections, NOT browser-verified</td>
-          <td><div class="variant-links"><a href="gemma-4-26b-a4b-it-mlx-8bit-pi-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi-fabled%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-        <tr class="row--control row--failed">
-          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">gpt-5-mini-gh-pi</span></td>
-          <td>gpt-5-mini · — skill · Pi (Copilot)</td>
-          <td class="num">2,073,066 total (118k in · 42k out · 1,912,960 cache)</td>
-          <td class="num">$0.1615</td>
-          <td class="num">~7.8 min (470s)</td>
-          <td class="num">8</td>
-          <td class="outcome--failed">Failed — developer aborted after unresolved browser errors</td>
-          <td><div class="variant-links"><a href="gpt-5-mini-gh-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi%2FJOURNEY.md">JOURNEY</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi%2Fresult%2FREPORT.md">REPORT</a></div></td>
-        </tr>
-        <tr class="row--challenger">
-          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">gpt-5-mini-gh-pi-fabled</span></td>
-          <td>gpt-5-mini · fabled skill · Pi (Copilot)</td>
-          <td class="num">78,402 total (16,185 in · 14,345 out · 47,872 cache)</td>
-          <td class="num">$0.0339</td>
-          <td class="num">~2.1 min (127s)</td>
-          <td class="num">2</td>
-          <td>Delivered — single-file build, static-trace verification only</td>
-          <td><div class="variant-links"><a href="gpt-5-mini-gh-pi-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi-fabled%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-        <tr class="row--control">
-          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">gpt-5-5-pi</span></td>
-          <td>gpt-5.5 · — skill · Pi (frontend-design, agent-browser)</td>
-          <td class="num">~287,200 total (76k in · 8.2k out · 203k cache)</td>
-          <td class="num">$0.730</td>
-          <td class="num">~3.5 min (209.731s)</td>
-          <td class="num">1</td>
-          <td>Delivered — browser-verified multi-file Three.js build</td>
-          <td><div class="variant-links"><a href="gpt-5-5-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-        <tr class="row--challenger">
-          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">gpt-5-5-pi-fabled</span></td>
-          <td>gpt-5.5 · fabled skill · Pi (frontend-design)</td>
-          <td class="num">~173,000 total (29k in · 10k out · 134k cache)</td>
-          <td class="num">$0.516</td>
-          <td class="num">~3.6 min (216.149s)</td>
-          <td class="num">1</td>
-          <td>Delivered — HTTP-verified playable single-file Three.js build</td>
-          <td><div class="variant-links"><a href="gpt-5-5-pi-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi-fabled%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-        <tr class="row--control">
-          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">gpt-5-5-no-omo-codex</span></td>
-          <td>gpt-5.5 · — skill · Codex (Browser)</td>
-          <td class="num">1,101,243 total (1,085,773 in · 15,470 out · 945,024 cache)</td>
-          <td class="num">~$3.0</td>
-          <td class="num">7m 29s</td>
-          <td class="num">1</td>
-          <td>Delivered — Skyline Flap static web game, Chrome-render verified</td>
-          <td><div class="variant-links"><a href="gpt-5-5-no-omo-codex/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-no-omo-codex%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-no-omo-codex%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-        <tr class="row--challenger">
-          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">gpt-5-5-no-omo-codex-fabled</span></td>
-          <td>gpt-5.5 · fabled skill · Codex (Browser)</td>
-          <td class="num">2,758,095 total (2.73M in · 25,186 out · 2.56M cache · 3,599 reasoning)</td>
-          <td class="num">~$4.82</td>
-          <td class="num">~17m 48s</td>
-          <td class="num">1</td>
-          <td>Delivered — browser-verified 3D Flappy Bird w/ logic tests + screenshots</td>
-          <td><div class="variant-links"><a href="gpt-5-5-no-omo-codex-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-no-omo-codex-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-no-omo-codex-fabled%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-        <tr class="row--control">
-          <td><span class="role-badge">Control</span><br /><span class="variant-name mono">gpt-5-5-codex</span></td>
-          <td>gpt-5.5 · — skill · Codex (OMO)</td>
-          <td class="num">3,019,341 total (2.99M in · 27,753 out · 2.80M cache · 4,048 reasoning)</td>
-          <td class="num">$5.28</td>
-          <td class="num">~20.7 min (1,243.1s)</td>
-          <td class="num">1</td>
-          <td>Delivered — browser-verified, score reached 3, 0 final browser errors</td>
-          <td><div class="variant-links"><a href="gpt-5-5-codex/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-        <tr class="row--challenger">
-          <td><span class="role-badge">Challenger</span><br /><span class="variant-name mono">gpt-5-5-codex-fabled</span></td>
-          <td>gpt-5.5 · fabled skill · Codex (OMO)</td>
-          <td class="num">196,410 total (178k in · 18,373 out · 1,146,624 cache · 2,625 reasoning)</td>
-          <td class="num">$2.87</td>
-          <td class="num">~34 min (&gt;=1,980s)</td>
-          <td class="num">1</td>
-          <td>Delivered — browser-verified, no page or console errors</td>
-          <td><div class="variant-links"><a href="gpt-5-5-codex-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex-fabled%2FJOURNEY.md">JOURNEY</a></div></td>
-        </tr>
-          </tbody>
-        </table>
-      </div>
+      <style>
+        .cc-intro{font-size:.86rem;color:var(--muted,#5f5f5f);margin:.2rem 0 .8rem}
+        .cc-tbl{width:100%;border-collapse:collapse;table-layout:fixed;font-size:.8rem}
+        .cc-tbl th,.cc-tbl td{border-bottom:1px solid var(--line);padding:.4rem .5rem;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+        .cc-tbl th{font-size:.62rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#8a8275);font-weight:700}
+        .cc-tbl td.n,.cc-tbl th.n{text-align:right;font-family:"IBM Plex Mono",monospace;white-space:nowrap;overflow-wrap:normal}
+        .cc-tbl .vn{font-family:"IBM Plex Mono",monospace;font-weight:600;line-height:1.2}
+        .cc-tbl .rdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.3rem;flex:0 0 auto}
+        .cc-tbl .vcell{display:flex;align-items:baseline}
+        .rdot.baseline{background:#6b4fbb}.rdot.challenger{background:#1a7f37}.rdot.control{background:#b1a892}
+        .cc-tbl tr.failed{background:rgba(190,30,40,.045)}
+        .cc-tbl .tok{cursor:help;border-bottom:1px dotted var(--line)}
+        .cc-score{font-family:"IBM Plex Mono",monospace;font-weight:600}
+        .cc-tag{display:inline-block;font-size:.58rem;font-weight:700;padding:.02rem .3rem;border-radius:4px;margin-left:.25rem;white-space:nowrap}
+        .tag-PASS{background:rgba(26,127,55,.14);color:#1a7f37}
+        .tag-PWD{background:rgba(179,89,0,.16);color:#9a5400}
+        .tag-FAIL{background:rgba(190,30,40,.14);color:#be1e28}
+        .cc-tbl .docs{font-size:.76rem}
+        .cc-tbl .docs a{white-space:nowrap}
+        @media (max-width:560px){.cc-tbl{font-size:.72rem}.cc-tbl th,.cc-tbl td{padding:.34rem .35rem}}
+      </style>
+      <p class="cc-intro">16 contenders · 1 baseline · 8 challengers · 7 controls. <b>Score</b> is the independent browser-verified combined rating (/100). <span class="rdot baseline" style="display:inline-block;width:8px;height:8px;border-radius:50%"></span> baseline · <span class="rdot challenger" style="display:inline-block;width:8px;height:8px;border-radius:50%"></span> challenger · <span class="rdot control" style="display:inline-block;width:8px;height:8px;border-radius:50%"></span> control. Hover a token figure for its in/out/cache split.</p>
+      <table class="cc-tbl">
+        <colgroup><col style="width:23%"><col style="width:11%"><col style="width:9%"><col style="width:9%"><col style="width:7%"><col style="width:17%"><col style="width:24%"></colgroup>
+        <thead><tr><th>Variant</th><th class="n">Tokens</th><th class="n">Cost</th><th class="n">Time</th><th class="n">Runs</th><th>Score</th><th>Docs</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="vcell"><span class="rdot baseline"></span><span class="vn">fable-5</span></span></td>
+            <td class="n"><span class="tok" title="≈180,000 total (estimated)">~180k</span></td>
+            <td class="n">~$10–18</td><td class="n">~5m</td><td class="n">1</td>
+            <td><span class="cc-score">84.6</span><span class="cc-tag tag-PASS">PASS</span></td>
+            <td class="docs"><a href="fable-5/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Ffable-5%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Ffable-5%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+          <tr class="failed">
+            <td><span class="vcell"><span class="rdot challenger"></span><span class="vn">glm-5-1-fabled-oc</span></span></td>
+            <td class="n">—</td><td class="n">n/a</td><td class="n">n/a</td><td class="n">loop</td>
+            <td><span class="cc-score">0</span><span class="cc-tag tag-FAIL">FAIL</span></td>
+            <td class="docs"><a href="glm-5-1-fabled-oc/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2FJOURNEY.md">JOURNEY</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled-oc%2Fresult%2FREPORT.md">REPORT</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot control"></span><span class="vn">glm-5-1-pi</span></span></td>
+            <td class="n"><span class="tok" title="31k in · 19k out · 267k cache">~316k</span></td>
+            <td class="n">~$0.50</td><td class="n">~7.6m</td><td class="n">1</td>
+            <td><span class="cc-score">68.6</span><span class="cc-tag tag-PWD">defects</span></td>
+            <td class="docs"><a href="glm-5-1-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-pi%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot challenger"></span><span class="vn">glm-5-1-fabled</span></span></td>
+            <td class="n"><span class="tok" title="40k in · 34k out · 374k cache">~449k</span></td>
+            <td class="n">~$0.73</td><td class="n">~8.3m</td><td class="n">1</td>
+            <td><span class="cc-score">89.0</span><span class="cc-tag tag-PASS">PASS</span></td>
+            <td class="docs"><a href="glm-5-1-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fglm-5-1-fabled%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot control"></span><span class="vn">qwen3.6-35b-a3b-ud-mlx-4bit-pi</span></span></td>
+            <td class="n"><span class="tok" title="130,806 in · 8,557 out">139k</span></td>
+            <td class="n">$0</td><td class="n">~2.6m</td><td class="n">2</td>
+            <td><span class="cc-score">54.6</span><span class="cc-tag tag-PWD">defects</span></td>
+            <td class="docs"><a href="qwen3.6-35b-a3b-ud-mlx-4bit-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot challenger"></span><span class="vn">qwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled</span></span></td>
+            <td class="n"><span class="tok" title="474,880 in · 31,172 out">506k</span></td>
+            <td class="n">$0</td><td class="n">~13.3m</td><td class="n">3</td>
+            <td><span class="cc-score">65.6</span><span class="cc-tag tag-PWD">defects</span></td>
+            <td class="docs"><a href="qwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled%2FJOURNEY.md">JOURNEY</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fqwen3.6-35b-a3b-ud-mlx-4bit-pi-fabled%2Fresult%2FREPORT.md">REPORT</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot control"></span><span class="vn">gemma-4-26b-a4b-it-mlx-8bit-pi</span></span></td>
+            <td class="n"><span class="tok" title="606,084 in · 4,913 out">611k</span></td>
+            <td class="n">$0</td><td class="n">~9.8m</td><td class="n">4</td>
+            <td><span class="cc-score">45.4</span><span class="cc-tag tag-PWD">defects</span></td>
+            <td class="docs"><a href="gemma-4-26b-a4b-it-mlx-8bit-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot challenger"></span><span class="vn">gemma-4-26b-a4b-it-mlx-8bit-pi-fabled</span></span></td>
+            <td class="n"><span class="tok" title="822,446 in · 21,377 out">844k</span></td>
+            <td class="n">$0</td><td class="n">~24.7m</td><td class="n">6</td>
+            <td><span class="cc-score">57.6</span><span class="cc-tag tag-PWD">defects</span></td>
+            <td class="docs"><a href="gemma-4-26b-a4b-it-mlx-8bit-pi-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgemma-4-26b-a4b-it-mlx-8bit-pi-fabled%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot control"></span><span class="vn">gpt-5-mini-gh-pi</span></span></td>
+            <td class="n"><span class="tok" title="118k in · 42k out · 1,912,960 cache">2.07M</span></td>
+            <td class="n">$0.16</td><td class="n">~7.8m</td><td class="n">8</td>
+            <td><span class="cc-score">50.0</span><span class="cc-tag tag-PWD">defects</span></td>
+            <td class="docs"><a href="gpt-5-mini-gh-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi%2FJOURNEY.md">JOURNEY</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi%2Fresult%2FREPORT.md">REPORT</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot challenger"></span><span class="vn">gpt-5-mini-gh-pi-fabled</span></span></td>
+            <td class="n"><span class="tok" title="16,185 in · 14,345 out · 47,872 cache">78k</span></td>
+            <td class="n">$0.034</td><td class="n">~2.1m</td><td class="n">2</td>
+            <td><span class="cc-score">75.6</span><span class="cc-tag tag-PASS">PASS</span></td>
+            <td class="docs"><a href="gpt-5-mini-gh-pi-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-mini-gh-pi-fabled%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot control"></span><span class="vn">gpt-5-5-pi</span></span></td>
+            <td class="n"><span class="tok" title="76k in · 8.2k out · 203k cache">~287k</span></td>
+            <td class="n">$0.73</td><td class="n">~3.5m</td><td class="n">1</td>
+            <td><span class="cc-score">68.6</span><span class="cc-tag tag-PWD">defects</span></td>
+            <td class="docs"><a href="gpt-5-5-pi/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot challenger"></span><span class="vn">gpt-5-5-pi-fabled</span></span></td>
+            <td class="n"><span class="tok" title="29k in · 10k out · 134k cache">~173k</span></td>
+            <td class="n">$0.52</td><td class="n">~3.6m</td><td class="n">1</td>
+            <td><span class="cc-score">64.6</span><span class="cc-tag tag-PWD">defects</span></td>
+            <td class="docs"><a href="gpt-5-5-pi-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-pi-fabled%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot control"></span><span class="vn">gpt-5-5-no-omo-codex</span></span></td>
+            <td class="n"><span class="tok" title="1,085,773 in · 15,470 out · 945,024 cache">1.10M</span></td>
+            <td class="n">~$3.0</td><td class="n">~7.5m</td><td class="n">1</td>
+            <td><span class="cc-score">66.0</span><span class="cc-tag tag-PWD">defects</span></td>
+            <td class="docs"><a href="gpt-5-5-no-omo-codex/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-no-omo-codex%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-no-omo-codex%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot challenger"></span><span class="vn">gpt-5-5-no-omo-codex-fabled</span></span></td>
+            <td class="n"><span class="tok" title="2.73M in · 25,186 out · 2.56M cache · 3,599 reasoning">2.76M</span></td>
+            <td class="n">~$4.82</td><td class="n">~17.8m</td><td class="n">1</td>
+            <td><span class="cc-score">84.2</span><span class="cc-tag tag-PASS">PASS</span></td>
+            <td class="docs"><a href="gpt-5-5-no-omo-codex-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-no-omo-codex-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-no-omo-codex-fabled%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot control"></span><span class="vn">gpt-5-5-codex</span></span></td>
+            <td class="n"><span class="tok" title="2.99M in · 27,753 out · 2.80M cache · 4,048 reasoning">3.02M</span></td>
+            <td class="n">$5.28</td><td class="n">~20.7m</td><td class="n">1</td>
+            <td><span class="cc-score">68.6</span><span class="cc-tag tag-PWD">defects</span></td>
+            <td class="docs"><a href="gpt-5-5-codex/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+          <tr>
+            <td><span class="vcell"><span class="rdot challenger"></span><span class="vn">gpt-5-5-codex-fabled</span></span></td>
+            <td class="n"><span class="tok" title="178k in · 18,373 out · 1,146,624 cache · 2,625 reasoning">196k*</span></td>
+            <td class="n">$2.87</td><td class="n">~34m</td><td class="n">1</td>
+            <td><span class="cc-score">66.6</span><span class="cc-tag tag-PWD">defects</span></td>
+            <td class="docs"><a href="gpt-5-5-codex-fabled/index.html">Result</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex-fabled%2FSPEC.md">SPEC</a> · <a href="../../viewer.html?doc=experiments%2Fexp-01%2Fgpt-5-5-codex-fabled%2FJOURNEY.md">JOURNEY</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="cc-intro" style="font-size:.74rem;margin-top:.5rem">Setup is encoded in each variant name (model · skill · agent); <code>-fabled</code> = Fabled skill, otherwise no skill. <code>*</code> token figure as reported by the harness; cache/estimate caveats are detailed in the Result section below.</p>
 
       <h2>Result</h2>
-      <p>tbd</p>
+
+      <style>
+        .result-headline{font-family:"Fraunces",serif;font-size:clamp(1.3rem,1rem + 1.4vw,2rem);line-height:1.25;font-weight:600;margin:.2rem 0 1.4rem;color:var(--text)}
+        .bridge-note{font-size:.85rem;color:var(--muted,#5f5f5f);border-left:3px solid var(--line);padding:.4rem .8rem;margin:0 0 1.2rem}
+        .quad-figure{margin:1.2rem 0;border:1px solid var(--line);border-radius:14px;padding:1rem 1rem .6rem;background:var(--surface,#fff)}
+        .quad-figure figcaption{font-size:.85rem;color:var(--muted,#5f5f5f);margin-bottom:.4rem}
+        #quadChart svg{width:100%;height:auto;display:block;font-family:"IBM Plex Mono",monospace}
+        .quad-note{font-size:.78rem;color:var(--muted,#5f5f5f);margin:.5rem 0 0;line-height:1.5}
+        .report-body h3{font-family:"Fraunces",serif;font-size:1.3rem;margin-top:2.2rem;margin-bottom:.4rem}
+        .report-body p{line-height:1.62}
+        .report-body strong{color:var(--text)}
+        .pair-table,.sb-table{border-collapse:collapse;margin:1rem 0;font-size:.88rem;width:100%}
+        .pair-table th,.pair-table td,.sb-table th,.sb-table td{border:1px solid var(--line);padding:.34rem .6rem;text-align:left}
+        .pair-table td.num,.sb-table td.num{text-align:right;font-family:"IBM Plex Mono",monospace}
+        .pair-win{color:#1a7f37;font-weight:600}.pair-lose{color:#b35900;font-weight:600}
+        .tier{display:inline-block;padding:.04rem .4rem;border-radius:5px;font-size:.72rem;font-weight:600}
+        .tier-PASS{background:rgba(26,127,55,.14);color:#1a7f37}
+        .tier-PWD{background:rgba(179,89,0,.16);color:#9a5400}
+        .tier-FAIL{background:rgba(190,30,40,.14);color:#be1e28}
+        .takeaway{border-left:3px solid var(--accent,#c8643c);background:rgba(200,100,60,.07);padding:.7rem 1rem;border-radius:0 8px 8px 0;font-size:1.02rem;margin-top:1.6rem}
+      </style>
+
+      <p class="result-headline">Fabled reliably bolts good structure onto a model’s output, but it cannot install reasoning a model lacks — so it rescues weak models and adds only overhead to the strongest one.</p>
+
+      <p class="bridge-note">The <b>Outcome</b> column in the table above is each author’s own self-report. The chart and analysis below use an <b>independent browser-verified evaluation</b> (every build driven live under software WebGL / SwiftShader), which re-scored several runs the authors had logged as “failed” or “unverified” as actually playable. Where the two disagree, the browser-verified result is authoritative — see <a href="#caveats">caveats</a>.</p>
+
+      <h3>Four-quadrant comparison</h3>
+      <figure class="quad-figure">
+        <figcaption>Cost (X) × running time (Y) · bubble area = total tokens touched · colour = browser-verified outcome. Dashed lines split the field at the median cost and median time, forming the four quadrants.</figcaption>
+        <div id="quadChart" role="img" aria-label="Bubble chart of 15 contenders plotting cost against running time, sized by total tokens and coloured by outcome."></div>
+        <noscript><p class="quad-note">Interactive chart needs JavaScript — the same four parameters (tokens, cost, time, outcome) are in the contenders table above.</p></noscript>
+        <p class="quad-note"><b>How to read it:</b> bottom-left = cheap &amp; fast (the sweet spot); top-right = expensive &amp; slow. A big bubble means the run dragged a lot of context around — not necessarily that it built more. <span style="color:#1a7f37">●</span> PASS · <span style="color:#9a5400">●</span> PASS-WITH-DEFECTS · <span style="color:#be1e28">✕</span> FAIL · ★ baseline. <b>fable-5</b> is pinned to the right edge (cost is a rough ~$14 estimate, off-scale). <b>glm-5-1-fabled-oc</b> is not plotted: its harness stream died and it produced no build (the only true 0/FAIL).</p>
+      </figure>
+
+      <div class="report-body">
+        <h3>Did Fabled really improve the model’s thinking?</h3>
+        <p><strong>Verdict: Fabled improves the OUTPUT, not reliably the REASONING — it scaffolds the <em>shape</em> of good engineering thinking without supplying the thinking itself.</strong> Across the seven comparable fabled-vs-control pairs (same model, same harness), Fabled helped 5 and hurt 2 — and both regressions land on the strongest base model, gpt-5.5.</p>
+
+        <table class="pair-table">
+          <thead><tr><th>Pair (model · harness)</th><th class="num">Control</th><th class="num">Fabled</th><th class="num">Δ</th></tr></thead>
+          <tbody>
+            <tr><td>glm-5.1 · Pi</td><td class="num">68.6</td><td class="num"><b>89.0</b></td><td class="num pair-win">+20.4</td></tr>
+            <tr><td>gpt-5-mini · GH-Pi</td><td class="num">50.0</td><td class="num"><b>75.6</b></td><td class="num pair-win">+25.6</td></tr>
+            <tr><td>gpt-5.5 · Codex no-OMO</td><td class="num">66.0</td><td class="num"><b>84.2</b></td><td class="num pair-win">+18.2</td></tr>
+            <tr><td>qwen3.6 · Pi</td><td class="num">54.6</td><td class="num"><b>65.6</b></td><td class="num pair-win">+11.0</td></tr>
+            <tr><td>gemma-4 · Pi</td><td class="num">45.4</td><td class="num"><b>57.6*</b></td><td class="num pair-win">+12.2*</td></tr>
+            <tr><td>gpt-5.5 · Pi</td><td class="num">68.6</td><td class="num">64.6</td><td class="num pair-lose">−4.0</td></tr>
+            <tr><td>gpt-5.5 · Codex (OMO)</td><td class="num">68.6</td><td class="num">66.6</td><td class="num pair-lose">−2.0</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:.82rem;color:var(--muted,#5f5f5f);margin-top:-.4rem">* gemma-4 was scored pre-SwiftShader; treat as mildly understated and approximate.</p>
+
+        <p><strong>The capability-equalizer thesis.</strong> The cleanest proof that Fabled transplants structure rather than teaches reasoning is that the strongest models already produce that structure <em>without it</em>. The fable-5 baseline (skill = none) independently split a pure logic block from the render layer “specifically because it foresaw verification,” shipped 36 logic assertions, pinned Three.js, and guarded CDN/WebGL/audio failures behind a friendly overlay — every habit Fabled would otherwise impose. The gpt-5.5/Codex control did the same on its own initiative. When the discipline is endogenous, the skill has nothing to add and its process overhead can only cost points — which is exactly why the two regressions are <em>both</em> gpt-5.5.</p>
+
+        <p><strong>Honest framing:</strong> the −4.0 and −2.0 deltas are within single-rater eval noise — read them as “no benefit on a model that didn’t need it,” not demonstrated harm. The truth is a gradient: Fabled reliably improves output structure, <em>weakly and indirectly</em> supports reasoning through that structure, and does <strong>not</strong> supply reasoning depth a model lacks.</p>
+
+        <p><strong>The decisive limit — gemma still mis-reasoned with the full scaffold.</strong> gemma-4 followed Fabled’s form faithfully (plan, assumptions, contracts, logic/render split) yet committed the <em>same</em> core error three times running: a vertical-axis sign-convention bug in the flight physics that it “fixed” by flipping signs and tweaking the magnitudes the user named, rather than re-deriving the physics from first principles — converging only on the 6th iteration. qwen3.6 is the matching anti-pattern: it produced the Plan, the Gate-B scan and a Verification table all marked PASS, but substituted Fabled’s executable check with a lexical string scan and never ran the game — shipping an unplayable build whose one-line boundary invariant was assertable but never asserted. <strong>Fabled’s form was followed; its function was not.</strong> Where the model is too weak to diagnose from first principles, the gates get satisfied ceremonially while the reasoning failure ships untouched.</p>
+
+        <h3>Why the small models diverge (gpt-5-mini vs gemma-4 vs qwen3.6)</h3>
+        <p>They diverge not because Fabled adds quality uniformly, but because <strong>each model’s competence bottleneck sits in a different place, and Fabled only pays off when the bottleneck is the exact thing it scaffolds.</strong></p>
+        <p><strong>gpt-5-mini — the rescue (bottleneck: dependency plumbing).</strong> The standout swing, 50.0 → 75.6. The control’s failure axis was pure delivery fragility: an import-map <em>plus</em> six live CDN example-module imports that never resolved (“Failed to resolve module specifier ‘three’” + cascading 404/500s). The author chased symptoms across <strong>eight prompts and a 2.07M-token spiral</strong>, then aborted. Fabled fixed this structurally — one pinned UMD bundle, zero example-module imports, a real WebGL fallback — shipping clean in <strong>two prompts and 78k tokens</strong>. Fabled’s single-file + pinned-CDN + fallback discipline <em>is</em> the precise fix for a dependency-plumbing failure, so its leverage was maximal.</p>
+        <p><strong>gemma-4 — persistent control-inversion (bottleneck: numeric/geometric reasoning).</strong> The scaffold ran faithfully and didn’t help where it mattered: a physics sign-convention error a checklist cannot encode, surviving three correction rounds because the model “kept tweaking magnitudes instead of re-deriving from first principles.” Tellingly, gemma’s <em>control</em> never hit this trap — its steering turns were operational (a foreground <code>vite</code> hang, a clobbered <code>render()</code>). (Caution: attributing gemma’s harder path to “Fabled dragging it into a full-physics build” is a causal inference on a single open-weights run.)</p>
+        <p><strong>qwen3.6 — ceremony displaces verification.</strong> qwen’s <em>control</em> got the physics right on the first shot (playable in 2 prompts / 139k tokens). Its fabled run took 3 prompts / 506k tokens and was logged a process failure — net-negative on its own efficiency — because the ceremony displaced the cheap executable check that would have caught a spawn-on-the-boundary collision bug. <strong>Score and process diverge here:</strong> the evaluator scored the eventually-repaired artifact 65.6 vs 54.6, so “Fabled helped qwen” is true on the rubric but false on the run’s lived outcome.</p>
+        <p><strong>The quantization angle — a hypothesis, not a finding.</strong> Both quantized local models shipped a physically-wrong core (4-bit qwen: boundary collision; 8-bit gemma: inverted sign) that hosted full-precision gpt-5-mini never did. Generation was never the bottleneck for any of them — all three authored a pretty Three.js scene in one write — the bottleneck was reasoning about correctness, where lower precision appears to show. But this is a 3-point local-vs-hosted contrast confounded by architecture, harness and training; treat it as a hypothesis to test, not a result.</p>
+
+        <h3>Fun fact: gpt-5.5 via Pi beats gpt-5.5 via Codex CLI</h3>
+        <p><strong>The same model is dramatically leaner under the Pi harness than under Codex CLI — and the gap is almost entirely the harness, not the thinking.</strong> For the like-for-like pair (stock Pi vs stock no-OMO Codex), Pi used <strong>~3.8× fewer tokens</strong> (287k vs 1.10M), ran <strong>~2.1× faster</strong> (210s vs 449s), and cost <strong>~4.1× less</strong> ($0.73 vs ~$3.00) — at statistically indistinguishable quality (both 68.6).</p>
+        <p><strong>Mechanism: re-fed context, not extra work.</strong> The <em>output</em> tokens are tiny and similar everywhere — Pi ~8.2k, Codex no-OMO 15.5k, Codex-fabled 25.2k. The blow-up is the envelope of context re-read around that small core. Pi commits to one architecture, writes the whole game in a single shot, and closes with one top-level browser check — few tool round-trips, little re-ingested context. Codex CLI runs a long inspect → scaffold → serve → verify → tune loop, and each round-trip re-sends the accumulated, growing context; the fingerprint is the rising cache-read share (~71% of Pi’s total vs ~86% for Codex no-OMO). (This is reconstructed from cache-share trends and loop shapes, not per-tool-call telemetry, and token accounting isn’t strictly comparable across harnesses — lean on the within-family direction, not exact ratios.)</p>
+        <p><strong>The nuance that keeps it honest: Codex CAN win on peak quality — but only by paying enormously.</strong> The single highest challenger score, <strong>84.2, was Codex no-OMO + Fabled</strong> — and it cost ~2.76M tokens, ~1068s and ~$4.82, roughly <strong>16× Pi’s tokens and ~5× its wall-clock</strong>. That peak wasn’t the harness being smarter; it was Fabled’s executed logic tests + dependency-fallback gates surviving Codex’s long-loop transport. Crucially Fabled did <em>not</em> transfer that lift to Pi (Pi-fabled 64.6, just below stock Pi). So: <strong>Pi wins decisively on efficiency at equal quality; Codex + Fabled wins on peak quality only by spending a fortune.</strong> And the harness has a tail risk — glm-5.1 under the Codex-family OpenCode harness died on ~60-second stream deaths and shipped nothing (the lone true FAIL), a stability cost that never shows on the happy path.</p>
+
+        <h3>How the quadrants land</h3>
+        <p>The <strong>sweet spot is the bottom-left</strong>: low cost, low time, small green bubble — a PASS earned without burning tokens or wall-clock. The standout is <strong>gpt-5-mini-gh-pi-fabled</strong>, effectively the origin of the chart: cheapest ($0.034), fastest (~127s), tiniest footprint (78k tokens), and a PASS (75.6) — a weak, cheap model that, given the right scaffold for its bottleneck, beats far more expensive runs on the only axis that’s free. The <strong>expensive outliers cluster top-right</strong>: the four Codex runs are the giant bubbles in the costly corner — they show that throwing tokens and time at the problem buys peak quality at the extreme (84.2) but mostly buys <em>amber</em> (66–68). The local-MLX runs sit at <strong>zero cost</strong> but drift up the time axis with deceptively huge bubbles — a reminder their token totals are full-prompt re-counts, not build size.</p>
+
+        <h3>Browser-verified scoreboard</h3>
+        <table class="sb-table">
+          <thead><tr><th>#</th><th>Variant</th><th>Role</th><th class="num">Combined /100</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td class="mono">glm-5-1-fabled</td><td>challenger</td><td class="num"><b>89.0</b></td><td><span class="tier tier-PASS">PASS</span></td></tr>
+            <tr><td>2</td><td class="mono">fable-5</td><td>baseline</td><td class="num">84.6</td><td><span class="tier tier-PASS">PASS</span></td></tr>
+            <tr><td>3</td><td class="mono">gpt-5-5-no-omo-codex-fabled</td><td>challenger</td><td class="num">84.2</td><td><span class="tier tier-PASS">PASS</span></td></tr>
+            <tr><td>4</td><td class="mono">gpt-5-mini-gh-pi-fabled</td><td>challenger</td><td class="num">75.6</td><td><span class="tier tier-PASS">PASS</span></td></tr>
+            <tr><td>5</td><td class="mono">glm-5-1-pi</td><td>control</td><td class="num">68.6</td><td><span class="tier tier-PWD">PASS·defects</span></td></tr>
+            <tr><td>5</td><td class="mono">gpt-5-5-codex</td><td>control</td><td class="num">68.6</td><td><span class="tier tier-PWD">PASS·defects</span></td></tr>
+            <tr><td>5</td><td class="mono">gpt-5-5-pi</td><td>control</td><td class="num">68.6</td><td><span class="tier tier-PWD">PASS·defects</span></td></tr>
+            <tr><td>8</td><td class="mono">gpt-5-5-codex-fabled</td><td>challenger</td><td class="num">66.6</td><td><span class="tier tier-PWD">PASS·defects</span></td></tr>
+            <tr><td>9</td><td class="mono">gpt-5-5-no-omo-codex</td><td>control</td><td class="num">66.0</td><td><span class="tier tier-PWD">PASS·defects</span></td></tr>
+            <tr><td>10</td><td class="mono">qwen3.6-…-pi-fabled</td><td>challenger</td><td class="num">65.6</td><td><span class="tier tier-PWD">PASS·defects</span></td></tr>
+            <tr><td>11</td><td class="mono">gpt-5-5-pi-fabled</td><td>challenger</td><td class="num">64.6</td><td><span class="tier tier-PWD">PASS·defects</span></td></tr>
+            <tr><td>12</td><td class="mono">gemma-4-…-pi-fabled</td><td>challenger</td><td class="num">57.6</td><td><span class="tier tier-PWD">PASS·defects</span></td></tr>
+            <tr><td>13</td><td class="mono">qwen3.6-…-pi</td><td>control</td><td class="num">54.6</td><td><span class="tier tier-PWD">PASS·defects</span></td></tr>
+            <tr><td>14</td><td class="mono">gpt-5-mini-gh-pi</td><td>control</td><td class="num">50.0</td><td><span class="tier tier-PWD">PASS·defects</span></td></tr>
+            <tr><td>15</td><td class="mono">gemma-4-…-pi</td><td>control</td><td class="num">45.4</td><td><span class="tier tier-PWD">PASS·defects</span></td></tr>
+            <tr><td>16</td><td class="mono">glm-5-1-fabled-oc</td><td>challenger</td><td class="num">0</td><td><span class="tier tier-FAIL">FAIL — no build</span></td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="caveats">Methodology &amp; caveats</h3>
+        <p><strong>n = 1 taste.</strong> Each cell is a single run scored by a single evaluator against subjective targets (“pretty,” “playable”). Score deltas inside roughly ±5 points — including both gpt-5.5 regressions — are within noise; treat them as “no benefit,” not measured harm. Directional and mechanical claims (read off shipped code: import failures, sign conventions, unasserted invariants) are far firmer than absolute magnitudes.</p>
+        <p><strong>Token accounting is NOT comparable across harnesses.</strong> Local MLX models (qwen, gemma) re-meter the full prompt every turn with <em>no</em> cache-read field, so their 506k/843k totals are prefix re-counts, not new-token work. Pi and GH report cache-read separately; OpenCode logged nothing; the fable-5 baseline totals are explicitly <em>estimated</em>. Cross-harness token/cost ratios cannot bear weight — only same-harness within-pair comparisons are legitimate, and even those reflect steering and cache, not build size.</p>
+        <p><strong>Browser-verification overturned several self-reports.</strong> Multiple runs the authors logged as “failed/unverified” were re-scored PASS or PASS-WITH-DEFECTS by the independent evaluator under software WebGL. The authoritative scores are the browser-verified ones; <strong>only glm-5-1-fabled-oc truly produced nothing</strong> — a transport-layer (~60s stream-death) FAIL, not a reasoning failure.</p>
+        <p><strong>Two cells were scored pre-SwiftShader.</strong> The fable-5 baseline (84.6) and gemma-4-pi-fabled (57.6) were evaluated before the software-WebGL render path, where scenes that didn’t composite may have been penalised; both are likely <em>mildly understated</em>. Don’t over-read small gaps involving them.</p>
+        <p><strong>“Reasoning” is partly inferred.</strong> The thinking-process characterisations come from post-hoc JOURNEY narrations and shipped artifacts, not raw chain-of-thought — so causal verbs (“Fabled dragged the model into a harder build,” “quantization causes the failure”) are inferences on single open-weights runs, not controlled findings.</p>
+
+        <p class="takeaway"><b>Takeaway —</b> Fabled is a capability equalizer that scaffolds output structure for models that can’t generate it themselves — rescuing weak/cheap models (gpt-5-mini: a 2.07M-token spiral → a 78k-token clean PASS) while adding only overhead to the strongest base model — but it installs the <em>shape</em> of good engineering, not the reasoning, so where a model can’t diagnose from first principles the gates pass ceremonially and the real bug ships anyway.</p>
+      </div>
+
+      <script>
+        (function(){
+          var D=[
+            {k:'fable5',f:'fable-5 · baseline · 84.6',cost:14,time:5.0,tok:180000,tier:'PASS',base:true},
+            {k:'glm+F',f:'glm-5-1-fabled · 89.0',cost:0.73,time:8.30,tok:449014,tier:'PASS'},
+            {k:'glm',f:'glm-5-1-pi · 68.6',cost:0.50,time:7.57,tok:316447,tier:'PWD'},
+            {k:'qwen',f:'qwen3.6-pi · 54.6',cost:0,time:2.63,tok:139363,tier:'PWD'},
+            {k:'qwen+F',f:'qwen3.6-pi-fabled · 65.6',cost:0,time:13.27,tok:506052,tier:'PWD'},
+            {k:'gemma',f:'gemma-4-pi · 45.4',cost:0,time:9.85,tok:610997,tier:'PWD'},
+            {k:'gemma+F',f:'gemma-4-pi-fabled · 57.6',cost:0,time:24.72,tok:843823,tier:'PWD'},
+            {k:'mini',f:'gpt-5-mini-gh-pi · 50.0',cost:0.1615,time:7.83,tok:2073066,tier:'PWD'},
+            {k:'mini+F',f:'gpt-5-mini-gh-pi-fabled · 75.6',cost:0.0339,time:2.12,tok:78402,tier:'PASS'},
+            {k:'5.5-pi',f:'gpt-5-5-pi · 68.6',cost:0.73,time:3.50,tok:287200,tier:'PWD'},
+            {k:'5.5-pi+F',f:'gpt-5-5-pi-fabled · 64.6',cost:0.516,time:3.60,tok:173000,tier:'PWD'},
+            {k:'cdx noOMO',f:'gpt-5-5-no-omo-codex · 66.0',cost:3.0,time:7.48,tok:1101243,tier:'PWD'},
+            {k:'cdx noOMO+F',f:'gpt-5-5-no-omo-codex-fabled · 84.2',cost:4.82,time:17.80,tok:2758095,tier:'PASS'},
+            {k:'cdx OMO',f:'gpt-5-5-codex · 68.6',cost:5.28,time:20.72,tok:3019341,tier:'PWD'},
+            {k:'cdx OMO+F',f:'gpt-5-5-codex-fabled · 66.6',cost:2.87,time:33.0,tok:1343034,tier:'PWD'}
+          ];
+          var W=960,H=600,L=66,R=212,T=44,B=64;
+          var pL=L,pR=W-R,pT=T,pB=H-B,pW=pR-pL,pH=pB-pT;
+          var XMAX=5.6,YMAX=34;
+          var COL={PASS:'#1a7f37',PWD:'#c47a1e',FAIL:'#be1e28'};
+          var SVGNS='http://www.w3.org/2000/svg';
+          function el(n,a){var e=document.createElementNS(SVGNS,n);for(var k in a)e.setAttribute(k,a[k]);return e;}
+          function x(c){return pL+Math.min(c,XMAX)/XMAX*pW;}
+          function y(t){return pB-Math.min(t,YMAX)/YMAX*pH;}
+          var meas=D.filter(function(d){return !d.base;});
+          function median(arr){arr=arr.slice().sort(function(a,b){return a-b;});var m=Math.floor(arr.length/2);return arr.length%2?arr[m]:(arr[m-1]+arr[m])/2;}
+          var costMed=median(meas.map(function(d){return d.cost;}));
+          var timeMed=median(meas.map(function(d){return d.time;}));
+          var sMin=Math.sqrt(78402),sMax=Math.sqrt(3019341);
+          function r(tok){return 7+(Math.sqrt(tok)-sMin)/(sMax-sMin)*(31-7);}
+          var svg=el('svg',{viewBox:'0 0 '+W+' '+H});
+          svg.appendChild(el('rect',{x:pL,y:y(timeMed),width:x(costMed)-pL,height:pB-y(timeMed),fill:'rgba(26,127,55,.05)'}));
+          svg.appendChild(el('line',{x1:pL,y1:pB,x2:pR,y2:pB,stroke:'#cfcabf','stroke-width':1.2}));
+          svg.appendChild(el('line',{x1:pL,y1:pT,x2:pL,y2:pB,stroke:'#cfcabf','stroke-width':1.2}));
+          svg.appendChild(el('line',{x1:x(costMed),y1:pT,x2:x(costMed),y2:pB,stroke:'#b9b2a4','stroke-dasharray':'5 5','stroke-width':1}));
+          svg.appendChild(el('line',{x1:pL,y1:y(timeMed),x2:pR,y2:y(timeMed),stroke:'#b9b2a4','stroke-dasharray':'5 5','stroke-width':1}));
+          function txt(tx,ty,s,o){var e=el('text',{x:tx,y:ty,'font-size':(o&&o.fs)||11,fill:(o&&o.fill)||'#6a6356','text-anchor':(o&&o.anchor)||'start'});if(o&&o.weight)e.setAttribute('font-weight',o.weight);if(o&&o.rot)e.setAttribute('transform','rotate('+o.rot+' '+tx+' '+ty+')');e.textContent=s;return e;}
+          [0,1,2,3,4,5].forEach(function(c){var xp=x(c);svg.appendChild(el('line',{x1:xp,y1:pB,x2:xp,y2:pB+5,stroke:'#cfcabf'}));svg.appendChild(txt(xp,pB+18,'$'+c,{anchor:'middle'}));});
+          [0,5,10,15,20,25,30].forEach(function(t){var yp=y(t);svg.appendChild(el('line',{x1:pL-5,y1:yp,x2:pL,y2:yp,stroke:'#cfcabf'}));svg.appendChild(txt(pL-9,yp+3.5,t+'',{anchor:'end'}));});
+          svg.appendChild(txt(pL+pW/2,pB+40,'Cost  (USD,  capped at $5.6)  →',{anchor:'middle',fs:12,fill:'#4a443a',weight:600}));
+          svg.appendChild(txt(pL-44,pT+pH/2,'Running time  (min)  →',{anchor:'middle',fs:12,fill:'#4a443a',weight:600,rot:-90}));
+          svg.appendChild(txt(pL+6,pB-8,'cheap · fast — sweet spot',{fs:10.5,fill:'#1a7f37',weight:600}));
+          svg.appendChild(txt(x(costMed)+6,pB-8,'pricey · fast',{fs:10.5,fill:'#9a8f78'}));
+          svg.appendChild(txt(pL+6,pT+14,'cheap · slow',{fs:10.5,fill:'#9a8f78'}));
+          svg.appendChild(txt(x(costMed)+6,pT+14,'pricey · slow',{fs:10.5,fill:'#9a8f78'}));
+          D.forEach(function(d){
+            var cx=x(d.cost),cy=y(d.time),rr=r(d.tok),c=COL[d.tier];
+            var g=el('g',{});
+            var ti=el('title',{});ti.textContent=d.f+'  ·  $'+d.cost+'  ·  '+d.time+' min  ·  '+(d.tok/1000).toFixed(0)+'k tok'+(d.base?'  (cost est, off-scale)':'');g.appendChild(ti);
+            g.appendChild(el('circle',{cx:cx,cy:cy,r:rr,fill:c,'fill-opacity':d.base?0.10:0.20,stroke:c,'stroke-width':1.6,'stroke-dasharray':d.base?'4 3':'0'}));
+            if(d.base){g.appendChild(txt(cx,cy+4,'★',{anchor:'middle',fs:14,fill:c,weight:700}));}
+            var side=(cx>pL+pW*0.72)?-1:1;
+            var lx=cx+side*(rr+4), la=side>0?'start':'end';
+            g.appendChild(txt(lx,cy+3.5,d.k,{fs:10,fill:'#3c372e',anchor:la,weight:600}));
+            svg.appendChild(g);
+          });
+          var lgx=pR+22,lgy=pT+6;
+          svg.appendChild(txt(lgx,lgy,'Outcome',{fs:11,weight:700,fill:'#3c372e'}));
+          [['PASS','PASS'],['PWD','PASS · defects'],['FAIL','FAIL (not plotted)']].forEach(function(p,i){
+            var yy=lgy+18+i*20;
+            svg.appendChild(el('circle',{cx:lgx+7,cy:yy-4,r:6,fill:COL[p[0]],'fill-opacity':0.2,stroke:COL[p[0]],'stroke-width':1.6}));
+            svg.appendChild(txt(lgx+20,yy,p[1],{fs:10.5,fill:'#4a443a'}));
+          });
+          var sy=lgy+18+3*20+8;
+          svg.appendChild(txt(lgx,sy,'★ baseline (cost est.)',{fs:10.5,fill:'#4a443a'}));
+          svg.appendChild(txt(lgx,sy+22,'Bubble area = total tokens',{fs:11,weight:700,fill:'#3c372e'}));
+          [[78402,'78k'],[610997,'0.6M'],[3019341,'3.0M']].forEach(function(p,i){
+            var yy=sy+44+i*34, rr=r(p[0]);
+            svg.appendChild(el('circle',{cx:lgx+18,cy:yy,r:rr,fill:'none',stroke:'#9a8f78','stroke-width':1.2}));
+            svg.appendChild(txt(lgx+40,yy+3.5,p[1]+' tokens',{fs:10,fill:'#4a443a'}));
+          });
+          var mount=document.getElementById('quadChart');
+          if(mount){mount.appendChild(svg);}
+        })();
+      </script>
     </section>
   </main>
 </body>

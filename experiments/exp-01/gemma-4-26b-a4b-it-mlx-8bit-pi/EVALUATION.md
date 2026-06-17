@@ -7,53 +7,48 @@
 | Role | control |
 | Model id | `gemma-4-26B-A4B-it-MLX-8bit` (Pi agent, no skill) |
 | Entry file | result/index.html (Vite-bundled multi-file Three.js) |
-| Evaluated | 2026-06-17 |
+| Evaluated | 2026-06-18 (re-scored: gates-as-penalties rubric + software-WebGL render) |
 
 ## Result
 
-**RESULT: FAIL**
-**Combined score: 0/100**  (gate G2 failed → taste not run; mechanical subtotal 28/55 is moot under a gate FAIL)
+**RESULT: PASS-WITH-DEFECTS**
+**Combined score: 45.4/100**  (Mechanical 38/55 + Taste 20.4/45 − gate penalty 13)
 
-Failed gate: **G2 — failure fallback.** When WebGL is unavailable the game
-renders a silent blank sky-blue canvas with the normal idle message and no
-user-visible error — a dead end. This is an environment-independent code
-defect (no fallback path), not an artifact of the headless eval host.
+Re-scored from the earlier 0/100: gates are now penalties, not a kill-switch,
+and the game was rendered for real via Chrome+SwiftShader (the prior run only
+got blank frames). The game is genuinely playable end-to-end; it loses points
+for a resize-crash (G1) and a silent WebGL dead-end (G2), plus thin polish.
 
-## Gates (mechanical-evaluator)
+## Gates (mechanical-evaluator) — penalty −13
 
-| Gate | Verdict | Evidence |
-|------|---------|----------|
-| G1 — happy-path console errors | PASS* | No genuine code error on the documented startup/play path. The only console errors (`THREE.WebGLRenderer: Error creating WebGL context.` + page-level `Error creating WebGL context.`) are headless-host GPU limitations, not code bugs; favicon 404 is benign. Graded PASS provisionally — under a strict "zero errors in any environment" reading this would also FAIL. |
-| G2 — failure fallback (no blank page) | **FAIL** | With WebGL disabled (`--disable-webgl --disable-webgl2`): blank sky-blue canvas + "Press SPACE or Tap to Start", Space does nothing, score stays 0, no message ever shown. `Has user-visible error: false`. Evidence: `.eval/06-g2-webgl-disabled.png`. |
-| G3 — zero placeholders/stubs | PASS | Grep of the 517 KB bundle for TODO/FIXME/"rest of the code"/"for brevity"/"left as an exercise"/"not implemented" → 0 matches; no empty/stub function bodies in authored code. |
+| Gate | Verdict | Penalty | Evidence |
+|------|---------|---------|----------|
+| G1 — happy-path runtime errors | **FAIL** | −8 | Dispatching a `resize` event throws uncaught `TypeError: e.resize is not a function` — the game class has no `resize()` but the window listener calls it. Fires on any window resize (a normal usage path). Confirmed via CDP Runtime.evaluate + error listener. |
+| G2 — failure fallback (no blank page) | **FAIL** | −5 | With `--disable-webgl --disable-webgl2`, the 3D scene is blank; HTML overlay still shows "0" + "Press SPACE or Tap to Start" but **no** WebGL error message. Silent dead-end. Evidence: `.eval/g2-no-webgl.png`. |
+| G3 — zero placeholders/stubs | PASS | 0 | Grep of built JS for TODO/FIXME/"rest of the code"/stub patterns → 0 matches. |
 
-> A gate FAILED, so score is 0/100 and taste was not run. The mechanical
-> itemization below is recorded for diagnostic value only.
-
-## Mechanical checks — 28/55 (diagnostic only; overridden to 0 by gate FAIL)
+## Mechanical checks — 38/55
 
 | # | Check | Pts | Score | Evidence |
 |---|-------|-----|-------|----------|
-| 1 | Core mechanics correct | 20 | 15/20 | All 5 reqs (gravity/jump physics, pipe spawn+move, AABB collision→game over, score on pipe pass, Space restart) present and wired; verified by 22-assertion headless logic sim. gravity −0.005/frame, jump 0.12, pipes x=15 moving −0.1/frame, BoundingBox3 intersection, reset() clears state. −5: 3D render layer unobservable end-to-end (WebGL fails in host). |
-| 2 | Verified by real tests | 12 | 0/12 | No test files anywhere. Deliverable is only index.html + assets/index-*.js + assets/index-*.css. |
-| 3 | Stable performance (happy path) | 8 | 4/8 | rAF over 150 idle frames: max gap 10.9 ms, avg 10.0 ms, zero gaps >250 ms — clean loop. −4: actual WebGL render perf untestable (no GPU). |
-| 4 | Input robustness | 8 | 5/8 | Space `keydown` + `touchstart` + `mousedown` all wired to one flap/start/restart handler; rapid-fire Space only sets velocity (no corruption). −3: confirmed `e.resize is not a function` TypeError on any window resize (`resize()` never defined on the game class). |
-| 5 | All UI states present | 7 | 4/7 | Idle / playing / game-over all exist in code (setupInput, gameOver(), reset()). Idle observable; −3: playing and game-over states unobservable in execution (WebGL fails). |
+| 1 | Core mechanics correct | 20 | 18/20 | Headless Node sim + live CDP run: flap impulse `birdVelocity=0.15`, gravity pulls down, pipes spawn & scroll (03-mid-play), collision → "GAME OVER" (04), score++ on pass, restart resets to idle (05). −2: resize handler broken (secondary feature). |
+| 2 | Verified by real tests | 12 | 0/12 | No test suite anywhere (no *.test.*/*.spec.*, no test script). |
+| 3 | Stable performance (happy path) | 8 | 8/8 | 350 frames over ~5s live gameplay via CDP: zero gaps >250ms after the first second (`{"gaps":[],"totalFrames":350}`). |
+| 4 | Input robustness | 8 | 5/8 | SPACE start/flap/restart all confirmed via real keypress injection; touch handler present in source (not independently driven). −3: window resize throws TypeError. |
+| 5 | All UI states present | 7 | 7/7 | Idle (01), playing (02–03), game-over (04), restarted (05) all observed and captured via SwiftShader renders. |
 
-## Taste checks — NOT RUN
+## Taste checks — 20.4/45  (taste-evaluator, n=1; judged from a real lifecycle frame burst)
 
-Not scored: mechanical gate G2 failed, so per the evaluation protocol taste
-scoring is skipped and the combined score is 0/100.
+| # | Check | Weight | Rating /5 | Pts | Reasoning |
+|---|-------|--------|-----------|-----|-----------|
+| 6 | Visual cohesion | 15 | 2/5 | 6.0 | Palette internally consistent (sky-blue, green ground, olive bird, green pipes) with some depth (curved ground, bird drop-shadow), but reads as a raw prototype: unstyled white score number, plain body-text UI messages sitting on the ground layer with no overlay/backdrop, pipe green clashes with ground green, no title screen, near-identical look across states. |
+| 7 | Feel of motion | 12 | 3/5 | 7.2 | Physics visible and working across frames: bird floats (01) → drops immediately on flap (02, gravity present) → pipes scrolled in (03) → clean reset (05); drop-shadow tracks height (good spatial cue). But no bird tilt by velocity, no flap/collision particles or squash-stretch — responsive but minimal, not juicy. |
+| 8 | Difficulty calibration | 10 | 2/5 | 4.0 | Pipe gap in 03 looks very generous vs bird size; death at score 0 reads as the test bot not flapping (ground collision), not real challenge. No visible progression or high score — tuned toward trivially easy. |
+| 9 | Overall delight | 8 | 2/5 | 3.2 | 3D perspective + curved ground + shadow differentiate it from flat 2D clones, and restart works cleanly; but no audio, no best score, no bird rotation, sparse feedback — a technical proof-of-concept more than a game you'd replay. |
 
-Captured artifacts (stills only — **no motion**; WebGL never rendered in the
-headless host, so all frames are an identical blank sky-blue canvas):
-- `.eval/01-idle-ready.png` — load, idle message
-- `.eval/02-first-flap.png` — after Space (unchanged; WebGL failed)
-- `.eval/03-mid-play.png` — mid-play attempt (unchanged)
-- `.eval/04-death-end.png` — after wait (unchanged)
-- `.eval/05-restarted.png` — after restart press (unchanged)
-- `.eval/06-g2-webgl-disabled.png` — G2 test, blank screen, no error message
+Captured artifacts (real SwiftShader renders; ordered lifecycle burst = motion evidence):
+- `.eval/01-idle-ready.png` · `02-first-flap.png` · `03-mid-play.png` · `04-game-over.png` · `05-restarted.png`
+- `.eval/g2-no-webgl.png` — G2 failure-mode evidence (blank, no error message)
 
 > Taste reflects one rater's subjective judgment (n=1); not an objective
-> measurement. Here it was not produced — a GPU-capable browser session would
-> be required to see the Three.js scene and judge it.
+> measurement.

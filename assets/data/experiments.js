@@ -56,7 +56,7 @@ window.EXPERIMENTS = [
         id: "exp-01",
         title: "Experiment 01",
         date: "2026-06-13",
-        status: "running",
+        status: "ready",
         prompt:
             "Create a webbed Flappy Bird video game, but 3D and I want it to look pretty and playable.",
         folder: "experiments/exp-01/",
